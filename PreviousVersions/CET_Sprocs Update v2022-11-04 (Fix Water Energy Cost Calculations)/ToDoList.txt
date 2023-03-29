@@ -1,0 +1,21 @@
+Scripts requiring revision by type:
+CREATE TABLE:
+    [X] InputMeasure
+    [X] InputMeasureCEDARS
+    [X] SavedInput
+    [X] SavedInputCEDARS
+    [X] SavedCE [if adding WEN outputs]
+    [X] OutputCE [if adding WEN outputs]
+ALTER VIEWS:
+    [X] AvoidedCostElecvw - Need to update "constant" end use with correct name
+PROCEDURE:
+    [X] CalcCE
+    [X] CalcSavings
+    [ ] CalcCost [Seems not to be used]
+    [ ] CalcEmissions [Is this applicable?]
+    [ ] InitializeSourceTables -- NO CHANGE
+    [X] InitializeTables [alters VIEWs SourceMeasurevw and MappingMeasurevw]
+    [X] SaveCE [if adding WEN outputs]
+    [ ] SaveSavings -- NO CHANGE
+    [X] SaveInput [is this even used?]
+    [X] SaveInputCEDARS
