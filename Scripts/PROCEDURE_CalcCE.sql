@@ -113,6 +113,8 @@ Change History  :  06/30/2016  Wayne Hauck added comment header
                 :              benefits and supply costs for fuel-substitution
                 :              and all-electric new construction
                 :  2023-03-13  Robert Hansen fixed error in TRC_Cost calculation
+                :  2023-03-29  Robert Hansen fixed error in summing avoided gas
+                :              cost quarters
 ################################################################################
 */
 
@@ -532,13 +534,14 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 ISNULL( e.UnitRefrigCosts, 0 )
             )
         ) AS OtherCostGross
---------------------------------------------------------------------------------
-
     FROM InputMeasurevw AS e
     LEFT JOIN Settingsvw AS s
     ON e.PA = s.PA AND s.[Version] = @AVCVersion
 
-    --***************************** ELECTRIC  *************************************
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--- Avoided Electric Costs -----------------------------------------------------
+--- First Baseline Avoided Electric Costs:
     LEFT JOIN (
         SELECT
             CET_ID
@@ -549,7 +552,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             ,DS
             /*,DS_AL*/
         FROM (
-    -- Get Generation (Gen) and Transmission & Distribution (TD) avoided costs, demand scalar (DS)
+            --- Full Quarters, First Baseline ----------------------------------
             SELECT
                 CET_ID
                 ,ISNULL( Gen / POWER( Rqf, Qac ), 0 ) AS Gen
@@ -561,7 +564,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             FROM AvoidedCostElecvw
             WHERE Qac BETWEEN Qm AND Qm + CONVERT( INT, eulq1 ) - 1
 
-    -- Get fractional generation (Genfrac) and transmission & Distribution (TDfrac) avoided costs. Fractions are effective useful lives (eul) for fractions of a quarter. First Baseline fraction
+            --- Last Fractional Quarter, First Baseline ------------------------
             UNION SELECT
                 CET_ID
                 ,( eulq1 - FLOOR( eulq1 ) ) * (Gen / POWER( Rqf, Qac ) ) AS Gen
@@ -576,6 +579,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         AS A GROUP BY CET_ID, DS/*, DS_AL*/
     ) AS ace_1 ON e.CET_ID=ace_1.CET_ID
 
+--- Second Baseline Avoided Electric Costs:
     LEFT JOIN (
         SELECT
             CET_ID
@@ -586,121 +590,100 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             ,DS
             /*,DS_AL*/
         FROM (
-    -- Get fractional generation (Genfrac) and transmission & Distribution (TDfrac) avoided costs. Second baseline fraction.
+            --- First Fractional Quarter, Second Baseline ----------------------
             SELECT
                 CET_ID
-                ,CASE
-                    WHEN eulq2 > 0 AND ( eulq1 - FLOOR( eulq1 ) ) > 0
-                    THEN ( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen / POWER( Rqf, Qac ) )
-                    ELSE 0
-                END AS Gen
-                --,CASE
-                --  WHEN eulq2 > 0 AND ( eulq1 - FLOOR( eulq1 ) ) > 0
-                --  THEN ( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_AL / POWER( Rqf, Qac ) )
-                --  ELSE 0
-                --END AS Gen_AL
-                ,CASE
-                    WHEN eulq2 > 0 AND ( eulq1 - FLOOR( eulq1 ) ) > 0
-                    THEN ( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD / POWER( Rqf, Qac ) )
-                    ELSE 0
-                END AS TD
-                --,CASE
-                --  WHEN eulq2 > 0 AND ( eulq1 - FLOOR( eulq1 ) ) > 0
-                --  THEN ( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_AL / POWER( Rqf, Qac ) )
-                --  ELSE 0
-                --END AS TD_AL
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
+                /*,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
+                /*,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
                 ,ISNULL( DS2, 0 ) AS DS
-                --,ISNULL( DS2_AL, 0 ) AS DS_AL
+                /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
             WHERE Qac = Qm + CONVERT( INT, eulq1 )
 
-    ---- Get Elec avoided costs (Elecfrac) - Second baseline
+            --- Full Quarters, Second Baseline ---------------------------------
             UNION SELECT
                 CET_ID
                 ,ISNULL( Gen / POWER( Rqf, Qac ), 0 ) AS Gen
-                --,ISNULL( Gen_AL / POWER( Rqf, Qac ), 0 ) AS Gen_AL
+                /*,ISNULL( Gen_AL / POWER( Rqf, Qac ), 0 ) AS Gen_AL*/
                 ,ISNULL( TD / POWER( Rqf, Qac ), 0 ) AS TD
-                --,ISNULL( TD_AL / POWER( Rqf, Qac ), 0 ) AS TD_AL
+                /*,ISNULL( TD_AL / POWER( Rqf, Qac ), 0 ) AS TD_AL*/
                 ,ISNULL( DS2, 0 ) AS DS
-                --,ISNULL( DS2_AL, 0 ) AS DS_AL
+                /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
-            WHERE Qac BETWEEN Qm + eulq1 AND Qm + eulq2 - 1
+            WHERE Qac BETWEEN Qm + CONVERT( INT, eulq1 ) + 1 AND Qm + CONVERT( INT, eulq2 ) - 1
 
-    -- Get fractional generation (Genfrac) and transmission & Distribution (TDfrac) avoided costs. Fractions are effective useful lives (eul) for fractions of a quarter
+            --- Last Fractional Quarter, Second Baseline -----------------------
             UNION SELECT
                 CET_ID
                 ,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
-                --,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL
+                /*,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
                 ,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
-                --,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL
+                /*,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
                 ,ISNULL( DS2, 0 ) AS DS
-                --,ISNULL( DS2_AL, 0 ) AS DS_AL
+                /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
             WHERE Qac = Qm + CONVERT( INT, eulq2 )
         ) AS A GROUP BY CET_ID, DS/*, DS_AL*/
     ) AS ace_2
     ON e.CET_ID = ace_2.CET_ID
 
-    --***************************** GAS  *************************************
+--------------------------------------------------------------------------------
+--- Avoided Gas Costs ----------------------------------------------------------
+--- First Baseline Avoided Gas Costs:
     LEFT JOIN (
         SELECT
             CET_ID
             ,SUM(Gas) AS Gas
             --,SUM(Gas_AL) AS Gas_AL
         FROM (
-    -- Get Gas avoided costs
+            --- Full Quarters, First Baseline ----------------------------------
             SELECT
                 CET_ID
                 ,ISNULL( Cost / POWER( Rqf, Qac ), 0 ) AS Gas
-                --,ISNULL( Cost_AL / POWER( Rqf, Qac ), 0 ) AS Gas_AL
+                /*,ISNULL( Cost_AL / POWER( Rqf, Qac ), 0 ) AS Gas_AL*/
             FROM AvoidedCostGasvw
             WHERE Qac BETWEEN Qm AND Qm + CONVERT( INT, eulq1 ) - 1
 
-    -- Get fractional Gas avoided costs (Gasfrac). Fractions are effective useful lives (eul) for fractions of a quarter. First Baseline fraction
-        UNION SELECT
-            CET_ID
-            ,( eulq1 - FLOOR( eulq1 ) ) * ( Cost / POWER( Rqf, Qac ) ) AS Gasfrac1
-            --,( eulq1 - FLOOR( eulq1 ) ) * ( Cost_AL / POWER( Rqf, Qac ) ) AS Gasfrac1_AL
-        FROM AvoidedCostGasvw
-        WHERE Qac = Qm + CONVERT( INT, eulq1 )
+            --- Last Fractional Quarter, First Baseline ------------------------
+            UNION SELECT
+                CET_ID
+                ,( eulq1 - FLOOR( eulq1 ) ) * ( Cost / POWER( Rqf, Qac ) ) AS Gasfrac1
+                /*,( eulq1 - FLOOR( eulq1 ) ) * ( Cost_AL / POWER( Rqf, Qac ) ) AS Gasfrac1_AL*/
+            FROM AvoidedCostGasvw
+            WHERE Qac = Qm + CONVERT( INT, eulq1 )
         ) AS A GROUP BY CET_ID
     ) AS acg_1 ON e.CET_ID = acg_1.CET_ID
 
-    -- Get fractional Gas avoided costs (Gasfrac) - Second baseline
+--- Second Baseline Avoided Gas Costs:
     LEFT JOIN (
         SELECT
             CET_ID,
-            SUM(Gas) AS Gas--,
-            --SUM(Gas_AL) AS Gas_AL
+            SUM(Gas) AS Gas,
+            /*SUM(Gas_AL) AS Gas_AL*/
         FROM (
+            --- First Fractional Quarter, Second Baseline ----------------------
             SELECT
                 CET_ID
-                ,CASE
-                    WHEN ( eulq1 - FLOOR( eulq1 ) ) > 0
-                    THEN ( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Cost / POWER( Rqf, Qac ) )
-                    ELSE 0
-                END AS Gas
-                --,CASE
-                --  WHEN ( eulq1 - FLOOR( eulq1 ) ) > 0
-                --  THEN ( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Cost_AL / POWER( Rqf, Qac ) )
-                --  ELSE 0
-                --END AS Gas_AL
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Cost / POWER( Rqf, Qac ) ) AS Gas
+                /*,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Cost_AL / POWER( Rqf, Qac ) ) AS Gas_AL*/
             FROM AvoidedCostGasvw
             WHERE Qac = Qm + CONVERT( INT, eulq1 )
 
-    -- Get Gas avoided costs, and NTGRTherms - Second baseline
+            --- Full Quarters, Second Baseline ---------------------------------
             UNION SELECT
                 CET_ID
                 ,ISNULL( Cost / POWER( Rqf, Qac ), 0 ) AS Gas
-                --,ISNULL( Cost_AL / POWER( Rqf, Qac ), 0 ) AS Gas_AL
+                /*,ISNULL( Cost_AL / POWER( Rqf, Qac ), 0 ) AS Gas_AL*/
             FROM AvoidedCostGasvw
-            WHERE Qac BETWEEN Qm + CONVERT( INT, eulq1 ) + 1 AND Qm + CONVERT( INT, eulq2 ) - 1 
+            WHERE Qac BETWEEN Qm + CONVERT( INT, eulq1 ) + 1 AND Qm + CONVERT( INT, eulq2 ) - 1
 
-    -- Get fractional Gas avoided costs (Gasfrac)
+            --- Last Fractional Quarter, Second Baseline -----------------------
             UNION SELECT
                 CET_ID
                 ,( eulq2 - FLOOR( eulq2 ) ) * ( Cost / POWER( Rqf, Qac ) ) AS Gas
-                --,( eulq2 - FLOOR( eulq2 ) ) * ( Cost_AL / POWER( Rqf, Qac ) ) AS Gas_AL
+                /*,( eulq2 - FLOOR( eulq2 ) ) * ( Cost_AL / POWER( Rqf, Qac ) ) AS Gas_AL*/
             FROM AvoidedCostGasvw
             WHERE Qac = Qm + CONVERT( INT, eulq2 )
         ) AS A GROUP BY CET_ID

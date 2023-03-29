@@ -21,8 +21,12 @@ Change History   :  2016-06-30 Wayne Hauck added comment header
                  :  2023-03-16  Robert Hansen added separate direct and embedded
                  :              (i.e., water-energy nexus) savings fields, added
                  :              "Annual" label to otherwise unlabelled Gross and
-                 :              Net savings fields, and fixed various
-                 :              calculations
+                 :              Net savings fields, and simplified various
+                 :              calculations and logical statements
+                 :  2023-03-29  Robert Hansen removed water energy savings terms
+                 :              from WeightedSavings calculation to account for
+                 :              original savings terms now representing total
+                 :              combined direct and embedded savings.
 ################################################################################
 */
 
@@ -605,10 +609,6 @@ AS (
                 WHEN FirstYearGrosskWh > 0
                 THEN FirstYearGrosskWh
                 ELSE 0
-            END + CASE
-                WHEN FirstYearGrosskWhWater > 0
-                THEN FirstYearGrosskWhWater
-                ELSE 0
             END
         ) AS SumkWh
         ,SUM(
@@ -647,10 +647,6 @@ AS
                     THEN FirstYearGrosskWh
                     ELSE 0
                 END + CASE
-                    WHEN FirstYearGrosskWhWater > 0
-                    THEN FirstYearGrosskWhWater
-                    ELSE 0
-                END + CASE 
                     WHEN FirstYearGrossThm > 0
                     THEN @ThermConv * FirstYearGrossThm
                     ELSE 0
