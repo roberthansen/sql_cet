@@ -619,10 +619,10 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             --- Last Fractional Quarter, Second Baseline -----------------------
             UNION SELECT
                 CET_ID
-                ,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
-                /*,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
-                ,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
-                /*,( eulq2 - ROUND( eulq2, 0, 1 ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
+                /*,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
+                /*,( eulq2 - FLOOR( eulq2 ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
                 ,ISNULL( DS2, 0 ) AS DS
                 /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -651,8 +651,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             --- Last Fractional Quarter, First Baseline ------------------------
             UNION SELECT
                 CET_ID
-                ,( eulq1 - FLOOR( eulq1 ) ) * ( Cost / POWER( Rqf, Qac ) ) AS Gasfrac1
-                /*,( eulq1 - FLOOR( eulq1 ) ) * ( Cost_AL / POWER( Rqf, Qac ) ) AS Gasfrac1_AL*/
+                ,( eulq1 - FLOOR( eulq1 ) ) * ( Cost / POWER( Rqf, Qac ) ) AS Gas
+                /*,( eulq1 - FLOOR( eulq1 ) ) * ( Cost_AL / POWER( Rqf, Qac ) ) AS Gas_AL*/
             FROM AvoidedCostGasvw
             WHERE Qac = Qm + CONVERT( INT, eulq1 )
         ) AS A GROUP BY CET_ID
