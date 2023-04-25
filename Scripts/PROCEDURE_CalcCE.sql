@@ -117,6 +117,9 @@ Change History  :  06/30/2016  Wayne Hauck added comment header
                 :              cost quarters
                 :  2023-04-04  Robert Hansen implemented sorting on CET_ID for
                 :              output table
+                :  2023-04-24  Robert Hansen renamed 'Gasfrac1' as 'Gas' in the
+                :              acg_1 SELECT statement, allowing correct
+                :              aggregation and summation of avoided gas costs.
 ################################################################################
 */
 
