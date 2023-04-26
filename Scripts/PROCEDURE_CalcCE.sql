@@ -665,8 +665,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
     LEFT JOIN (
         SELECT
             CET_ID,
-            SUM(Gas) AS Gas,
-            /*SUM(Gas_AL) AS Gas_AL*/
+            SUM(Gas) AS Gas
+            /*,SUM(Gas_AL) AS Gas_AL*/
         FROM (
             --- First Fractional Quarter, Second Baseline ----------------------
             SELECT
