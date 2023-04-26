@@ -120,6 +120,9 @@ Change History  :  06/30/2016  Wayne Hauck added comment header
                 :  2023-04-24  Robert Hansen renamed 'Gasfrac1' as 'Gas' in the
                 :              acg_1 SELECT statement, allowing correct
                 :              aggregation and summation of avoided gas costs.
+                :  2023-04-26  Robert Hansen removed extra comma which was
+                :              causing a syntax error when extra fields were
+                :              commented out.
 ################################################################################
 */
 
@@ -641,7 +644,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         SELECT
             CET_ID
             ,SUM(Gas) AS Gas
-            --,SUM(Gas_AL) AS Gas_AL
+            /*,SUM(Gas_AL) AS Gas_AL*/
         FROM (
             --- Full Quarters, First Baseline ----------------------------------
             SELECT
@@ -664,9 +667,9 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- Second Baseline Avoided Gas Costs:
     LEFT JOIN (
         SELECT
-            CET_ID,
-            SUM(Gas) AS Gas,
-            /*SUM(Gas_AL) AS Gas_AL*/
+            CET_ID
+            ,SUM(Gas) AS Gas
+            /*,SUM(Gas_AL) AS Gas_AL*/
         FROM (
             --- First Fractional Quarter, Second Baseline ----------------------
             SELECT
