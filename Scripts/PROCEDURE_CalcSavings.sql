@@ -32,6 +32,8 @@ Change History   :  2016-06-30 Wayne Hauck added comment header
                  :              calculations, renamed "Direct" savings fields
                  :              to "Site", and implemented sorting on CET_ID for
                  :              output table
+                 :  2023-06-21  Robert Hansen corrected Therm->kWh conversion
+                 :              factor
 ###############################################################################
 */
 
@@ -54,7 +56,7 @@ AS
 SET NOCOUNT ON
 
 DECLARE @ThermConv float
-SET @ThermConv = 29.307111111
+SET @ThermConv = 29.30
 
 IF @MEBens Is Null
     BEGIN
