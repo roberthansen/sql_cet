@@ -34,6 +34,8 @@ Change History   :  2016-06-30 Wayne Hauck added comment header
                  :              output table
                  :  2023-06-21  Robert Hansen corrected Therm->kWh conversion
                  :              factor
+                 :  2023-08-24  Robert Hansen removed extra EUL factor from Net
+                 :              Lifecycle Electric Savings calculations.
 ###############################################################################
 */
 
@@ -256,21 +258,21 @@ BEGIN
             CASE
                 WHEN IsNull(RUL,0) = 0
                 THEN Qty * (NTGRkWh + @MEBens) * EUL * IRkWh * RRkWh * (kWh1 + kWhWater1)
-                ELSE Qty * (NTGRkWh + @MEBens) * EUL * IRkWh * RRkWh * ((kWh1 + kWhWater1) * RUL + (kWh2 + kWhWater2) * (EUL - RUL))
+                ELSE Qty * (NTGRkWh + @MEBens) * IRkWh * RRkWh * ((kWh1 + kWhWater1) * RUL + (kWh2 + kWhWater2) * (EUL - RUL))
             END
         ) AS LifecycleNetkWh
         ,SUM(
             CASE
                 WHEN IsNull(RUL,0) = 0
                 THEN Qty * (NTGRkWh + @MEBens) * EUL * IRkWh * RRkWh * kWh1
-                ELSE Qty * (NTGRkWh + @MEBens) * EUL * IRkWh * RRkWh * (kWh1 * RUL + kWh2 * (EUL - RUL))
+                ELSE Qty * (NTGRkWh + @MEBens) * IRkWh * RRkWh * (kWh1 * RUL + kWh2 * (EUL - RUL))
             END
         ) AS LifecycleNetkWhSite
         ,SUM(
             CASE
                 WHEN IsNull(RUL,0) = 0
                 THEN Qty * (NTGRkWh + @MEBens) * EUL * IRkWh * RRkWh * kWhWater1
-                ELSE Qty * (NTGRkWh + @MEBens) * EUL * IRkWh * RRkWh * (kWhWater1 * RUL + kWhWater2 * (EUL - RUL))
+                ELSE Qty * (NTGRkWh + @MEBens) * IRkWh * RRkWh * (kWhWater1 * RUL + kWhWater2 * (EUL - RUL))
             END
         ) AS LifecycleNetkWhWater
         ,SUM(
