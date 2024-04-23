@@ -19,7 +19,7 @@ GO
 -- Purpose          :  This stored procedure saves cost results by JobID into the SavedCost table.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
+-- Copyright ï¿½      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
 -- Change History   :  06/30/2016  Wayne Hauck added comment header
 --                     
 --#################################################################################################
@@ -53,7 +53,7 @@ ELSE
 SET @SQL2 = 
 'INSERT INTO ' + @CETDataDbName + 'SavedCost 
 SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
-      ,[PA]
+      ,[IOU_AC_Territory]
       ,[PrgID]
       ,[CET_ID]
       ,[IncentiveToOthers]

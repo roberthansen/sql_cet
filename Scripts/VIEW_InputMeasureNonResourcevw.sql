@@ -1,15 +1,20 @@
 /*
-#################################################################################################
+################################################################################
 Name             :  InputMeasurevw
-Date             :  06/30/2016
+Date             :  2016-06-30
 Author           :  Wayne Hauck
 Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
-Purpose          :  This view 1) sets the core variables for cost effectiveness calculations, 2) handles nulls, 3) calculates quarters based on first year of implementation, and 4) calculates calculated fields.
+Purpose          :  This view 1) sets the core variables for cost effectiveness
+				 :  calculations, 2) handles nulls, 3) calculates quarters based
+				 :  on first year of implementation, and 4) calculates
+				 :  calculated fields.
 Usage            :  n/a
 Called by        :  n/a
-Copyright �     :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
-Change History   :  06/30/2016  Wayne Hauck added comment header
-                 :  05/25/2021  Robert Hansen added fields for fuel substitution
+Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+				 :  Inc.) for California Public Utilities Commission (CPUC), All
+				 :  Rights Reserved
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2021-05-25  Robert Hansen added fields for fuel substitution
                  :              and refrigerants, and removed MEBens and MECost
                  :              fields
                  :  2021-06-16  Robert Hansen commented out new fields for fuel
@@ -31,7 +36,9 @@ Change History   :  06/30/2016  Wayne Hauck added comment header
                  :                  UESkWh_TotalWater, kWhTotalWater1
                  :                + UnitkWhTotalWater2ndBaseline aka
                  :                  UESkWh_TotalWater_ER, kWhTotalWater2
-#################################################################################################
+				 :  2024-04-23  Robert Hansen renamed "PA" field to
+				 :       		"IOU_AC_Territory"
+################################################################################
 */
 
 IF OBJECT_ID('dbo.InputMeasureNonResourcevw','V') IS NOT NULL
@@ -42,7 +49,7 @@ CREATE VIEW [dbo].[InputMeasureNonResourcevw]
 AS
 	SELECT JobID 
 		,m.PrgID CET_ID
-	  ,m.PA
+	    ,m.IOU_AC_Territory
 		,m.PrgID 
 		,''ProgramName
 		,'' MeasureName
@@ -126,8 +133,8 @@ AS
 		,'' [UnitType]
 		,'' Comments
 		,'' DataField
-	  FROM MappingProgramvw m 
+	  FROM MappingProgramvw AS m 
 	  WHERE m.PrgID NOT IN (SELECT PrgID FROM dbo.MappingMeasurevw)
-	  Group By m.JobID,m.PA,m.PrgID
+	  GROUP BY m.JobID, m.IOU_AC_Territory, m.PrgID
 
 GO

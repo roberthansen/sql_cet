@@ -1,7 +1,7 @@
 /*
 ################################################################################
 Name             :  InitializeSourceTables
-Date             :  06/30/2016
+Date             :  2016-06-30
 Author           :  Wayne Hauck
 Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose          :  This stored procedure initializes tables which prepares
@@ -11,12 +11,12 @@ Called by        :  n/a
 Copyright �      :  Developed by Pinnacle Consulting Group (aka InTech Energy,
                  :  Inc.) for California Public Utilities Commission (CPUC).
 				 :  All Rights Reserved.
-Change History   :  06/30/2016  Wayne Hauck added comment header
-                 :  09/01/2016  Wayne Hauck modified to allow source database
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2016-09-01  Wayne Hauck modified to allow source database
                  :              to be passed and processed correctly
-                 :  07/01/2017  Wayne Hauck modified to pass  avoided cost
+                 :  2017-07-01  Wayne Hauck modified to pass  avoided cost
                  :              version to when Settingsvw view is created
-                 :  06/22/2021  Robert Hansen removed ALTER InputMeasurevw block
+                 :  2021-06-22  Robert Hansen removed ALTER InputMeasurevw block
 				 :              from procedure
                  :  2022-09-02  Robert Hansen added the following new fields related to
                  :              water-energy nexus savings:
@@ -66,14 +66,14 @@ SET @SourceMeasurevwSql = 'ALTER VIEW [dbo].[SourceMeasurevw] AS
 /*
 ################################################################################
 Name : SourceMeasurevw
-Date : 06/30/2016
+Date : 2016-06-30
 Author : Wayne Hauck
 Company : Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose : This view is a pointer to the source measure table and is code generated in the InitializeTables sproc. It does not care about fieldnames or formats. Only the location of the source table.
 Usage : n/a
 Called by : n/a
 Copyright : Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
-Change History : 06/30/2016  Wayne Hauck added comment header        
+Change History : 2016-06-30  Wayne Hauck added comment header        
 ################################################################################
 */
 SELECT * FROM ' + @SourceDatabase + '.dbo.' +  @MeasureTable
@@ -82,14 +82,14 @@ SET @SourceProgramvwSql = 'ALTER VIEW [dbo].[SourceProgramvw] AS
 /*
 ################################################################################
 Name : SourceProgramvw
-Date : 06/30/2016
+Date : 2016-06-30
 Author : Wayne Hauck
 Company : Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose : This view is a pointer to the source program table and is code generated in the InitializeTables sproc. It does not care about fieldnames or formats. Only the location of the source table.
 Usage : n/a
 Called by : n/a
 Copyright : Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
-Change History : 06/30/2016  Wayne Hauck added comment header
+Change History : 2016-06-30  Wayne Hauck added comment header
 ################################################################################
 */
 SELECT * FROM ' + @SourceDatabase + '.dbo.' + @ProgramTable
@@ -100,14 +100,14 @@ SET @SettingsvwSql = 'ALTER VIEW [dbo].[Settingsvw] AS
 ################################################################################
 Name : Settingsvw
 Purpose : This view is E3Settings table.
-Date : 06/30/2016
+Date : 2016-06-30
 Author : Wayne Hauck
 Company : Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Usage : n/a
 Called by : n/a
 Copyright : Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
-Change History : 06/30/2016  Wayne Hauck added comment header
-Change History : 07/01/2017  Modified to settings based on avoided cost version by Wayne Hauck with encryption
+Change History : 2016-06-30  Wayne Hauck added comment header
+Change History : 2017-07-01  Modified to settings based on avoided cost version by Wayne Hauck with encryption
 ################################################################################
 */
 SELECT

@@ -1,30 +1,31 @@
+/*
+################################################################################
+Name             :  FinalizeTables
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure validates input, runs CalcAll sproc,
+                 :  and saves the results.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+                 :  Inc.) for California Public Utilities Commission (CPUC), All
+                 :  Rights Reserved
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2016-12-30  Wayne Hauck added  @AVCVersion and @FirstYear
+                 :              parameters to ValidateInput sp, which are needed
+                 :              to validate EUL > years in avoided cost tables.
+################################################################################
+*/
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[FinalizeTables]    Script Date: 12/16/2019 1:23:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[FinalizeTables]    Script Date: 2019-12-16 1:23:17 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
---#################################################################################################
--- Name             :  FinalizeTables
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure validates input, runs CalcAll sproc, and saves the results.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header
--- Change History   :  12/30/2016  Wayne Hauck added  @AVCVersion and @FirstYear parameters to ValidateInput sp, which are needed to validate EUL > years in avoided cost tables. 
---                     
---#################################################################################################
-
-
 CREATE PROCEDURE [dbo].[FinalizeTables]
 @JobID INT = -1,
 @MEBens FLOAT=NULL,

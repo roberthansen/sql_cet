@@ -1,19 +1,12 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetProgramInputsCEDARSAllByJobID]    Script Date: 12/16/2019 1:45:43 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetProgramInputsCEDARSAllByJobID]    Script Date: 2019-12-16 1:45:43 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
 
 CREATE PROCEDURE [dbo].[GetProgramInputsCEDARSAllByJobID]
          @JobID INT
@@ -31,7 +24,7 @@ BEGIN
 SELECT 
        [PrgID]
       ,[PrgYear]
-	  ,ClaimYearQuarter
+	    ,[ClaimYearQuarter]
       ,[AdminCostsOverheadAndGA]
       ,[AdminCostsOther]
       ,[MarketingOutreach]
@@ -43,7 +36,7 @@ SELECT
       ,[UserInputIncentive]
       ,[OnBillFinancing]
       ,[CostsRecoveredFromOtherSources]
-      ,[PA]
+      ,[IOU_AC_Territory]
   FROM [dbo].[SavedProgramCostCEDARS]
   WHERE JobID = @JobID
   
@@ -57,7 +50,7 @@ SELECT
        [PrgID]
       ,[ProgramName]
       ,SUBSTRING([Year],1,4) [PrgYear]
-	  ,[Year] ClaimYearQuarter
+	    ,[Year] ClaimYearQuarter
       ,[AdminCostsOverheadAndGA]
       ,[AdminCostsOther]
       ,[MarketingOutreach]
@@ -69,8 +62,7 @@ SELECT
       ,[UserInputIncentive]
       ,[OnBillFinancing]
       ,[CostsRecoveredFromOtherSources]
-	  ,[PA]
-
+  	  ,[IOU_AC_Territory]
   FROM [dbo].[SavedProgramCost]
   WHERE JobID = @JobID
 

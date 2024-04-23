@@ -1,3 +1,20 @@
+/*
+################################################################################
+Name             :  RunCET
+Date             :  06/30/2016
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This is the main entry point to run cost effectivensss both
+				 :  from the Desktop and in the database. It creates the job,
+				 :  and calls the InitializeTables and FinalizeTables sproc.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+				 :  Inc.) for California Public Utilities Commission (CPUC). All
+				 :  Rights Reserved.
+Change History   :  06/30/2016  Wayne Hauck added comment header
+################################################################################
+*/
 USE [CET_2018_new_release]
 GO
 
@@ -7,24 +24,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
---#################################################################################################
--- Name             :  RunCET
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This is the main entry point to run cost effectivensss both from the Desktop and in the database. It creates the job, and calls the InitializeTables and FinalizeTables sproc.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
 
 CREATE PROCEDURE [dbo].[RunCET]
 @MeasureTable VARCHAR(255)='EDFilled',
@@ -203,12 +202,4 @@ SELECT CONVERT(INT,@JobID)
 
 RETURN CONVERT(INT,@JobID) 
 
-
-
-
-
-
-
 GO
-
-

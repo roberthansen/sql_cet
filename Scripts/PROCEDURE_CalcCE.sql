@@ -1,55 +1,72 @@
 /*
 ################################################################################
 Name            :  CalcCE (procedure)
-Date            :  06/30/2016
+Date            :  2016-06-30
 Author          :  Wayne Hauck
 Company         :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose         :  This stored procedure calculates cost effectiveness.
 Usage           :  n/a
 Called by       :  n/a
-Copyright �     :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
-Change History  :  06/30/2016  Wayne Hauck added comment header
-                :  12/30/2016  Wayne Hauck added measure inflation
-                :  12/30/2016  Added modified Elec and Gas benefits to use savings-specific installation rate (IR) and realization rate (RR)
-                :  2020-02-11  Robert Hansen reformatted for readability and added comments to identify possible errors
-                :  2020-07-23  Robert Hansen applied logic to remove negative benefits to measure costs
+Copyright       :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+                :  Inc.) for California Public Utilities Commission (CPUC), All
+                :  Rights Reserved
+Change History  :  2016-06-30  Wayne Hauck added comment header
+                :  2016-12-30  Wayne Hauck added measure inflation
+                :  2016-12-30  Added modified Elec and Gas benefits to use
+                :              savings-specific installation rate (IR) and
+                :              realization rate (RR)
+                :  2020-02-11  Robert Hansen reformatted for readability and
+                :              added comments to identify possible errors
+                :  2020-07-23  Robert Hansen applied logic to remove negative
+                :              benefits to measure costs
                 :              Added four fields to #OutputCE table variable:
                 :                + ElecNegBen
                 :                + GasNegBen
                 :                + ElecNegBenGross
                 :                + GasNegBenGross
-                :              Added ElecNegBen and GasNegBen (and _Gross) to measure-level cost columns:
+                :              Added ElecNegBen and GasNegBen (and _Gross) to
+                :              measure-level cost columns:
                 :                + PAC_Cost
                 :                + PAC_Cost_NoAdmin
                 :                + TRC_Cost
                 :                + TRC_CostGross
                 :                + TRC_Cost_NoAdmin
-                :  2020-08-03  Robert Hansen added switch to negative benefits logic to apply
-                :              only to measures marked with 'FuelSub' in the MeasImpactType
-                :              field of the InputMeasure table
-                :  2020-11-03  Robert Hansen removed JobID from join between InputMeasurevw
-                :              and InputMeasureCEDARS, used for retrieving MeasImpactType
-                :  2020-11-19  Robert Hansen fixed error in program-level summations in the
-                :              in-memory table "BenefitsSum" introduced when the threshold
-                :              logic applied to each measure which was removed in 07/23/2020
-                :              due to similar logic in ElecBen and GasBen calculations, but
-                :              again became necessary when "FuelSub" tag check was added in
-                :              08/03/2020.
-                :  2020-12-18  Robert Hansen added ISNULL() wrappers to benefits fields in
-                :              WeightedBenefits calculation; replaced erroneous "OR" with
-                :              "AND" in ElecBenGross calculation.
-                :  2021-04-26  Robert Hansen implemented second impact profile for additional
-                :              load associated with fuel substitution measures, used to
-                :              calculate 'negative savings' as new cost.
-                :  2021-05-14  Robert Hansen implemented the following corrections to code errors:
-                :                + Removed (1+MEBens) from Gross Benefits Calculations
+                :  2020-08-03  Robert Hansen added switch to negative benefits
+                :              logic to apply only to measures marked with
+                :              'FuelSub' in the MeasImpactType field of the
+                :              InputMeasure table
+                :  2020-11-03  Robert Hansen removed JobID from join between
+                :              InputMeasurevw and InputMeasureCEDARS, used for
+                :              retrieving MeasImpactType
+                :  2020-11-19  Robert Hansen fixed error in program-level
+                :              summations in the in-memory table "BenefitsSum"
+                :              introduced when the threshold logic applied to
+                :              each measure which was removed in 2020-07-23 due
+                :              to similar logic in ElecBen and GasBen
+                :              calculations, but again became necessary when
+                :              "FuelSub" tag check was added in 2020-08-03.
+                :  2020-12-18  Robert Hansen added ISNULL() wrappers to benefits
+                :              fields in WeightedBenefits calculation; replaced
+                :              erroneous "OR" with "AND" in ElecBenGross
+                :              calculation.
+                :  2021-04-26  Robert Hansen implemented second impact profile
+                :              for additional load associated with fuel
+                :              substitution measures, used to calculate
+                :              'negative savings' as new cost.
+                :  2021-05-14  Robert Hansen implemented the following corrections
+                :              to code errors:
+                :                + Removed (1+MEBens) from Gross Benefits
+                :                  Calculations
                 :                + Applied IRkW and RRkW to Demand Savings where
-                :                  missing or where IRkWh and RRkWh are used improperly
+                :                  missing or where IRkWh and RRkWh are used
+                :                  improperly
                 :                + Removed Rqf terms from benefits calculations
-                :                 as net-present conversions occur in JOIN sub-queries
-                :                + Moved ISNULL() functions inside SUM() aggregators
-                :  2021-05-17  Robert Hansen incorporated the following new benefits and
-                :              costs fields in test calculations:
+                :                  as net-present conversions occur in JOIN sub-
+                :                  queries
+                :                + Moved ISNULL() functions inside SUM()
+                :                  aggregators
+                :  2021-05-17  Robert Hansen incorporated the following new
+                :              benefits and costs fields in test calculations:
                 :                + UnitGasInfraBens,
                 :                + UnitRefrigCosts,
                 :                + UnitRefrigBens,
@@ -86,8 +103,9 @@ Change History  :  06/30/2016  Wayne Hauck added comment header
                 :              negative participant costs for fuel substitution
                 :              and codes and standards measures
                 :  2022-09-02  Robert Hansen added the following new fields
-                :              related to water-energy nexus savings and included
-                :              their values in calculating gross and net savings:
+                :              related to water-energy nexus savings and
+                :              included their values in calculating gross and
+                :              net savings:
                 :                + kWhWater1 (UnitkWhIOUWater1stBaseline in
                 :                  InputMeasureCEDARS)
                 :                + kWhWater2 (UnitkWhIOUWater2ndBaseline in
@@ -123,6 +141,17 @@ Change History  :  06/30/2016  Wayne Hauck added comment header
                 :  2023-04-26  Robert Hansen removed extra comma which was
                 :              causing a syntax error when extra fields were
                 :              commented out.
+                :  2024-04-22  Robert Hansen applied the following changes:
+                :                + MiscBens and MiscCosts added to OtherBen,
+                :                  OtherBenGross, OtherCost, and
+                :                  OtherCostGross
+                :                + Modified fuel-substitution logic for electric
+                :                  and gas net and gross benefits and costs to
+                :                  evaluate combined first- and second-baseline
+                :                  benefits or costs before evaluating rather
+                :                  than checking only first-baseline savings
+                :                  rate
+                :                + Renamed the "PA" field to "IOU_AC_Territory"
 ################################################################################
 */
 
@@ -160,7 +189,7 @@ IF @MECost Is Null
 PRINT 'Inserting electrical and gas benefits... Message 2'
 CREATE TABLE [#OutputCE](
     JobID INT NULL,
-    PA NVARCHAR(24) NULL,
+    IOU_AC_Territory NVARCHAR(24) NULL,
     PrgID NVARCHAR(255) NULL,
     CET_ID NVARCHAR(255) NULL,
     ElecBen FLOAT NULL,
@@ -205,7 +234,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
     -- Insert into CE with correction for Null gas and elec
     INSERT INTO #OutputCE (
         JobID
-        ,PA
+        ,IOU_AC_Territory
         ,PrgID
         ,CET_ID
         ,ElecBen
@@ -227,14 +256,15 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
     )
     SELECT
         @JobID AS JobID
-        ,e.PA AS PA
+        ,e.IOU_AC_Territory AS IOU_AC_Territory
         ,e.PrgID AS PrgID
         ,e.CET_ID AS CET_ID
 --- ElecBen (Net Lifecycle) ----------------------------------------------------
 --- PVBenNet[E]: Present value net electricity benefits
         ,SUM(
             CASE
-                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE') OR e.kWh1>0
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.kWh1 * ace_1.Gen + e.kWh * ISNULL(ace_2.Gen,0)>0)
                 THEN
                     ISNULL(
                         e.Qty *
@@ -265,7 +295,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- NetPVBenTOT[G]: Present value of net gas benefits
         ,SUM(
             CASE 
-                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE') OR e.Thm1>0
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)>0)
                 THEN
                     ISNULL(
                         e.Qty *
@@ -306,7 +337,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- PVBen[E]: Present value gross electricity benefits
         ,SUM(
             CASE
-                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE') OR e.kWh1>0
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)>0)
                 THEN
                     ISNULL(
                         e.Qty *
@@ -336,7 +368,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- PVBen[G]: Present value gross gas benefits
         ,SUM(
             CASE
-                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE') OR e.Thm1>0
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)>0)
                 THEN
                     ISNULL(
                         e.Qty *
@@ -378,14 +411,16 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             (NTGRkWh + @MEBens) *
             (
                 ISNULL( UnitGasInfraBens, 0 ) +
-                ISNULL( UnitRefrigBens, 0 )
+                ISNULL( UnitRefrigBens, 0 ) +
+                ISNULL( UnitMiscBens, 0)
             )
         ) AS OtherBen
         ,SUM(
             e.Qty *
             (
                 ISNULL( UnitGasInfraBens, 0 ) +
-                ISNULL( UnitRefrigBens, 0 )
+                ISNULL( UnitRefrigBens, 0 ) +
+                ISNULL( UnitMiscBens, 0)
             )
         ) AS OtherBenGross
 --------------------------------------------------------------------------------
@@ -394,7 +429,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCost (Net Lifecycle) ---------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE') AND e.kWh1<0
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)<0)
                 THEN
                     ISNULL(
                         -e.Qty *
@@ -424,7 +460,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- GasSupplyCost (Net Lifecycle) ----------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE') AND e.Thm1<0
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas)<0)
                 THEN
                     ISNULL(
                         -e.Qty *
@@ -464,7 +501,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCostGross (Lifecycle) --------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE') AND e.kWh1<0
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)<0)
                 THEN
                     ISNULL(
                         -e.Qty *
@@ -492,7 +530,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- GasSupplyCostGross (Lifecycle) ---------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE') AND e.Thm1<0
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)<0
                 THEN
                     ISNULL(
                         -e.Qty *
@@ -533,18 +572,20 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             e.Qty *
             (e.NTGRkWh + @MECost) *
             (
-                ISNULL( e.UnitRefrigCosts, 0 )
+                ISNULL( e.UnitRefrigCosts, 0 ) +
+                ISNULL( e.MiscCosts, 0 )
             )
         ) AS OtherCost
         ,SUM(
             e.Qty *
             (
-                ISNULL( e.UnitRefrigCosts, 0 )
+                ISNULL( e.UnitRefrigCosts, 0 ) +
+                ISNULL( e.MiscCosts, 0 )
             )
         ) AS OtherCostGross
     FROM InputMeasurevw AS e
     LEFT JOIN Settingsvw AS s
-    ON e.PA = s.PA AND s.[Version] = @AVCVersion
+    ON e.IOU_AC_Territory = s.IOU_AC_Territory AND s.[Version] = @AVCVersion
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -698,11 +739,11 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
     ) AS acg_2 ON e.CET_ID = acg_2.CET_ID
     WHERE s.Version = @AVCVersion
     GROUP BY
-        e.PA
+        e.IOU_AC_Territory
         ,e.PrgID
         ,e.CET_ID
     ORDER BY
-        e.PA
+        e.IOU_AC_Territory
         ,e.PrgID
         ,e.CET_ID
 
@@ -767,7 +808,7 @@ ProgramCosts (
         ) AS SumCostsNPV
     FROM dbo.[InputProgramvw] AS  c
     LEFT JOIN Settingsvw AS s
-    ON c.PA = s.PA
+    ON c.IOU_AC_Territory = s.IOU_AC_Territory
     WHERE s.[Version] = @AVCVersion
     GROUP BY c.PrgID, [Year], s.Raf
 )
@@ -824,7 +865,7 @@ ProgramCosts (
 --      ,SUM(Qty * (e.UnitMeasureGrossCost- CASE WHEN e.rul > 0 THEN (e.UnitMeasureGrossCost - e.MeasIncrCost)/POWER(((1+e.MeasInflation)/4)*Rqf, e.rulq) ELSE 0  END) / POWER(Rqf, Qm)) As GrossMeasCostPV
         ,SUM(Qty * e.MeasIncrCost)  AS MeasureIncCost
     FROM InputMeasurevw e
-    LEFT JOIN Settingsvw s ON e.PA = s.PA
+    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
     WHERE s.[Version] = @AVCVersion
     GROUP BY PrgID, e.CET_ID
     )
@@ -940,7 +981,7 @@ AS
     LEFT JOIN ExcessIncentives ex on ri.CET_ID = ex.CET_ID
     LEFT JOIN InputMeasurevw e ON ce.CET_ID = e.CET_ID
     LEFT JOIN GrossMeasureCostAdjusted gma on ce.CET_ID = gma.CET_ID
-    LEFT JOIN Settingsvw s ON e.PA = s.PA
+    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
     WHERE s.[Version] = @AVCVersion
 )
 , Calculations (
@@ -1234,7 +1275,7 @@ AS
     LEFT JOIN BenefitsSum bensSum ON CE.PrgID = bensSum.PrgID
     LEFT JOIN BenPos bp on ce.CET_ID = bp.CET_ID
     LEFT JOIN ClaimCount cc on CE.PrgID = cc.PrgID
-    LEFT JOIN Settingsvw s ON e.PA = s.PA
+    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
     WHERE s.[Version] = @AVCVersion
 )
     UPDATE #OutputCE 
@@ -1308,7 +1349,7 @@ WITH RIMTest (
             )
         ) AS RIMCostGas
     FROM InputMeasurevw e
-    LEFT JOIN Settingsvw s ON e.PA = s.PA and s.[Version] = @AVCVersion
+    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory and s.[Version] = @AVCVersion
     
 --First baseline
     LEFT JOIN (
@@ -1409,7 +1450,7 @@ WITH RIMTest (
         WHERE Qy = Convert(INT, Yr1 + (eul2))
         ) RGfrac2_2 ON e.CET_ID = RGfrac2_2.CET_ID
     WHERE s.Version = @AVCVersion
-    GROUP BY e.PA, e.PrgID, e.CET_ID, e.EUL1, re.RateE1, rg.RateG1, Qy
+    GROUP BY e.IOU_AC_Territory, e.PrgID, e.CET_ID, e.EUL1, re.RateE1, rg.RateG1, Qy
 )
     UPDATE #OutputCE
     SET BillReducElec=t.RimCostElec, BillReducGas=t.RimCostGas, RimCost = t.RimCostElec + t.RimCostGas + ce.PacCost
@@ -1459,7 +1500,7 @@ DELETE FROM SavedCE WHERE JobID = @JobID
 INSERT INTO OutputCE
 SELECT 
     JobID
-    ,PA
+    ,IOU_AC_Territory
     ,PrgID
     ,CET_ID
     ,ElecBen

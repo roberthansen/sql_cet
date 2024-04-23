@@ -1,3 +1,19 @@
+/*
+################################################################################
+Name             :  ClearRefreshAllTablesIncludingSaved
+Date             :  06/30/2016
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure clears all output tables for all jobs
+                 :  including the CETJobs table.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+                 :  Inc.) for California Public Utilities Commission (CPUC), All
+                 :  Rights Reserved
+Change History   :  06/30/2016  Wayne Hauck added comment header
+################################################################################
+*/
 USE [CET_2018_new_release]
 GO
 
@@ -7,24 +23,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
---#################################################################################################
--- Name             :  ClearRefreshAllTablesIncludingSaved
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure clears all output tables for all jobs including the CETJobs table.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
-
 
 CREATE PROCEDURE [dbo].[ClearRefreshAllTablesIncludingSaved]
 AS

@@ -1,13 +1,13 @@
 /*
 ################################################################################
 Name            :  SavedSavings (table)
-Date            :  06/30/2016
+Date            :  2016-06-30
 Author          :  Wayne Hauck
 Company         :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose         :  This stored procedure creates the OutputSavings table.
 Usage           :  n/a
 Called by       :  n/a
-Copyright �     :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+Copyright       :  Developed by Pinnacle Consulting Group (aka Intech Energy,
                 :  Inc.) for California Public Utilities Commission (CPUC),
                 :  All Rights Reserved
 Change History  :  2016-06-30  Original version (reconstructed from
@@ -18,13 +18,15 @@ Change History  :  2016-06-30  Original version (reconstructed from
                 :              (i.e., water-energy nexus) savings fields, and
                 :              added "Annual" label to otherwise unlabelled
                 :              fields
+                :  2024-04-23  Robert Hansen renamed the "PA" field to
+                :              "IOU_AC_Territory"
 ################################################################################
 */
 CREATE TABLE [dbo].[SavedSavings]
 (
     ID INT NOT NULL IDENTITY(1, 1),
     JobID INT NULL,
-    PA NVARCHAR (8) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    IOU_AC_Territory NVARCHAR (8) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     PrgID NVARCHAR (255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     CET_ID NVARCHAR (255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
     GrosskWh FLOAT NULL,

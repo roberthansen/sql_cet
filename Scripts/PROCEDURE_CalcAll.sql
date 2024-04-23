@@ -1,30 +1,29 @@
+/*
+################################################################################
+Name             :  CalcAll
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure runs the main stored procedures for
+                 :  cost effectiveness, savings, emissions, and cost.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+                 :  Inc.) for California Public Utilities Commission (CPUC). All
+                 :  Rights Reserved.
+Change History   :  2016-06-30  Wayne Hauck added comment header
+################################################################################
+*/
+
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[CalcAll]    Script Date: 12/16/2019 12:47:38 PM ******/
+/****** Object:  StoredProcedure [dbo].[CalcAll]    Script Date: 2019-12-16 12:47:38 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
---#################################################################################################
--- Name             :  CalcAll
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure runs the main stored procedures for cost effectiveness, savings, emissions, and cost.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
-
 
 CREATE PROCEDURE [dbo].[CalcAll]
 @JobID int = -1,
@@ -72,9 +71,4 @@ Print 'End of CalcCost at ' + Convert(varchar,GetDate())
 
 END
 
-
-
-
 GO
-
-

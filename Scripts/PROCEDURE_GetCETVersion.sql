@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetCETVersion]    Script Date: 12/16/2019 1:25:12 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetCETVersion]    Script Date: 2019-12-16 1:25:12 PM ******/
 SET ANSI_NULLS ON
 GO
 

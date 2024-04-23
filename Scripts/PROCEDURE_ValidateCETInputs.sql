@@ -1,30 +1,29 @@
+/*
+################################################################################
+Name             :  ValidateCETInput
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This is the main entry point to run cost effectivensss both
+				 :  from the Desktop and in the database. It creates the job,
+				 :  and calls the InitializeTables and FinalizeTables sproc.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+				 :  Inc.) for California Public Utilities Commission (CPUC). All
+				 :  Rights Reserved.
+Change History   :  2016-06-30  Wayne Hauck added comment header
+################################################################################
+*/
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[ValidateCETInputs]    Script Date: 12/16/2019 2:10:41 PM ******/
+/****** Object:  StoredProcedure [dbo].[ValidateCETInputs]    Script Date: 2019-12-16 2:10:41 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
---#################################################################################################
--- Name             :  ValidateCETInput
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This is the main entry point to run cost effectivensss both from the Desktop and in the database. It creates the job, and calls the InitializeTables and FinalizeTables sproc.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
 
 CREATE PROCEDURE [dbo].[ValidateCETInputs]
 @SourceType NVARCHAR(25) = 'CETDatabase',
@@ -69,11 +68,4 @@ BEGIN
 	;THROW 50004, @ErrorMsg, 4;
 END
 
-
-
-
-
-
 GO
-
-

@@ -1,17 +1,12 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetMeasureInputsCEDARSAllByJobID]    Script Date: 12/16/2019 1:41:56 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetMeasureInputsCEDARSAllByJobID]    Script Date: 2019-12-16 1:41:56 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 CREATE PROCEDURE [dbo].[GetMeasureInputsCEDARSAllByJobID]
          @JobID INT
@@ -29,7 +24,7 @@ PRINT 'Source Type = ' + @SourceType
 CREATE TABLE [dbo].[#tmp](
 	[Row] [bigint] NULL,
 	[CEInputID] [nvarchar](255) NOT NULL,
-	[PA] [nvarchar](255) NULL,
+	[IOU_AC_Territory] [nvarchar](255) NULL,
 	[PrgID] [nvarchar](255) NULL,
 	[ClaimYearQuarter] [nvarchar](6) NULL,
 	[MeasDescription] [nvarchar](255) NULL,
@@ -101,7 +96,7 @@ BEGIN
 INSERT INTO #tmp
 SELECT ROW_NUMBER() OVER (ORDER BY ID ASC) AS Row
       ,CET_ID [CEInputID]
-      ,[PA]
+      ,[IOU_AC_Territory]
       ,[PrgID]
       ,Qtr [ClaimYearQuarter]
       ,Measurename [MeasDescription]
@@ -175,7 +170,7 @@ PRINT 'SELECTING FROM CEDARS'
 INSERT INTO #tmp
 SELECT ROW_NUMBER() OVER (ORDER BY ID ASC) AS Row
       ,[CEInputID]
-      ,[PA]
+      ,[IOU_AC_Territory]
       ,[PrgID]
       ,[ClaimYearQuarter]
       ,[MeasDescription]
@@ -245,7 +240,7 @@ END
 SELECT 
 	   [Row]
       ,[CEInputID]
-      ,[PA]
+      ,[IOU_AC_Territory]
       ,[PrgID]
       ,[ClaimYearQuarter]
       ,[MeasDescription]

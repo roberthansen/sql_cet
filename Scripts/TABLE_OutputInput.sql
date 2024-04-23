@@ -1,4 +1,5 @@
 /*
+################################################################################
 Name            : OutputInput (table)
 Date            : c.2016-06-30
 Author          : Wayne Huack
@@ -20,6 +21,9 @@ Change History  : 2023-03-16  Robert Hansen added the following new fields:
                 :   + kWhWater1
                 :   + kWhWater2
                 :   + WaterUse
+                : 2024-04-23  Robert Hansen renamed the "PA" field to
+                :             "IOU_AC_Territory"
+################################################################################
 */
 
 CREATE TABLE [dbo].[OutputInput]
@@ -27,7 +31,7 @@ CREATE TABLE [dbo].[OutputInput]
     [ID] [int] NOT NULL IDENTITY(1, 1),
     [JobID] [int] NOT NULL,
     [CET_ID] [nvarchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-    [PA] [nvarchar] (24) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [IOU_AC_Territory] [nvarchar] (24) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [PrgID] [nvarchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [ProgramName] [nvarchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [MeasureName] [nvarchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,

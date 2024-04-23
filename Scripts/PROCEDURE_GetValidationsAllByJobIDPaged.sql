@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetValidationsAllByJobIDPaged]    Script Date: 12/16/2019 1:52:40 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetValidationsAllByJobIDPaged]    Script Date: 2019-12-16 1:52:40 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -21,7 +21,7 @@ FROM
 (
 SELECT DISTINCT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
 	  ,c.JobID
-      ,c.[PA]
+      ,c.[IOU_AC_Territory]
       ,c.[PrgID]
       ,c.[CET_ID]
       ,k.TS [ElecTargetSector]
@@ -39,7 +39,7 @@ SELECT DISTINCT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
   WHERE  v.JobID = @JobID
   ) tmp
 WHERE JobID = @JobID AND (Row >= @StartRow AND Row <= @StartRow + @NumRows)
-GROUP BY Row, JobID, PA, PrgID, CET_ID,[ElecTargetSector],[ElecEndUseShape],[ClimateZone],[GasSector],[GasSavingsProfile],[ClaimYearQuarter],[MessageType],[Message]
+GROUP BY Row, JobID, IOU_AC_Territory, PrgID, CET_ID,[ElecTargetSector],[ElecEndUseShape],[ClimateZone],[GasSector],[GasSavingsProfile],[ClaimYearQuarter],[MessageType],[Message]
 
  
 END

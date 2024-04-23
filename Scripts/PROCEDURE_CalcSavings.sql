@@ -1,7 +1,7 @@
 /*
 ################################################################################
 Name             :  CalcSavings (procedure)
-Date             :  06/30/2016
+Date             :  2016-06-30
 Author           :  Wayne Hauck
 Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose          :  This stored procedure calculates savings outputs.
@@ -36,6 +36,8 @@ Change History   :  2016-06-30 Wayne Hauck added comment header
                  :              factor
                  :  2023-08-24  Robert Hansen removed extra EUL factor from Net
                  :              Lifecycle Electric Savings calculations.
+                 :  2024-04-23  Robert Hansen renamed the "PA" field to
+                 :              "IOU_AC_Territory"
 ###############################################################################
 */
 
@@ -69,7 +71,7 @@ PRINT 'Inserting savings...'
 
 CREATE TABLE [#OutputSavings](
     JobID INT NULL,
-    PA NVARCHAR(8) NULL,
+    IOU_AC_Territory NVARCHAR(8) NULL,
     PrgID NVARCHAR(255) NULL,
     CET_ID NVARCHAR(255) NOT NULL,
     AnnualGrosskWh FLOAT NULL,
@@ -108,7 +110,7 @@ BEGIN
     -- Insert into OutputSavings
     INSERT INTO #OutputSavings (
         JobID,
-        PA,
+        IOU_AC_Territory,
         PrgID,
         CET_ID,
         AnnualGrosskWh,
@@ -141,7 +143,7 @@ BEGIN
         FirstYearNetThm
     )
     SELECT @JobID
-        ,e.PA
+        ,e.IOU_AC_Territory
         ,e.PrgID
         ,e.CET_ID
 
@@ -469,10 +471,10 @@ BEGIN
         END * Qty * (NTGRThm+@MEBens) * IRThm * RRThm * Thm2
     ) AS FirstYearNetThm
     FROM InputMeasurevw e
-    GROUP BY e.PA
+    GROUP BY e.IOU_AC_Territory
         ,e.PrgID
         ,e.CET_ID
-    ORDER BY e.PA
+    ORDER BY e.IOU_AC_Territory
         ,e.PrgID
         ,e.CET_ID
 END
@@ -556,7 +558,7 @@ DELETE FROM SavedSavings WHERE JobID = @JobID
 INSERT INTO OutputSavings
 SELECT
     JobID
-    ,PA
+    ,IOU_AC_Territory
     ,PrgID
     ,CET_ID
     ,AnnualGrosskWh

@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InitializeTablesAvoidedCosts]    Script Date: 12/16/2019 1:57:45 PM ******/
+/****** Object:  StoredProcedure [dbo].[InitializeTablesAvoidedCosts]    Script Date: 2019-12-16 1:57:45 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -11,18 +11,20 @@ GO
 
 
 
---#################################################################################################
--- Name             :  InitializeTablesAvoidedCosts
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure initializes the avoided costs, emissions, and RIM rate tables.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
+/*
+################################################################################
+Name             :  InitializeTablesAvoidedCosts
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure initializes the avoided costs, emissions, and RIM rate tables.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2024-04-23  Robert Hansen renamed "PA" field to
+				 :  			"IOU_AC_Territory"
+################################################################################
 
 
 CREATE PROCEDURE [dbo].[InitializeTablesAvoidedCosts]
@@ -53,14 +55,14 @@ SET @Qtrs = CASE WHEN @FirstYear - @BaseYear >= 0 THEN (@FirstYear - @BaseYear) 
 SET @AvoidedCostSourceElecvwSql = 'ALTER VIEW [dbo].[AvoidedCostSourceElecvw]  
 /*#################################################################################################
 -- Name             :  AvoidedCostSourceElecvw
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This view is the source of avoided costs used by the cost effectiveness calculations. If First Year is base year then it is just the avoided cost table. If first year is greater than base year, then avoided costs are adjusted to account for year shift.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header*/with encryption
+-- Copyright ï¿½      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
+-- Change History   :  2016-06-30  Wayne Hauck added comment header*/with encryption
 --#################################################################################################
 
 	AS
@@ -72,14 +74,14 @@ SET @AvoidedCostSourceElecvwSql = 'ALTER VIEW [dbo].[AvoidedCostSourceElecvw]
 SET @AvoidedCostSourceGasvwSql = 'ALTER VIEW [dbo].[AvoidedCostSourceGasvw] 
 /*#################################################################################################
 -- Name             :  AvoidedCostSourceGasvw
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This view is the source of avoided costs used by the cost effectiveness calculations. If First Year is base year then it is just the avoided cost table. If first year is greater than base year, then avoided costs are adjusted to account for year shift.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header*/with encryption
+-- Copyright ï¿½      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
+-- Change History   :  2016-06-30  Wayne Hauck added comment header*/with encryption
 --#################################################################################################
 
 	AS
@@ -102,19 +104,19 @@ IF @Qtrs > 0
     	SET @AvoidedCostSourceElecvwSql = 'ALTER VIEW [dbo].[AvoidedCostSourceElecvw] 
 /* #################################################################################################
 -- Name             :  AvoidedCostSourceElecvw
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This view is the source of avoided costs used by the cost effectiveness calculations. If First Year is base year then it is just the avoided cost table. If first year is greater than base year, then avoided costs are adjusted to account for year shift.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header*/ with encryption
+-- Copyright ï¿½      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
+-- Change History   :  2016-06-30  Wayne Hauck added comment header*/ with encryption
 -- #################################################################################################
 			
 		AS 
 				
-		SELECT [PA]
+		SELECT [IOU_AC_Territory]
 			  ,[Version]
 			  ,[TS]
 			  ,[EU]
@@ -128,7 +130,7 @@ IF @Qtrs > 0
 		  FROM [dbo].[' + @AvoidedCostElecTable + ']
 		  WHERE Qac > ' + Convert(nvarchar,@Qtrs-1) + '
 		UNION
-		SELECT [PA]
+		SELECT [IOU_AC_Territory]
 			  ,[Version]
 			  ,[TS]
 			  ,[EU]
@@ -145,21 +147,21 @@ IF @Qtrs > 0
 	SET @AvoidedCostSourceGasvwSql = 'ALTER VIEW [dbo].[AvoidedCostSourceGasvw]  
 /* #################################################################################################
 -- Name             :  AvoidedCostSourceGasvw
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This view is the source of avoided costs used by the cost effectiveness calculations. If First Year is base year then it is just the avoided cost table. If first year is greater than base year, then avoided costs are adjusted to account for year shift.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header*/ with encryption
+-- Copyright ï¿½      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
+-- Change History   :  2016-06-30  Wayne Hauck added comment header*/ with encryption
 -- #################################################################################################
 
 		AS
 
 	    SELECT
 		   [ID]
-		  ,[PA]
+		  ,[IOU_AC_Territory]
 		  ,[Version]
 		  ,[FirstYear]
 		  ,[GS]
@@ -176,7 +178,7 @@ IF @Qtrs > 0
 	UNION
 	    SELECT
 		   [ID]
-		  ,[PA]
+		  ,[IOU_AC_Territory]
 		  ,[Version]
 		  ,[FirstYear]
 		  ,[GS]
@@ -206,7 +208,7 @@ ELSE
 '
 ALTER VIEW [dbo].[E3EmissionsSourcevw] AS 
 
-SELECT co.[PA]
+SELECT co.[IOU_AC_Territory]
       ,co.[Version]
       ,co.[TS]
       ,co.[EU]
@@ -221,7 +223,7 @@ SELECT co.[PA]
 	  ,em.NOx
 	  ,em.PM10
   FROM [dbo].' + @AvoidedCostElecTable + ' co
-  LEFT JOIN [dbo].E3Emissions em on co.PA = em.PA  and co.[Version] = em.[Version] and co.TS = em.TS and co.EU = em.EU and co.CZ = em.CZ
+  LEFT JOIN [dbo].E3Emissions em on co.IOU_AC_Territory = em.IOU_AC_Territory  and co.[Version] = em.[Version] and co.TS = em.TS and co.EU = em.EU and co.CZ = em.CZ
   AND co.Version = ''' + @AVCVersion + ''''
 
 	END

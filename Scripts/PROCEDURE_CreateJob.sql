@@ -1,7 +1,23 @@
+/*
+################################################################################
+Name             :  CreateJob
+Purpose          :  This stored procedure creates a job in the CETJob table.
+Usage            :  n/a
+Called by        :  n/a
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+                 :  Inc.) for California Public Utilities Commission (CPUC), All
+                 :  Rights Reserved
+Change History   :  2017-05-20  Revised to return JobID as an output parameter.
+                 :  2016-06-30  Wayne Hauck added comment header
+################################################################################
+*/
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[CreateJob]    Script Date: 12/16/2019 1:20:47 PM ******/
+/****** Object:  StoredProcedure [dbo].[CreateJob]    Script Date: 2019-12-16 1:20:47 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,19 +25,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
---#################################################################################################
--- Name             :  CreateJob
--- Purpose          :  This stored procedure creates a job in the CETJob table.
--- Usage            :  n/a
--- Called by        :  n/a
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  5/20/2017  Revised to return JobID as an output parameter.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
 CREATE PROCEDURE [dbo].[CreateJob]
 (
     @CETDataDbName AS NVARCHAR(128) = N'',

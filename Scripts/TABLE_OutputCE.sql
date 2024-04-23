@@ -1,26 +1,30 @@
 /*
 ################################################################################
  Name             :  OutputCE (table)
- Date             :  06/30/2016
+ Date             :  2016-06-30
  Author           :  Wayne Hauck
  Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
  Purpose          :  This stored procedure calculates cost effectiveness.
  Usage            :  n/a
  Called by        :  n/a
- Copyright �     :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
- Change History   :  06/30/2016  Wayne Hauck added comment header
+ Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+ 				  :  Inc.) for California Public Utilities Commission (CPUC),
+				  :  All Rights Reserved
+ Change History   :  2016-06-30  Wayne Hauck added comment header
                   :  2021-05-14  Robert Hansen added negative benefit
                   :              for fuel substitution
                   :  2021-07-08  Robert Hansen renamed "TotalSystemBenefits" to
-                  :  "TotalSystemBenefit"
+                  :  			 "TotalSystemBenefit"
                   :  2021-07-09  Robert Hansen added OtherBenGross and
-                  :  OtherCostGross to outputs
-                  :  2022-09-02 Robert Hansen added water energy fields to
-                  :  output:
-                  :    + WaterEnergyBen
-                  :    + WaterEnergyBenGross
-                  :    + WaterEnergyCost
-                  :    + WaterEnergyCostGross
+                  :     		 OtherCostGross to outputs
+                  :  2022-09-02  Robert Hansen added water energy fields to
+                  :   			 output:
+                  :    			   + WaterEnergyBen
+                  :    			   + WaterEnergyBenGross
+                  :    			   + WaterEnergyCost
+                  :    			   + WaterEnergyCostGross
+				  :  2024-04-23  Robert Hansen renamed the "PA" field to
+				  :	 			 "IOU_AC_Territory"
 ################################################################################
 */
 SET ANSI_NULLS ON
@@ -36,7 +40,7 @@ GO
 CREATE TABLE dbo.OutputCE(
 	ID INT IDENTITY(1,1) NOT NULL,
 	JobID INT NULL,
-	PA NVARCHAR(8) NULL,
+	IOU_AC_Territory NVARCHAR(8) NULL,
 	PrgID NVARCHAR(255) NULL,
 	CET_ID NVARCHAR(255) NULL,
 	ElecBen FLOAT NULL,

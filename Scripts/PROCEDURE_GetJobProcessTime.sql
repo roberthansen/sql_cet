@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetJobProcessTime]    Script Date: 12/16/2019 1:30:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetJobProcessTime]    Script Date: 2019-12-16 1:30:34 PM ******/
 SET ANSI_NULLS ON
 GO
 

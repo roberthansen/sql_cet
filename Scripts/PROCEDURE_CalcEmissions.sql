@@ -1,7 +1,7 @@
 /*
 ################################################################################
 Name             :  CalcEmissions
-Date             :  06/30/2016
+Date             :  2016-06-30
 Author           :  Wayne Hauck
 Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose          :  This stored procedure calculates emissions outputs.
@@ -10,25 +10,27 @@ Called by        :  n/a
 Copyright (c)    :  Developed by Pinnacle Consulting Group (aka Intech Energy,
                  :  Inc.) for California Public Utilities Commission (CPUC),
                  :  All Rights Reserved
-Change History   :  06/30/2016  Wayne Hauck added comment header
-                 :  12/31/2019  Robert Hansen reformatted and added comments to
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2019-12-31  Robert Hansen reformatted and added comments to
                  :              code
-                 :  01/02/2020  Robert Hansen rewrote to update calculations
-                 :  01/03/2020  Robert Hansen identified and corrected errors in
+                 :  2020-01-02  Robert Hansen rewrote to update calculations
+                 :  2020-01-03  Robert Hansen identified and corrected errors in
                  :              rewritten code
-                 :  01/08/2020  Robert Hansen removed #tmp table use and
+                 :  2020-01-08  Robert Hansen removed #tmp table use and
                  :              replaced with direct queries
-                 :  02/03/2020  Robert Hansen applied future-quarterly emissions
+                 :  2020-02-03  Robert Hansen applied future-quarterly emissions
                  :              calculations
-                 :  04/27/2021  Robert Hansen updated savings terms to subtract
+                 :  2021-04-27  Robert Hansen updated savings terms to subtract
                  :              additional loads and apply second emissions
                  :              rates for fuel substitution
-                 :  05/25/2021  Robert Hansen removed references to MEBens field
+                 :  2021-05-25  Robert Hansen removed references to MEBens field
                  :              in calculations
                  :  2021-06-16  Robert Hansen commented out new fields for fuel
                  :              substitution for implementation at a later date
                  :  2022-09-19  Robert Hansen included Water Energy fields in
                  :              emissions calculations
+                 :  2024-04-23  Robert Hansen renamed the "PA" field to
+                 :              "IOU_AC_Territory"
 ################################################################################
 */
 
@@ -297,7 +299,7 @@ INSERT INTO @QuarterlyElecEmissions
             SELECT
                 CET_ID
                 ,JobID
-                ,PA
+                ,IOU_AC_Territory
                 ,TS
                 ,EU
                 --,EUAL
@@ -322,11 +324,11 @@ INSERT INTO @QuarterlyElecEmissions
         LEFT JOIN
             Settingsvw AS s
             ON
-                im.PA = s.PA
+                im.IOU_AC_Territory = s.IOU_AC_Territory
         --- Join all Emissions table quarters within each measure's EUL:
         LEFT JOIN (
                 SELECT
-                    PA
+                    IOU_AC_Territory
                     ,TS
                     ,EU
                     ,CZ
@@ -341,8 +343,8 @@ INSERT INTO @QuarterlyElecEmissions
             ON
                 s.Version = em1.Version
             AND
-                im.PA + im.TS + im.EU + RTRIM(im.CZ) =
-                em1.PA +
+                im.IOU_AC_Territory + im.TS + im.EU + RTRIM(im.CZ) =
+                em1.IOU_AC_Territory +
                 CASE
                     WHEN em1.EU LIKE 'Non_res:DEER%'
                     THEN 'Non_res'
@@ -373,7 +375,7 @@ INSERT INTO @QuarterlyElecEmissions
         --LEFT JOIN (
         --        --- Second join to emissions table on end use profile for additional load:
         --        SELECT
-        --            PA
+        --            IOU_AC_Territory
         --            ,TS
         --            ,EU
         --            ,CZ
@@ -388,8 +390,8 @@ INSERT INTO @QuarterlyElecEmissions
         --    ON
         --        s.Version = em2.Version
         --    AND
-        --        im.PA + im.TS + im.EUAL + RTRIM(im.CZ) =
-        --        em2.PA +
+        --        im.IOU_AC_Territory + im.TS + im.EUAL + RTRIM(im.CZ) =
+        --        em2.IOU_AC_Territory +
         --        CASE
         --            WHEN em2.EU LIKE 'Non_res:DEER%'
         --            THEN 'Non_res'
@@ -425,7 +427,7 @@ INSERT INTO @QuarterlyElecEmissions
 INSERT INTO OutputEmissions
     SELECT
         @JobID AS JobID,
-        im.PA AS PA,
+        im.IOU_AC_Territory AS IOU_AC_Territory,
         im.PrgID AS PrgID,
         im.CET_ID AS CET_ID,
         FirstYearElecEmissions.NetElecCO2 AS NetElecCO2,
@@ -668,7 +670,7 @@ INSERT INTO OutputEmissions
     LEFT JOIN
         Settingsvw AS s
     ON
-        im.PA = s.PA
+        im.IOU_AC_Territory = s.IOU_AC_Territory
     LEFT JOIN
         E3CombustionTypevw AS eg
     ON
@@ -706,7 +708,7 @@ INSERT INTO OutputEmissions
     ON
         im.CET_ID = LifecycleElecEmissions.CET_ID
     ORDER BY
-        im.PA
+        im.IOU_AC_Territory
         ,im.PrgID
         ,im.CET_ID
 GO

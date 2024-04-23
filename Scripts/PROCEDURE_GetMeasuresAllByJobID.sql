@@ -1,31 +1,31 @@
+/*
+################################################################################
+Name             :  GetMeasuresAllByJobIDPaged
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure returns measure-level CET results.
+                 :  Called when there are large number of records.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+                 :  Inc.) for California Public Utilities Commission (CPUC). All
+                 :  Rights Reserved.
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2024-04-23  Robert Hansen renamed the "PA" field to
+                 :  "IOU_AC_Territory"
+################################################################################
+*/
+
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetMeasuresAllByJobID]    Script Date: 12/16/2019 1:42:57 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetMeasuresAllByJobID]    Script Date: 2019-12-16 1:42:57 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
---#################################################################################################
--- Name             :  GetMeasuresAllByJobIDPaged
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure returns measure-level CET results. Called when there are large number of records.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
 
 CREATE PROCEDURE [dbo].[GetMeasuresAllByJobID]
          @JobID INT
@@ -43,8 +43,8 @@ IF @SourceType NOT IN ('CEDARS','CEDARSDatabase', 'CEDARSExcel')
 BEGIN  
 
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
-	   ,c.[CET_ID]
-      ,c.[PA]
+	    ,c.[CET_ID]
+      ,c.[IOU_AC_Territory]
       ,c.[PrgID]
 	  ,Coalesce(Case When k.ProgramName = '' Then Null else k.ProgramName end ,p.[Program Name],'') ProgramName
       ,k.[MeasureName]
@@ -216,7 +216,7 @@ PRINT 'SELECTING FROM CEDARS'
 
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
 	   ,c.[CET_ID]
-      ,c.[PA]
+      ,c.[IOU_AC_Territory]
       ,c.[PrgID]
 	  ,p.[Program Name] ProgramName
       ,k.[MeasDescription] [MeasureName]

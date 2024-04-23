@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetValidationsAllByMessageType]    Script Date: 12/16/2019 1:53:40 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetValidationsAllByMessageType]    Script Date: 2019-12-16 1:53:40 PM ******/
 SET ANSI_NULLS ON
 GO
 

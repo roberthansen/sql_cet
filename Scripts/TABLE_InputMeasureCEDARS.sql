@@ -1,6 +1,6 @@
 /*
 Name            : ImpactMeasureCEDARS (table)
-Date            : c.2016-30-2016
+Date            : c.2016-06-30
 Author          : Wayne Huack
 Company         : Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose         : Creates one of tables that stores measures for use in the CET
@@ -48,6 +48,8 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 :    + UnitGalWater2ndBaseline aka UWSGal_ER, Gal2
                 :    + UnitkWhTotalWater1stBaseline aka UESkWh_TotalWater, kWhTotalWater1
                 :    + UnitkWhTotalWater2ndBaseline aka UESkWh_TotalWater_ER, kWhTotalWater2
+                : 2024-04-23  Robert Hansen renamed the "PA" field to
+                : "IOU_AC_Territory"
 */
 SET ANSI_NULLS ON
 GO
@@ -63,7 +65,7 @@ CREATE TABLE "dbo"."InputMeasureCEDARS"
 (
     CEInputID nvarchar(255) PRIMARY KEY NOT NULL,
     JobID int,
-    PA nvarchar(50),
+    IOU_AC_Territory nvarchar(50),
     PrgID nvarchar(255),
     ClaimYearQuarter nvarchar(6),
     MeasDescription nvarchar(255),
@@ -160,5 +162,5 @@ CREATE INDEX IDX_CEInputID ON dbo.InputMeasureCEDARS(CEInputID)
 GO
 CREATE INDEX IDX_PrgID ON dbo.InputMeasureCEDARS(PrgID)
 GO
-CREATE INDEX IDX_PA ON dbo.InputMeasureCEDARS(PA)
+CREATE INDEX IDX_IOU_AC_Territory ON dbo.InputMeasureCEDARS(IOU_AC_Territory)
 GO

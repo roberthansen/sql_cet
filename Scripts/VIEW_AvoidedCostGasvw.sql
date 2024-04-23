@@ -1,18 +1,18 @@
 /*
 ##############################################################################
 Name           : AvoidedCostGasvw
-Date           : 06/30/2016
+Date           : 2016-06-30
 Author         : Wayne Hauck
 Company        : Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose        : This view joins the input measures with the avoided costs used by the cost effectiveness calculations.
 Usage          : n/a
 Called by      : n/a
-Copyright ©    : Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
-Change History : 06/30/2016  Wayne Hauck added comment header
-                 04/26/2021  Robert Hansen modified join and added fields for
-                 fuel substitution
-
-
+Copyright      : Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
+Change History : 2016-06-30  Wayne Hauck added comment header
+               : 2021-04-26  Robert Hansen modified join and added fields for
+               : fuel substitution
+               : 2024-04-23  Robert Hansen renamed the "PA" field to
+               : "IOU_AC_Territory"
 ##############################################################################
 */
 
@@ -64,10 +64,10 @@ SELECT
 FROM
 dbo.InputMeasurevw AS im
 LEFT JOIN dbo.Settingsvw AS s
-ON im.PA=s.PA
+ON im.IOU_AC_Territory=s.PA
 LEFT JOIN AvoidedCostSourceGasvw AS ac1
-ON im.PA=ac1.PA AND im.GS=ac1.GS AND im.GP=ac1.GP AND s.[Version] = ac1.[Version]
+ON im.IOU_AC_Territory=ac1.IOU_AC_Territory AND im.GS=ac1.GS AND im.GP=ac1.GP AND s.[Version] = ac1.[Version]
 --LEFT JOIN AvoidedCostSourceGasvw AS ac2
---ON im.PA=ac2.PA AND im.GS=ac2.GS AND im.GP=ac2.GP AND s.[Version] = ac2.[Version] AND ac1.Qtr=ac2.Qtr
+--ON im.IOU_AC_Territory=ac2.IOU_AC_Territory AND im.GS=ac2.GS AND im.GP=ac2.GP AND s.[Version] = ac2.[Version] AND ac1.Qtr=ac2.Qtr
 WHERE  ac1.Qac BETWEEN im.Qm AND im.Qm + CONVERT( INT, im.eulq )
 GO

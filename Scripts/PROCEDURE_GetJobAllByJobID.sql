@@ -1,40 +1,39 @@
+/*
+################################################################################
+Name             :  GetJobAllByJobID
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure returns job-level CET results.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+				 :  Inc.) for California Public Utilities Commission (CPUC). All
+				 :  Rights Reserved.
+Change History   :  2016-06-30  Wayne Hauck added comment header
+				 :  2024-04-23  Robert Hansen renamed the "PA" field to
+				 :  			"IOU_AC_Territory"
+################################################################################
+*/
+
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetJobAllByJobID]    Script Date: 12/16/2019 1:29:37 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetJobAllByJobID]    Script Date: 2019-12-16 1:29:37 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
---#################################################################################################
--- Name             :  GetJobAllByJobID
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure returns job-level CET results.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
-
-
-CREATE PROCEDURE [dbo].[GetJobAllByJobID]
-         @JobID INT		 
+CREATE PROCEDURE [dbo].[GetJobAllByJobID] @JobID INT
 AS
 BEGIN
 
 SET FMTONLY OFF;
 
 CREATE TABLE [dbo].[#tmpCE](
-	[PA] [varchar](255) NOT NULL,
+	[IOU_AC_Territory] [varchar](255) NOT NULL,
 	[TRCRatio] [float] NULL,
 	[PACRatio] [float] NULL,
 	[ElecBen] [float] NULL,
@@ -54,7 +53,7 @@ CREATE TABLE [dbo].[#tmpCE](
 ) ON [PRIMARY]
 
 CREATE TABLE [dbo].[#tmpSav](
-	[PA] [varchar](255) NOT NULL,
+	[IOU_AC_Territory] [varchar](255) NOT NULL,
 	[GrossKWh] [float] NULL,
 	[GrossKW] [float] NULL,
 	[GrossThm] [float] NULL,
@@ -77,7 +76,7 @@ CREATE TABLE [dbo].[#tmpSav](
 ) ON [PRIMARY]
 
 CREATE TABLE [dbo].[#tmpEm](
-	[PA] [varchar](255) NOT NULL,
+	[IOU_AC_Territory] [varchar](255) NOT NULL,
 	[NetElecCO2] [float] NULL,
 	[NetGasCO2] [float] NULL,
 	[GrossElecCO2] [float] NULL,
@@ -101,7 +100,7 @@ CREATE TABLE [dbo].[#tmpEm](
 ) ON [PRIMARY]
 
 CREATE TABLE [dbo].[#tmpCost](
-	[PA] [nvarchar](255) NULL,
+	[IOU_AC_Territory] [nvarchar](255) NULL,
 	[GrossMeasureCost] [float] NULL,
 	[DILaborCost] [float] NULL,
 	[DIMaterialCost] [float] NULL,
@@ -152,7 +151,7 @@ CREATE TABLE [dbo].[#tmpCost](
 INSERT INTO #tmpCE
 SELECT 
 	   --JobID
-	  'Job ' + Convert(varchar(255),@JobID) AS  PA
+	  'Job ' + Convert(varchar(255),@JobID) AS  IOU_AC_Territory
 	  ,CASE WHEN Sum(IsNull(c.TRCCost,0)) <> 0 THEN (Sum(c.ElecBen) + Sum(c.GasBen))/Sum(c.TRCCost) ELSE 0 END AS TRCRatio
 	  ,CASE WHEN Sum(IsNull(c.PACCost,0)) <> 0 THEN (Sum(c.ElecBen) + Sum(c.GasBen))/Sum(c.PACCost) ELSE 0 END AS PACRatio
       ,Sum(c.[ElecBen]) ElecBen
@@ -176,7 +175,7 @@ SELECT
 INSERT INTO #tmpSav
 SELECT 
 	   --JobID
-	  'Job ' + Convert(varchar(255),@JobID) AS  PA
+	  'Job ' + Convert(varchar(255),@JobID) AS  IOU_AC_Territory
       ,Sum(s.[GrossKWh]) GrossKWh
       ,Sum(s.[GrossKW]) GrossKW
       ,Sum(s.[GrossThm]) GrossThm
@@ -203,7 +202,7 @@ SELECT
 INSERT INTO #tmpEM
 SELECT 
 	   --JobID
-	  'Job ' + Convert(varchar(255),@JobID) AS  PA
+	  'Job ' + Convert(varchar(255),@JobID) AS IOU_AC_Territory
       ,Sum(e.[NetElecCO2]) NetElecCO2
       ,Sum(e.[NetGasCO2]) NetGasCO2
       ,Sum(e.[GrossElecCO2]) GrossElecCO2
@@ -231,7 +230,7 @@ SELECT
 INSERT INTO #tmpCost
 SELECT 
 	   --JobID
-	  'Job ' + Convert(varchar(255),@JobID) AS  PA
+	  'Job ' + Convert(varchar(255),@JobID) AS  IOU_AC_Territory
 	  ,Sum(m.[GrossMeasureCost]) GrossMeasureCost
 	  ,Sum(m.[DILaborCost]) DILaborCost
 	  ,Sum(m.[DIMaterialCost]) DIMaterialCost
@@ -291,7 +290,7 @@ SELECT
 
 
 DECLARE @cnt int
-set @cnt = (select count(*) from ( select PA from savedCE where JobID = @JobID group by PA ) as tmp)
+set @cnt = (select count(*) from ( select IOU_AC_Territory from savedCE where JobID = @JobID group by IOU_AC_Territory ) as tmp)
  
 IF @cnt > 1
 BEGIN
@@ -299,7 +298,7 @@ BEGIN
 INSERT INTO #tmpCE
 SELECT 
 	   --JobID
-	   PA
+	   IOU_AC_Territory
 	  ,CASE WHEN Sum(IsNull(c.TRCCost,0)) <> 0 THEN (Sum(c.ElecBen) + Sum(c.GasBen))/Sum(c.TRCCost) ELSE 0 END AS TRCRatio
 	  ,CASE WHEN Sum(IsNull(c.PACCost,0)) <> 0 THEN (Sum(c.ElecBen) + Sum(c.GasBen))/Sum(c.PACCost) ELSE 0 END AS PACRatio
       ,Sum(c.[ElecBen]) ElecBen
@@ -318,12 +317,12 @@ SELECT
 	  ,CASE WHEN Sum(c.ElecBen+c.GasBen) <> 0 THEN Sum(c.ElecBen)/(Sum(c.ElecBen+c.GasBen)) ELSE 0 END  WeightedElecAlloc
   FROM [SavedCE] c
   WHERE c.JobID = @JobID
-  GROUP BY c.PA
+  GROUP BY c.IOU_AC_Territory
 
 INSERT INTO #tmpSav
 SELECT 
 	   --JobID
-	   PA
+	   IOU_AC_Territory
       ,Sum(s.[GrossKWh]) GrossKWh
       ,Sum(s.[GrossKW]) GrossKW
       ,Sum(s.[GrossThm]) GrossThm
@@ -345,12 +344,12 @@ SELECT
       ,Sum(s.[LifecycleNetThm]) LifecycleNetThm
   FROM [SavedSavings] s
   WHERE s.JobID = @JobID
-  GROUP BY s.PA
+  GROUP BY s.IOU_AC_Territory
 
 INSERT INTO #tmpEM
 SELECT 
 	   --JobID
-	  PA
+	  IOU_AC_Territory
       ,Sum(e.[NetElecCO2]) NetElecCO2
       ,Sum(e.[NetGasCO2]) NetGasCO2
       ,Sum(e.[GrossElecCO2]) GrossElecCO2
@@ -373,13 +372,13 @@ SELECT
       ,Sum(e.[GrossPM10Lifecycle]) GrossPM10Lifecycle
   FROM SavedEmissions e 
   WHERE e.JobID = @JobID
-  GROUP BY e.PA
+  GROUP BY e.IOU_AC_Territory
 
 
 INSERT INTO #tmpCost
 SELECT 
 	   --JobID
-	  m.PA
+	  m.IOU_AC_Territory
 	  ,SUM(m.[GrossMeasureCost]) GrossMeasureCost
 	  ,SUM(m.[DILaborCost]) DILaborCost
 	  ,SUM(m.[DIMaterialCost]) DIMaterialCost
@@ -436,12 +435,12 @@ SELECT
   FROM SavedCost m 
   LEFT JOIN SavedCE c ON m.CET_ID = c.CET_ID 
   WHERE m.JobID = @JobID AND c.JobID = @JobID
-  GROUP BY m.PA
+  GROUP BY m.IOU_AC_Territory
 
 END
 
 SELECT 
-	ce.[PA],
+	ce.[IOU_AC_Territory],
 	[TRCRatio],
 	[PACRatio],
 	[ElecBen],
@@ -539,9 +538,9 @@ SELECT
     [LevNetBenRIMElec],
     [LevNetBenRIMGas]
 	FROM #tmpCE ce
-	LEFT JOIN #tmpSav s ON ce.PA = s.PA 
-	LEFT JOIN #tmpEM e ON ce.PA = e.PA
-	LEFT JOIN #tmpCost m ON ce.PA = m.PA
+	LEFT JOIN #tmpSav s ON ce.IOU_AC_Territory = s.IOU_AC_Territory 
+	LEFT JOIN #tmpEM e ON ce.IOU_AC_Territory = e.IOU_AC_Territory
+	LEFT JOIN #tmpCost m ON ce.IOU_AC_Territory = m.IOU_AC_Territory
 
 END
 

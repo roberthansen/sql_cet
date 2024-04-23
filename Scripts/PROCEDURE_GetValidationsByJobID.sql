@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetValidationsByJobID]    Script Date: 12/16/2019 1:54:32 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetValidationsByJobID]    Script Date: 2019-12-16 1:54:32 PM ******/
 SET ANSI_NULLS ON
 GO
 

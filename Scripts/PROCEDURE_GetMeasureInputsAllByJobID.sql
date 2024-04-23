@@ -1,16 +1,12 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetMeasureInputsAllByJobID]    Script Date: 12/16/2019 1:33:18 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetMeasureInputsAllByJobID]    Script Date: 2019-12-16 1:33:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 
 CREATE PROCEDURE [dbo].[GetMeasureInputsAllByJobID]
          @JobID INT
@@ -19,7 +15,7 @@ BEGIN
 
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
 	   ,c.[CET_ID]
-      ,c.[PA]
+      ,c.[IOU_AC_Territory]
       ,c.[PrgID]
 	  ,k.ProgramName
       ,k.[MeasureName]

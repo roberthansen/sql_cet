@@ -1,7 +1,7 @@
 /*
 ################################################################################
 Name             :  SaveInputCEDARS (procedure)
-Date             :  06/30/2016
+Date             :  2016-06-30
 Author           :  Wayne Hauck
 Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose          :  This stored procedure saves inputs by JobID into the
@@ -11,8 +11,8 @@ Called by        :  n/a
 Copyright �      :  Developed by Pinnacle Consulting Group (aka Intech Energy,
                  :  Inc.) for California Public Utilities Commission (CPUC),
                  :  All Rights Reserved
-Change History   :  06/30/2016  Wayne Hauck added comment header
-                 :  05/25/2021  Robert Hansen removed MarketEffectsBenefits and
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2021-05-25  Robert Hansen removed MarketEffectsBenefits and
                  :  MarketEffectsCosts fields
                  :  2021-06-16  Robert Hansen commented out new fields for fuel
                  :  substitution for implementation at a later date

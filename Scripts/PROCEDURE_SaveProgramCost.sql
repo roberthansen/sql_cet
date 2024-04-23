@@ -1,27 +1,30 @@
+/*
+################################################################################
+Name             :  SaveProgramCost
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure saves program cost inputs by JobID
+                 :  into the SavedProgramCost table.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+                 :  Inc.) for California Public Utilities Commission (CPUC), All
+                 :  Rights Reserved
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2024-04-23  Robert Hansen renamed the "PA" field to
+                 :              "IOU_AC_Territory"
+################################################################################
+*/
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SaveProgramCost]    Script Date: 12/16/2019 2:07:54 PM ******/
+/****** Object:  StoredProcedure [dbo].[SaveProgramCost]    Script Date: 2019-12-16 2:07:54 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
---#################################################################################################
--- Name             :  SaveProgramCost
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure saves program cost inputs by JobID into the SavedProgramCost table.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
-
 
 CREATE PROCEDURE [dbo].[SaveProgramCost]
 @JobID INT = -1,
@@ -51,7 +54,7 @@ ELSE
 SET @SQL2 = 
 'INSERT INTO ' + @CETDataDbName + 'SavedProgramCost 
  SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
-      ,[PA]
+      ,[IOU_AC_Territory]
       ,[PrgID]
       ,[ProgramName]
       ,[Year]

@@ -48,6 +48,8 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 :    + UnitGalWater2ndBaseline aka UWSGal_ER, Gal2
                 :    + UnitkWhTotalWater1stBaseline aka UESkWh_TotalWater, kWhTotalWater1
                 :    + UnitkWhTotalWater2ndBaseline aka UESkWh_TotalWater_ER, kWhTotalWater2
+                :  2024-04-23  Robert Hansen renamed the "PA" field to
+                :  "IOU_AC_Territory"
 */
 
 SET ANSI_NULLS ON
@@ -65,7 +67,7 @@ CREATE TABLE dbo.SavedInputCEDARS(
     ID INT IDENTITY(1,1) NOT NULL,
     JobID INT NOT NULL,
     CEInputID NVARCHAR(255) NOT NULL,
-    PA NVARCHAR(50) NULL,
+    IOU_AC_Territory NVARCHAR(50) NULL,
     PrgID NVARCHAR(255) NULL,
     ClaimYearQuarter NVARCHAR(6) NULL,
     MeasDescription NVARCHAR(255) NULL,

@@ -1,21 +1,12 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetValidationsAllByJobID]    Script Date: 12/16/2019 1:51:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetValidationsAllByJobID]    Script Date: 2019-12-16 1:51:34 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
-
-
 
 CREATE PROCEDURE [dbo].[GetValidationsAllByJobID]
          @JobID INT
@@ -23,8 +14,8 @@ AS
 BEGIN
 
 SELECT DISTINCT 
-	   k.[PA]
-	  ,k.[PrgID]
+	    k.[IOU_AC_Territory]
+	    ,k.[PrgID]
       ,k.[CET_ID]
       ,k.TS [ElecTargetSector]
       ,k.EU [ElecEndUseShape]

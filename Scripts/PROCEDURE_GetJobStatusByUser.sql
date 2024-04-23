@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetJobStatusByUser]    Script Date: 12/16/2019 1:32:31 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetJobStatusByUser]    Script Date: 2019-12-16 1:32:31 PM ******/
 SET ANSI_NULLS ON
 GO
 

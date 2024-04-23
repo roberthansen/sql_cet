@@ -1,31 +1,31 @@
+/*
+################################################################################
+Name             :  GetMeasuresAllByJobIDPaged
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure returns measure-level CET results.
+                 :  Called when there are large number of records.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+                 :  Inc.) for California Public Utilities Commission (CPUC). All
+                 :  Rights Reserved.
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2024-04-23  Robert Hansen renamed the "PA" field to
+                 :              "IOU_AC_Territory"
+################################################################################
+*/
+
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[GetMeasuresAllByJobIDPaged]    Script Date: 12/16/2019 1:43:48 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetMeasuresAllByJobIDPaged]    Script Date: 2019-12-16 1:43:48 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
---#################################################################################################
--- Name             :  GetMeasuresAllByJobIDPaged
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure returns measure-level CET results. Called when there are large number of records.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
---                     
---#################################################################################################
 
 CREATE PROCEDURE [dbo].[GetMeasuresAllByJobIDPaged]
          @JobID INT
@@ -48,8 +48,8 @@ SELECT  *
 FROM     
 (
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
-	   ,c.[CET_ID]
-      ,c.[PA]
+	    :wq,c.[CET_ID]
+      ,c.[IOU_AC_Territory]
       ,c.[PrgID]
 	  ,Coalesce(Case When k.ProgramName = '' Then Null else k.ProgramName end ,p.[Program Name],'') ProgramName
       ,k.[MeasureName]
@@ -77,15 +77,15 @@ SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
       ,s.[NetKWh]
       ,s.[NetKW]
       ,s.[NetThm]
-	  ,s.[GoalAttainmentKWh]
-	  ,s.[GoalAttainmentKW]
-	  ,s.[GoalAttainmentThm]
-	  ,s.[FirstYearGrossKWh]
-	  ,s.[FirstYearGrossKW]
-	  ,s.[FirstYearGrossThm]
-	  ,s.[FirstYearNetKWh]
-	  ,s.[FirstYearNetKW]
-	  ,s.[FirstYearNetThm]
+      ,s.[GoalAttainmentKWh]
+      ,s.[GoalAttainmentKW]
+      ,s.[GoalAttainmentThm]
+      ,s.[FirstYearGrossKWh]
+      ,s.[FirstYearGrossKW]
+      ,s.[FirstYearGrossThm]
+      ,s.[FirstYearNetKWh]
+      ,s.[FirstYearNetKW]
+      ,s.[FirstYearNetThm]
       ,s.[LifecycleGrossKWh]
       ,s.[LifecycleGrossThm]
       ,s.[LifecycleNetKWh]
@@ -111,31 +111,31 @@ SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
       ,e.[GrossPM10Lifecycle]
       ,e.[NetPM10Lifecycle]
       --,c.[WeightedBenefits]
-	  --,s.[WeightedSavings]
-	  ,m.[ProgramCosts] ProgramCosts
-	  ,m.RebatesandIncents AS TotalIncentives
-	  ,m.TotalExpenditures AS TotalCosts
-	  ,m.[WtdAdminCostsOverheadAndGA] [PrgAdminCostsOverheadAndGA]
-	  ,m.[WtdAdminCostsOther] [PrgAdminCostsOther]
-	  ,m.[WtdMarketingOutreach] [PrgMarketingOutreach]
-	  ,m.[WtdDIActivity] [PrgDIActivity]
-	  ,m.[WtdDIInstallation] [PrgDIInstallation]
-	  ,m.[WtdDIHardwareAndMaterials] [PrgDIHardwareAndMaterials]
-	  ,m.[WtdDIRebateAndInspection] [PrgDIRebateAndInspection]
-	  ,m.[WtdEMV] [PrgEMV] 
-	  ,m.[WtdUserInputIncentive] [PrgUserInputIncentive]
-	  ,m.[WtdCostsRecoveredFromOtherSources] [PrgCostsRecoveredFromOtherSources]
-	  ,m.DILaborCost
-	  ,m.DIMaterialCost
-	  ,m.EndUserRebate
-	  ,m.IncentiveToOthers
-	  ,m.GrossMeasureCost
-	  ,m.[ExcessIncentives]
-	  ,m.[NetParticipantCost]
-	  ,IsNull(m.[DiscountedSavingsGrosskWh],0) DiscountedSavingsGrosskWh
-	  ,IsNull(m.[DiscountedSavingsNetkWh],0) DiscountedSavingsNetkWh
-	  ,IsNull(m.[DiscountedSavingsGrossThm],0) DiscountedSavingsGrossThm
-	  ,IsNull(m.[DiscountedSavingsNetThm],0) DiscountedSavingsNetThm
+      --,s.[WeightedSavings]
+      ,m.[ProgramCosts] ProgramCosts
+      ,m.RebatesandIncents AS TotalIncentives
+      ,m.TotalExpenditures AS TotalCosts
+      ,m.[WtdAdminCostsOverheadAndGA] [PrgAdminCostsOverheadAndGA]
+      ,m.[WtdAdminCostsOther] [PrgAdminCostsOther]
+      ,m.[WtdMarketingOutreach] [PrgMarketingOutreach]
+      ,m.[WtdDIActivity] [PrgDIActivity]
+      ,m.[WtdDIInstallation] [PrgDIInstallation]
+      ,m.[WtdDIHardwareAndMaterials] [PrgDIHardwareAndMaterials]
+      ,m.[WtdDIRebateAndInspection] [PrgDIRebateAndInspection]
+      ,m.[WtdEMV] [PrgEMV] 
+      ,m.[WtdUserInputIncentive] [PrgUserInputIncentive]
+      ,m.[WtdCostsRecoveredFromOtherSources] [PrgCostsRecoveredFromOtherSources]
+      ,m.DILaborCost
+      ,m.DIMaterialCost
+      ,m.EndUserRebate
+      ,m.IncentiveToOthers
+      ,m.GrossMeasureCost
+      ,m.[ExcessIncentives]
+      ,m.[NetParticipantCost]
+      ,IsNull(m.[DiscountedSavingsGrosskWh],0) DiscountedSavingsGrosskWh
+      ,IsNull(m.[DiscountedSavingsNetkWh],0) DiscountedSavingsNetkWh
+      ,IsNull(m.[DiscountedSavingsGrossThm],0) DiscountedSavingsGrossThm
+      ,IsNull(m.[DiscountedSavingsNetThm],0) DiscountedSavingsNetThm
       ,m.[LevBenElec]
       ,m.[LevBenGas]
       ,m.[LevTRCCost]
@@ -153,9 +153,9 @@ SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
       ,m.[LevNetBenPACGasNoAdmin]
       ,m.[LevNetBenRIMElec]
       ,m.[LevNetBenRIMGas]
-	  ,m.[ProgramCosts] WeightedProgramCost
-	  ,m.RebatesandIncents MeasureCosts
-	  ,c.[CET_ID] [CET__ID]
+      ,m.[ProgramCosts] WeightedProgramCost
+      ,m.RebatesandIncents MeasureCosts
+      ,c.[CET_ID] [CET__ID]
       ,k.[MeasureID]
       ,k.TS [ElecTargetSector]
       ,k.EU [ElecEndUseShape]
@@ -225,10 +225,10 @@ SELECT  *
 FROM     
 (
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
-	   ,c.[CET_ID]
-      ,c.[PA]
+	    ,c.[CET_ID]
+      ,c.[IOU_AC_Territory]
       ,c.[PrgID]
-	  ,p.[Program Name] ProgramName
+	    ,p.[Program Name] ProgramName
       ,k.[MeasDescription] [MeasureName]
       ,c.[TRCRatio]
       ,c.[PACRatio]
@@ -245,7 +245,7 @@ SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
       ,c.[BillReducElec]
       ,c.[BillReducGas]
       ,c.[RIMCost]
-	  ,CASE WHEN c.[RIMCost] <> 0 THEN (c.[ElecBen] + c.[GasBen])/c.[RIMCost] ELSE 0 END RIMRatio
+	    ,CASE WHEN c.[RIMCost] <> 0 THEN (c.[ElecBen] + c.[GasBen])/c.[RIMCost] ELSE 0 END RIMRatio
       ,c.[WeightedBenefits]
       ,c.[WeightedElecAlloc]
       ,s.[GrossKWh]
@@ -254,15 +254,15 @@ SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
       ,s.[NetKWh]
       ,s.[NetKW]
       ,s.[NetThm]
-	  ,s.[GoalAttainmentKWh]
-	  ,s.[GoalAttainmentKW]
-	  ,s.[GoalAttainmentThm]
-	  ,s.[FirstYearGrossKWh]
-	  ,s.[FirstYearGrossKW]
-	  ,s.[FirstYearGrossThm]
-	  ,s.[FirstYearNetKWh]
-	  ,s.[FirstYearNetKW]
-	  ,s.[FirstYearNetThm]
+      ,s.[GoalAttainmentKWh]
+      ,s.[GoalAttainmentKW]
+      ,s.[GoalAttainmentThm]
+      ,s.[FirstYearGrossKWh]
+      ,s.[FirstYearGrossKW]
+      ,s.[FirstYearGrossThm]
+      ,s.[FirstYearNetKWh]
+      ,s.[FirstYearNetKW]
+      ,s.[FirstYearNetThm]
       ,s.[LifecycleGrossKWh]
       ,s.[LifecycleGrossThm]
       ,s.[LifecycleNetKWh]
@@ -288,31 +288,31 @@ SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
       ,e.[GrossPM10Lifecycle]
       ,e.[NetPM10Lifecycle]
       --,c.[WeightedBenefits]
-	  --,s.[WeightedSavings]
-	  ,m.[ProgramCosts] ProgramCosts
-	  ,m.RebatesandIncents AS TotalIncentives
-	  ,m.TotalExpenditures AS TotalCosts
-	  ,m.[WtdAdminCostsOverheadAndGA] [PrgAdminCostsOverheadAndGA]
-	  ,m.[WtdAdminCostsOther] [PrgAdminCostsOther]
-	  ,m.[WtdMarketingOutreach] [PrgMarketingOutreach]
-	  ,m.[WtdDIActivity] [PrgDIActivity]
-	  ,m.[WtdDIInstallation] [PrgDIInstallation]
-	  ,m.[WtdDIHardwareAndMaterials] [PrgDIHardwareAndMaterials]
-	  ,m.[WtdDIRebateAndInspection] [PrgDIRebateAndInspection]
-	  ,m.[WtdEMV] [PrgEMV] 
-	  ,m.[WtdUserInputIncentive] [PrgUserInputIncentive]
-	  ,m.[WtdCostsRecoveredFromOtherSources] [PrgCostsRecoveredFromOtherSources]
-	  ,m.DILaborCost
-	  ,m.DIMaterialCost
-	  ,m.EndUserRebate
-	  ,m.IncentiveToOthers
-	  ,m.GrossMeasureCost
-	  ,m.[ExcessIncentives]
-	  ,m.[NetParticipantCost]
-	  ,ISNULL(m.[DiscountedSavingsGrosskWh],0) DiscountedSavingsGrosskWh
-	  ,ISNULL(m.[DiscountedSavingsNetkWh],0) DiscountedSavingsNetkWh
-	  ,ISNULL(m.[DiscountedSavingsGrossThm],0) DiscountedSavingsGrossThm
-	  ,ISNULL(m.[DiscountedSavingsNetThm],0) DiscountedSavingsNetThm
+      --,s.[WeightedSavings]
+      ,m.[ProgramCosts] ProgramCosts
+      ,m.RebatesandIncents AS TotalIncentives
+      ,m.TotalExpenditures AS TotalCosts
+      ,m.[WtdAdminCostsOverheadAndGA] [PrgAdminCostsOverheadAndGA]
+      ,m.[WtdAdminCostsOther] [PrgAdminCostsOther]
+      ,m.[WtdMarketingOutreach] [PrgMarketingOutreach]
+      ,m.[WtdDIActivity] [PrgDIActivity]
+      ,m.[WtdDIInstallation] [PrgDIInstallation]
+      ,m.[WtdDIHardwareAndMaterials] [PrgDIHardwareAndMaterials]
+      ,m.[WtdDIRebateAndInspection] [PrgDIRebateAndInspection]
+      ,m.[WtdEMV] [PrgEMV] 
+      ,m.[WtdUserInputIncentive] [PrgUserInputIncentive]
+      ,m.[WtdCostsRecoveredFromOtherSources] [PrgCostsRecoveredFromOtherSources]
+      ,m.DILaborCost
+      ,m.DIMaterialCost
+      ,m.EndUserRebate
+      ,m.IncentiveToOthers
+      ,m.GrossMeasureCost
+      ,m.[ExcessIncentives]
+      ,m.[NetParticipantCost]
+      ,ISNULL(m.[DiscountedSavingsGrosskWh],0) DiscountedSavingsGrosskWh
+      ,ISNULL(m.[DiscountedSavingsNetkWh],0) DiscountedSavingsNetkWh
+      ,ISNULL(m.[DiscountedSavingsGrossThm],0) DiscountedSavingsGrossThm
+      ,ISNULL(m.[DiscountedSavingsNetThm],0) DiscountedSavingsNetThm
       ,m.[LevBenElec]
       ,m.[LevBenGas]
       ,m.[LevTRCCost]
@@ -330,9 +330,9 @@ SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
       ,m.[LevNetBenPACGasNoAdmin]
       ,m.[LevNetBenRIMElec]
       ,m.[LevNetBenRIMGas]
-	  ,m.[ProgramCosts] WeightedProgramCost
-	  ,m.RebatesandIncents MeasureCosts
-	  ,c.[CET_ID] [CET__ID]
+      ,m.[ProgramCosts] WeightedProgramCost
+      ,m.RebatesandIncents MeasureCosts
+      ,c.[CET_ID] [CET__ID]
       ,k.[MeasureID]
       ,k.[E3TargetSector] [ElecTargetSector]
       ,k.[E3MeaElecEndUseShape] [ElecEndUseShape]
