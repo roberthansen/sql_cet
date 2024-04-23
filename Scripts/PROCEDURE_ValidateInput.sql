@@ -45,7 +45,7 @@ DELETE FROM InputValidation WHERE JobID=@JobID
 
 --************** Validate Null IOU_AC_Territory Input  ***************
 insert into InputValidation 
-select @JobID AS JobID, 'InputMeasure' AS [Table], 'Error' AS ErrorType, CET_ID, 'Null PA' as MessageType, '' as Detail 
+select @JobID AS JobID, 'InputMeasure' AS [Table], 'Error' AS ErrorType, CET_ID, 'Null IOU_AC_Territory' as MessageType, '' as Detail 
 from  [dbo].[InputMeasurevw] 
 m where IOU_AC_Territory is null  
 --************************************************************

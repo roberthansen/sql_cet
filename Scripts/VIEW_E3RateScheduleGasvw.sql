@@ -59,7 +59,7 @@ AS
         e.Qty
     FROM
         InputMeasurevw AS e
-        LEFT JOIN Settingsvw AS s ON e.IOU_AC_Territory=s.PA
+        LEFT JOIN Settingsvw AS s ON e.IOU_AC_Territory=s.IOU_AC_Territory
         LEFT JOIN E3RateScheduleGasMapping AS m ON  s.Version=m.Version AND s.IOU_AC_Territory=m.IOU_AC_Territory AND e.GS=m.GasSector
         LEFT JOIN E3RateScheduleSourceGasvw AS r ON s.Version=r.Version AND s.IOU_AC_Territory=r.IOU_AC_Territory AND m.GasRateSchedule=r.Schedule
     WHERE r.Schedule IS NOT NULL

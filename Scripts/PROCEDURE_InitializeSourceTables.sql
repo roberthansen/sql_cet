@@ -8,7 +8,7 @@ Purpose          :  This stored procedure initializes tables which prepares
                  :  views for running cost effectiveness.
 Usage            :  n/a
 Called by        :  n/a
-Copyright �      :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
                  :  Inc.) for California Public Utilities Commission (CPUC).
 				 :  All Rights Reserved.
 Change History   :  2016-06-30  Wayne Hauck added comment header
@@ -26,6 +26,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :                + UnitkWhIOUWater2ndBaseline
                  :                + UnitkWhTotalWater1stBaseline
                  :                + UnitkWhTotalWater2ndBaseline
+                 :  2024-04-23  Robert Hansen renamed the "PA" field to
+                 :              "IOU_AC_Territory"
 ################################################################################
 */
 
@@ -107,12 +109,13 @@ Usage : n/a
 Called by : n/a
 Copyright : Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
 Change History : 2016-06-30  Wayne Hauck added comment header
-Change History : 2017-07-01  Modified to settings based on avoided cost version by Wayne Hauck with encryption
+               : 2017-07-01  Modified to settings based on avoided cost version by Wayne Hauck with encryption
+               : 2024-04-23  Robert Hansen renamed the "PA" to "IOU_AC_Territory"
 ################################################################################
 */
 SELECT
 [Version]
-,PA
+,IOU_AC_Territory
 ,DiscountRateAnnual Ra
 ,DiscountRateAnnual+1 Raf
 ,DiscountRateQtr Rq

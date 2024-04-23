@@ -31,6 +31,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :    + kWhTotalWater2
                  :  2023-04-04  Robert Hansen implemented sorting on CET_ID for
                  :  output table
+                 :  2024-04-23  Robert Hansen renamed the "PA" field to
+                 :  "IOU_AC_Territory"
 ################################################################################
 */
 
@@ -84,7 +86,7 @@ SET @SQL2 =
 (
 JobID
 ,CET_ID
-,PA
+,IOU_AC_Territory
 ,PrgID
 ,ProgramName
 ,MeasureName
@@ -164,7 +166,7 @@ JobID
 )
 SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
 ,CET_ID
-,PA
+,IOU_AC_Territory
 ,PrgID
 ,ProgramName
 ,MeasureName

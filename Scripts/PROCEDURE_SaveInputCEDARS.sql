@@ -82,7 +82,7 @@ SET @SQL2 =
 (
 JobID
 ,CEInputID
-,PA
+,IOU_AC_Territory
 ,PrgID
 ,ClaimYearQuarter
 ,MeasDescription
@@ -168,7 +168,7 @@ JobID
 )
 SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
 ,CEInputID
-,PA
+,IOU_AC_Territory
 ,PrgID
 ,ClaimYearQuarter
 ,MeasDescription

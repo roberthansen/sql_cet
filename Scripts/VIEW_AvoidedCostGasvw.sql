@@ -27,7 +27,7 @@ SELECT
     ,s.Ra
     ,s.Rq
     ,s.Rqf
-    ,ac1.PA
+    ,ac1.IOU_AC_Territory
     ,ac1.Qtr
     ,ac1.Qac
     ,ac1.Total As Cost
@@ -64,7 +64,7 @@ SELECT
 FROM
 dbo.InputMeasurevw AS im
 LEFT JOIN dbo.Settingsvw AS s
-ON im.IOU_AC_Territory=s.PA
+ON im.IOU_AC_Territory=s.IOU_AC_Territory
 LEFT JOIN AvoidedCostSourceGasvw AS ac1
 ON im.IOU_AC_Territory=ac1.IOU_AC_Territory AND im.GS=ac1.GS AND im.GP=ac1.GP AND s.[Version] = ac1.[Version]
 --LEFT JOIN AvoidedCostSourceGasvw AS ac2

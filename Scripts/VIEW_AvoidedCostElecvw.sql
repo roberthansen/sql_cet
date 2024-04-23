@@ -47,7 +47,7 @@ SELECT
     ,s.Ra
     ,s.Rq
     ,s.Rqf
-    ,im.PA
+    ,im.IOU_AC_Territory
     ,im.TS
     ,im.EU
     --,im.EUAL
@@ -109,7 +109,7 @@ SELECT
     --END AS DS2_AL
 FROM dbo.InputMeasurevw AS im
 LEFT JOIN dbo.Settingsvw AS s
-ON im.IOU_AC_Territory = s.PA
+ON im.IOU_AC_Territory = s.IOU_AC_Territory
 LEFT JOIN
     AvoidedCostSourceElecvw AS ac1
 ON im.IOU_AC_Territory=ac1.IOU_AC_Territory AND im.TS=ac1.TS AND im.EU=ac1.EU AND RTRIM(im.CZ)=ac1.CZ AND s.[Version]=ac1.[Version]
