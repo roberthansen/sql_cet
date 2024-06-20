@@ -54,7 +54,7 @@ ELSE
 SET @SQL2 = 
 'INSERT INTO ' + @CETDataDbName + 'SavedProgramCostCEDARS 
  SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,[PrgYear]
       ,[ClaimYearQuarter]

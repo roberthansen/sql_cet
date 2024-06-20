@@ -60,7 +60,7 @@ ELSE
 SET @SQL2 = 
 'INSERT INTO ' + @CETDataDbName + 'SavedSavings 
 SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,[CET_ID]
       ,[AnnualGrosskWh]
