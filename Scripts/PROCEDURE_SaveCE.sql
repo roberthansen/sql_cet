@@ -1,7 +1,7 @@
 /*
 ################################################################################
 Name             :  SaveCE (procedure)
-Date             :  06/30/2016
+Date             :  2016-06-30
 Author           :  Wayne Hauck
 Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 Purpose          :  This stored procedure saves cost effectiveness results by
@@ -11,13 +11,17 @@ Called by        :  n/a
 Copyright �      :  Developed by Pinnacle Consulting Group (aka Intech Energy,
                  :  Inc.) for California Public Utilities Commission (CPUC),
                  :  All Rights Reserved
-Change History   :  06/30/2016  Wayne Hauck added comment header
-                 :  05/28/2021  Robert Hansen renamed "NegBens" to "SupplyCost"
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2021-05-28  Robert Hansen renamed "NegBens" to "SupplyCost"
                  :  and added Total System Benefits calculations
-				 :  07/08/2021  Robert Hansen renamed "TotalSystemBenefits" to
+				 :  2021-07-08  Robert Hansen renamed "TotalSystemBenefits" to
 				 :  "TotalSystemBenefit"
-				 :  07/09/2021  Robert Hansen added OtherBenGross and
+				 :  2021-07-09  Robert Hansen added OtherBenGross and
 				 :  OtherCostGross fields to outputs
+				 :  2024-04-23  Robert Hansen renamed "PA" field to
+				 :	"IOU_AC_Territory"
+				 :	2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+				 :	"PA"
 
 ################################################################################
 */
@@ -60,7 +64,7 @@ EXEC  sp_executesql @SQL
 SET @SQL = 
 'INSERT INTO ' + @CETDataDbName + 'SavedCE  
 SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
-	,[IOU_AC_Territory]
+	,[PA]
 	,[PrgID]
 	,[CET_ID]
 	,[ElecBen]

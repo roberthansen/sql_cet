@@ -140,7 +140,7 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :              aggregation and summation of avoided gas costs.
                 :  2023-04-26  Robert Hansen removed extra comma which was
                 :              causing a syntax error when extra fields were
-                :              commented out.
+                :              commented out
                 :  2024-04-22  Robert Hansen applied the following changes:
                 :                + MiscBens and MiscCosts added to OtherBen,
                 :                  OtherBenGross, OtherCost, and
@@ -152,6 +152,8 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :                  than checking only first-baseline savings
                 :                  rate
                 :                + Renamed the "PA" field to "IOU_AC_Territory"
+                :  2024-06-20  Robert Hansen reverted the "IOU_AC_Territory" to
+                :              "PA"
 ################################################################################
 */
 
@@ -189,7 +191,7 @@ IF @MECost Is Null
 PRINT 'Inserting electrical and gas benefits... Message 2'
 CREATE TABLE [#OutputCE](
     JobID INT NULL,
-    IOU_AC_Territory NVARCHAR(24) NULL,
+    PA NVARCHAR(24) NULL,
     PrgID NVARCHAR(255) NULL,
     CET_ID NVARCHAR(255) NULL,
     ElecBen FLOAT NULL,
@@ -234,7 +236,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
     -- Insert into CE with correction for Null gas and elec
     INSERT INTO #OutputCE (
         JobID
-        ,IOU_AC_Territory
+        ,PA
         ,PrgID
         ,CET_ID
         ,ElecBen
@@ -256,7 +258,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
     )
     SELECT
         @JobID AS JobID
-        ,e.IOU_AC_Territory AS IOU_AC_Territory
+        ,e.PA AS PA
         ,e.PrgID AS PrgID
         ,e.CET_ID AS CET_ID
 --- ElecBen (Net Lifecycle) ----------------------------------------------------
@@ -585,7 +587,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ) AS OtherCostGross
     FROM InputMeasurevw AS e
     LEFT JOIN Settingsvw AS s
-    ON e.IOU_AC_Territory = s.IOU_AC_Territory AND s.[Version] = @AVCVersion
+    ON e.PA = s.PA AND s.[Version] = @AVCVersion
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -739,11 +741,11 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
     ) AS acg_2 ON e.CET_ID = acg_2.CET_ID
     WHERE s.Version = @AVCVersion
     GROUP BY
-        e.IOU_AC_Territory
+        e.PA
         ,e.PrgID
         ,e.CET_ID
     ORDER BY
-        e.IOU_AC_Territory
+        e.PA
         ,e.PrgID
         ,e.CET_ID
 
@@ -808,7 +810,7 @@ ProgramCosts (
         ) AS SumCostsNPV
     FROM dbo.[InputProgramvw] AS  c
     LEFT JOIN Settingsvw AS s
-    ON c.IOU_AC_Territory = s.IOU_AC_Territory
+    ON c.PA = s.PA
     WHERE s.[Version] = @AVCVersion
     GROUP BY c.PrgID, [Year], s.Raf
 )
@@ -865,7 +867,7 @@ ProgramCosts (
 --      ,SUM(Qty * (e.UnitMeasureGrossCost- CASE WHEN e.rul > 0 THEN (e.UnitMeasureGrossCost - e.MeasIncrCost)/POWER(((1+e.MeasInflation)/4)*Rqf, e.rulq) ELSE 0  END) / POWER(Rqf, Qm)) As GrossMeasCostPV
         ,SUM(Qty * e.MeasIncrCost)  AS MeasureIncCost
     FROM InputMeasurevw e
-    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+    LEFT JOIN Settingsvw s ON e.PA = s.PA
     WHERE s.[Version] = @AVCVersion
     GROUP BY PrgID, e.CET_ID
     )
@@ -981,7 +983,7 @@ AS
     LEFT JOIN ExcessIncentives ex on ri.CET_ID = ex.CET_ID
     LEFT JOIN InputMeasurevw e ON ce.CET_ID = e.CET_ID
     LEFT JOIN GrossMeasureCostAdjusted gma on ce.CET_ID = gma.CET_ID
-    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+    LEFT JOIN Settingsvw s ON e.PA = s.PA
     WHERE s.[Version] = @AVCVersion
 )
 , Calculations (
@@ -1275,7 +1277,7 @@ AS
     LEFT JOIN BenefitsSum bensSum ON CE.PrgID = bensSum.PrgID
     LEFT JOIN BenPos bp on ce.CET_ID = bp.CET_ID
     LEFT JOIN ClaimCount cc on CE.PrgID = cc.PrgID
-    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+    LEFT JOIN Settingsvw s ON e.PA = s.PA
     WHERE s.[Version] = @AVCVersion
 )
     UPDATE #OutputCE 
@@ -1349,7 +1351,7 @@ WITH RIMTest (
             )
         ) AS RIMCostGas
     FROM InputMeasurevw e
-    LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory and s.[Version] = @AVCVersion
+    LEFT JOIN Settingsvw s ON e.PA = s.PA and s.[Version] = @AVCVersion
     
 --First baseline
     LEFT JOIN (
@@ -1450,7 +1452,7 @@ WITH RIMTest (
         WHERE Qy = Convert(INT, Yr1 + (eul2))
         ) RGfrac2_2 ON e.CET_ID = RGfrac2_2.CET_ID
     WHERE s.Version = @AVCVersion
-    GROUP BY e.IOU_AC_Territory, e.PrgID, e.CET_ID, e.EUL1, re.RateE1, rg.RateG1, Qy
+    GROUP BY e.PA, e.PrgID, e.CET_ID, e.EUL1, re.RateE1, rg.RateG1, Qy
 )
     UPDATE #OutputCE
     SET BillReducElec=t.RimCostElec, BillReducGas=t.RimCostGas, RimCost = t.RimCostElec + t.RimCostGas + ce.PacCost
@@ -1500,7 +1502,7 @@ DELETE FROM SavedCE WHERE JobID = @JobID
 INSERT INTO OutputCE
 SELECT 
     JobID
-    ,IOU_AC_Territory
+    ,PA
     ,PrgID
     ,CET_ID
     ,ElecBen

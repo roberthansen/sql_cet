@@ -16,6 +16,8 @@ Change History   :  2016-12-30  Wayne Hauck added measure inflation
                  :              from calculations
 				 :  2024-04-23  Robert Hansen renamed the "PA" field to
 				 :  			"IOU_AC_Territory"
+				 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+				 :              "PA"
 ################################################################################
 */
 
@@ -51,7 +53,7 @@ IF @MECost Is Null
 
 CREATE TABLE [#OutputCost](
 	[JobID] [int] NOT NULL,
-	[IOU_AC_Territory] [nvarchar](8) NULL,
+	[PA] [nvarchar](8) NULL,
 	[PrgID] [nvarchar](255) NULL,
 	[CET_ID] [nvarchar](255) NOT NULL,
 	IncentiveToOthers [float] NULL,
@@ -114,14 +116,14 @@ CREATE TABLE [#OutputCost](
 
 BEGIN
 WITH Settings (
-	IOU_AC_Territory
+	PA
 	, [Version]
 	, Rqf
 	, Raf
 	, BaseYear
 	)
 AS (
-	SELECT IOU_AC_Territory
+	SELECT PA
 	, [Version]
 	, Rqf
 	, Raf
@@ -203,7 +205,7 @@ AS	(
 		,SUM(IsNull([UserInputIncentive],0)) AS UserInputIncentive
 		,SUM(IsNull([UserInputIncentive],0))/POWER(s.Raf,Convert(int,[Year]-@FirstYear)) AS UserInputIncentiveNPV
 	FROM dbo.[InputProgramvw] c
-	LEFT JOIN Settingsvw s ON c.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON c.PA = s.PA
 	WHERE [Version] = @AVCVersion
 	GROUP BY c.PrgID, [Year], s.Raf, BaseYear
 	)
@@ -227,7 +229,7 @@ AS	(
 	, Sum((Qty * (e.IncentiveToOthers + e.DILaborCost + e.DIMaterialCost + e.EndUserRebate)) / Power(Rqf, Qm)) As TotalIncentivesandRebatesPV
 	FROM InputMeasurevw e
 	LEFT JOIN OutputCE ce on e.PrgID = ce.PrgID 
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	WHERE s.[Version] = @AVCVersion
 	GROUP BY e.PrgID
 	)
@@ -279,7 +281,7 @@ AS (
 	, Sum(Qty * (e.IncentiveToOthers + e.DILaborCost + e.DIMaterialCost + e.EndUserRebate) ) As RebatesAndIncents
 	, Sum(Qty * (e.IncentiveToOthers + e.DILaborCost + e.DIMaterialCost + e.EndUserRebate) / Power(Rqf, Qm)) As RebatesAndIncentsPV
 FROM InputMeasurevw e
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	WHERE [Version] = @AVCVersion
 	GROUP BY PrgID, e.CET_ID, NTGRCost
 	)
@@ -362,7 +364,7 @@ AS
 	LEFT JOIN ExcessIncentives ex on ri.CET_ID = ex.CET_ID
 	LEFT JOIN InputMeasurevw e ON CE.CET_ID = e.CET_ID
 	LEFT JOIN GrossMeasureCostAdjusted gma on ce.CET_ID = gma.CET_ID
-	--LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	--LEFT JOIN Settingsvw s ON e.PA = s.PA
 )
 , DiscountedSavings (
 	CET_ID
@@ -393,7 +395,7 @@ AS
 			CASE WHEN Thm1 <> 0 THEN CASE WHEN Power(Rqf, Qm) <> 0 THEN CASE WHEN Ra <> 0 THEN CASE WHEN Power(Raf, eul-1) <> 0 THEN CASE WHEN IsNull(eul,0) <> 0 THEN Sum((NTGRThm+@MEBens) * Qty * ((IRThm * RRThm * Thm1 * (1 + (1-1/(Power(Raf, eul-1)))/Ra)))/ Power(Rqf, Qm)) ELSE 0 END END END END END END as DiscountedSavingsGrossThm
 
 	FROM InputMeasurevw e
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	WHERE s.[Version] = @AVCVersion
 	Group By CET_ID, kWh1, Thm1, eul,rul, Rqf, Qm, Ra, Raf 
 )
@@ -453,7 +455,7 @@ AS
 	INSERT INTO #OutputCost
 	SELECT 
 		@JobID AS JobID
-		,e.IOU_AC_Territory
+		,e.PA
 		,e.PrgID
 		,e.CET_ID
 
@@ -528,7 +530,7 @@ AS
 	    ,lv.LevNetBenRIMGas
 
 	FROM InputMeasurevw e
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	LEFT JOIN OutputCE ce on e.CET_ID  = ce.CET_ID
 	LEFT JOIN ParticipantCost pc on e.CET_ID = pc.CET_ID
 	LEFT JOIN RebatesAndIncentives ri on e.CET_ID = ri.CET_ID
@@ -536,7 +538,7 @@ AS
 	LEFT JOIN DiscountedSavings ds on e.CET_ID = ds.CET_ID
 	LEFT JOIN ProgramCostDetail pd on e.PrgID = pd.PrgID
 	LEFT JOIN LevelizedCost lv on e.CET_ID = lv.CET_ID
-	GROUP BY e.IOU_AC_Territory
+	GROUP BY e.PA
 		,e.PrgID
 		,e.CET_ID
 		,ce.ElecBen
@@ -602,7 +604,7 @@ AS
 	  ,lv.LevNetBenPACGasNoAdmin	  
 	  ,lv.LevNetBenRIMElec
 	  ,lv.LevNetBenRIMGas
-	  ORDER BY e.IOU_AC_Territory
+	  ORDER BY e.PA
 	  ,e.PrgID
  	  ,e.CET_ID
 END
@@ -615,7 +617,7 @@ DELETE FROM SavedCost WHERE JobID = @JobID
 INSERT INTO OutputCost
 SELECT 
 	[JobID]
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,[CET_ID]
       ,[IncentiveToOthers]

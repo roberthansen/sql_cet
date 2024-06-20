@@ -24,6 +24,7 @@ Change History  :  2021-05-28  Robert Hansen added "SupplyCost" and
                 :    + WaterEnergyCostGross
 				:  2024-04-23  Robert Hansen renamed the "PA" field to
 				:  "IOU_AC_Territory"
+				:  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 
@@ -40,7 +41,7 @@ GO
 CREATE TABLE dbo.SavedCE(
 	ID INT IDENTITY(1,1) NOT NULL,
 	JobID INT NOT NULL,
-	IOU_AC_Territory NVARCHAR(8) NULL,
+	PA NVARCHAR(8) NULL,
 	PrgID NVARCHAR(255) NULL,
 	CET_ID NVARCHAR(255) NOT NULL,
 	ElecBen FLOAT NULL,
@@ -88,7 +89,7 @@ GO
 CREATE NONCLUSTERED INDEX [IX_JobID] ON [dbo].[SavedCE] ([JobID]) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX [IX_PA] ON [dbo].[SavedCE] ([IOU_AC_Territory]) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_PA] ON [dbo].[SavedCE] ([PA]) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
 GO
 
 CREATE NONCLUSTERED INDEX [IX_PrgID] ON [dbo].[SavedCE] ([PrgID]) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]

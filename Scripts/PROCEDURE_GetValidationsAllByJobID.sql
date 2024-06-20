@@ -14,7 +14,7 @@ AS
 BEGIN
 
 SELECT DISTINCT 
-	    k.[IOU_AC_Territory]
+	    k.[PA]
 	    ,k.[PrgID]
       ,k.[CET_ID]
       ,k.TS [ElecTargetSector]

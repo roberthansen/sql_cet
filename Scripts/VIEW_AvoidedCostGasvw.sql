@@ -13,6 +13,7 @@ Change History : 2016-06-30  Wayne Hauck added comment header
                : fuel substitution
                : 2024-04-23  Robert Hansen renamed the "PA" field to
                : "IOU_AC_Territory"
+               : 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ##############################################################################
 */
 
@@ -27,7 +28,7 @@ SELECT
     ,s.Ra
     ,s.Rq
     ,s.Rqf
-    ,ac1.IOU_AC_Territory
+    ,ac1.PA
     ,ac1.Qtr
     ,ac1.Qac
     ,ac1.Total As Cost
@@ -64,10 +65,10 @@ SELECT
 FROM
 dbo.InputMeasurevw AS im
 LEFT JOIN dbo.Settingsvw AS s
-ON im.IOU_AC_Territory=s.IOU_AC_Territory
+ON im.PA=s.PA
 LEFT JOIN AvoidedCostSourceGasvw AS ac1
-ON im.IOU_AC_Territory=ac1.IOU_AC_Territory AND im.GS=ac1.GS AND im.GP=ac1.GP AND s.[Version] = ac1.[Version]
+ON im.PA=ac1.PA AND im.GS=ac1.GS AND im.GP=ac1.GP AND s.[Version] = ac1.[Version]
 --LEFT JOIN AvoidedCostSourceGasvw AS ac2
---ON im.IOU_AC_Territory=ac2.IOU_AC_Territory AND im.GS=ac2.GS AND im.GP=ac2.GP AND s.[Version] = ac2.[Version] AND ac1.Qtr=ac2.Qtr
+--ON im.PA=ac2.PA AND im.GS=ac2.GS AND im.GP=ac2.GP AND s.[Version] = ac2.[Version] AND ac1.Qtr=ac2.Qtr
 WHERE  ac1.Qac BETWEEN im.Qm AND im.Qm + CONVERT( INT, im.eulq )
 GO

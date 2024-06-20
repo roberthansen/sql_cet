@@ -28,6 +28,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :                + UnitkWhTotalWater2ndBaseline
                  :  2024-04-23  Robert Hansen renamed the "PA" field to
                  :              "IOU_AC_Territory"
+                 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+                 :              "PA"
 ################################################################################
 */
 
@@ -111,11 +113,12 @@ Copyright : Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for
 Change History : 2016-06-30  Wayne Hauck added comment header
                : 2017-07-01  Modified to settings based on avoided cost version by Wayne Hauck with encryption
                : 2024-04-23  Robert Hansen renamed the "PA" to "IOU_AC_Territory"
+               : 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 SELECT
 [Version]
-,IOU_AC_Territory
+,PA
 ,DiscountRateAnnual Ra
 ,DiscountRateAnnual+1 Raf
 ,DiscountRateQtr Rq

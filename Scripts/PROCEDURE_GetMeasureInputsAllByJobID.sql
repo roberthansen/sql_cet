@@ -15,7 +15,7 @@ BEGIN
 
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
 	   ,c.[CET_ID]
-      ,c.[IOU_AC_Territory]
+      ,c.[PA]
       ,c.[PrgID]
 	  ,k.ProgramName
       ,k.[MeasureName]

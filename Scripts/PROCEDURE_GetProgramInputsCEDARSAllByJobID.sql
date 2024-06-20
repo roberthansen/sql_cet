@@ -36,7 +36,7 @@ SELECT
       ,[UserInputIncentive]
       ,[OnBillFinancing]
       ,[CostsRecoveredFromOtherSources]
-      ,[IOU_AC_Territory]
+      ,[PA]
   FROM [dbo].[SavedProgramCostCEDARS]
   WHERE JobID = @JobID
   
@@ -62,7 +62,7 @@ SELECT
       ,[UserInputIncentive]
       ,[OnBillFinancing]
       ,[CostsRecoveredFromOtherSources]
-  	  ,[IOU_AC_Territory]
+  	  ,[PA]
   FROM [dbo].[SavedProgramCost]
   WHERE JobID = @JobID
 

@@ -44,6 +44,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :                  UESkWh_TotalWater_ER, kWhTotalWater2
                  :  2024-04-23  Robert Hansen renamed "PA" field to
                  :              "IOU_AC_Territory"
+                 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+                 :              "PA"
 ################################################################################
 */
 
@@ -135,11 +137,12 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-05-25 Robert Hansen removed MEBens and MECost fields
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 
 SELECT
-' + CONVERT(VARCHAR,@JobID) + 'AS JobID,CET_ID,IOU_AC_Territory,PrgID,ProgramName,MeasureName,
+' + CONVERT(VARCHAR,@JobID) + 'AS JobID,CET_ID,PA,PrgID,ProgramName,MeasureName,
 MeasureID,MeasImpactType,
 CASE WHEN ElecEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN ElecEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE ElecTargetSector END END AS ElecTargetSector,
 CASE WHEN ElecEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(ElecEndUseShape,''Non_res:'','''') ELSE CASE WHEN ElecEndUseShape LIKE ''res:DEER%'' THEN Replace(ElecEndUseShape,''res:'','''') ELSE ElecEndUseShape END END AS ElecEndUseShape,
@@ -171,11 +174,12 @@ Called by : n/a
 Copyright � : Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
 Change History : 2016-06-30  Wayne Hauck added comment header
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 SELECT
     ' + CONVERT(VARCHAR,@JobID) + ' AS JobID, 
-    IOU_AC_Territory,
+    PA,
     PrgID,
     ProgramName,
     ClaimYearQuarter,
@@ -214,12 +218,13 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-05-25 Robert Hansen removed MEBens and MECost fields
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 
 SELECT
 ' + CONVERT(VARCHAR,@JobID) + ' AS JobID,
-CEInputID CET_ID,IOU_AC_Territory,PrgID,'''' AS ProgramName,MeasDescription MeasureName,
+CEInputID CET_ID,PA,PrgID,'''' AS ProgramName,MeasDescription MeasureName,
 MeasureID,MeasImpactType,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE E3TargetSector END END AS ElecTargetSector,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''Non_res:'','''') ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''res:'','''') ELSE E3MeaElecEndUseShape END END AS ElecEndUseShape,
@@ -273,11 +278,12 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-04-18 Robert Hansen added new columns for additional load for fuel substitution measures
  : 2021-05-17 Robert Hansen added new benefits and costs columns
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 SELECT
     ' + CONVERT(VARCHAR,@JobID) + ' AS JobID, 
-    IOU_AC_Territory,
+    PA,
     PrgID,
     '''' AS ProgramName,
     ClaimYearQuarter,
@@ -312,11 +318,12 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-04-18 Robert Hansen added new columns for additional load for fuel substitution measures
  : 2021-05-17 Robert Hansen added new benefits and costs columns
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-04-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 SELECT
     ' + CONVERT(VARCHAR,@JobID) + ' AS JobID, 
-    IOU_AC_Territory,
+    PA,
     PrgID,
     '''' AS ProgramName,
     ClaimYearQuarter,
@@ -355,11 +362,12 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-05-25 Robert Hansen removed MEBens and MECost fields
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 
 SELECT
-' + CONVERT(VARCHAR,@JobID) + ' as JobID,ClaimID CET_ID,IOU_AC_Territory,
+' + CONVERT(VARCHAR,@JobID) + ' as JobID,ClaimID CET_ID,PA,
 ProgramID PrgID,ProgramName,Measurename,MeasureID,MeasImpactType,
 CASE WHEN ElectricMeasureEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN ElectricMeasureEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE ElectricTargetSector END END AS ElecTargetSector,
 CASE WHEN ElectricMeasureEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(ElectricMeasureEndUseShape,''Non_res:'','''') ELSE CASE WHEN ElectricMeasureEndUseShape LIKE ''res:DEER%'' THEN Replace(ElectricMeasureEndUseShape,''res:'','''') ELSE ElectricMeasureEndUseShape END END AS ElecEndUseShape,
@@ -397,11 +405,12 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-04-18 Robert Hansen added new columns for additional load for fuel substitution measures
  : 2021-05-17 Robert Hansen added new benefits and costs columns
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 SELECT
     ' + CONVERT(VARCHAR,@JobID) + ' AS JobID,
-    IOU_AC_Territory,
+    PA,
     PrgID,
     '''' AS ProgramName,
     ClaimYearQuarter,
@@ -439,11 +448,12 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-05-25 Robert Hansen removed MEBens and MECost fields
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 
 SELECT
-' + CONVERT(VARCHAR,@JobID) + ' AS JobID,CEInputID CET_ID,IOU_AC_Territory,PrgID,
+' + CONVERT(VARCHAR,@JobID) + ' AS JobID,CEInputID CET_ID,PA,PrgID,
 '''' AS ProgramName,MeasDescription Measurename,MeasureID,MeasImpactType,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE E3TargetSector END END AS ElecTargetSector,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''Non_res:'','''') ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''res:'','''') ELSE E3MeaElecEndUseShape END END AS ElecEndUseShape,
@@ -491,11 +501,12 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2021-04-18 Robert Hansen added new columns for additional load for fuel substitution measures
  : 2021-05-17 Robert Hansen added new benefits and costs columns
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 SELECT
     ' + CONVERT(VARCHAR,@JobID) + ' AS JobID, 
-    IOU_AC_Territory,
+    PA,
     PrgID,
     '''' AS ProgramName,
     ClaimYearQuarter,
@@ -532,12 +543,13 @@ Change History : 2016-06-30 Wayne Hauck added comment header with encryption
  : 2021-05-25 Robert Hansen removed MEBens and MECost fields
  : 2022-08-30 Robert Hansen new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
+ : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 
 SELECT
 ' + CONVERT(VARCHAR,@JobID) + ' AS JobID,
-CET_ID,IOU_AC_Territory,PrgID,ProgramName,MeasureName,MeasureID,MeasImpactType,ISNULL(ElecTargetSector,'''') TS,
+CET_ID,PA,PrgID,ProgramName,MeasureName,MeasureID,MeasImpactType,ISNULL(ElecTargetSector,'''') TS,
 ISNULL(ElecEndUseShape,'''') EU,/*ISNULL(ElecAddEndUseShape,'''') EUAL,*/
 ISNULL(ClimateZone,'''') CZ,ISNULL(GasSector,'''') GS,ISNULL(GasSavingsProfile,'''') GP,
 /*ISNULL(GasAdditionalLoadProfile,'''') GPAL,*/ISNULL(ElecRateSchedule,'''') ElecRateSchedule,
@@ -565,8 +577,8 @@ CASE WHEN ISNULL( CASE WHEN RUL >= EUL THEN 0 ELSE RUL END,0)>0 THEN ISNULL(EUL,
 ISNULL( CASE WHEN RUL >= EUL THEN 0 ELSE RUL END, 0 )*4 rulq,
 CASE WHEN ISNULL(RUL,0) >= ISNULL(EUL,0) THEN ISNULL(RUL,0) ELSE ISNULL(EUL,0) END EUL,
 ISNULL( CASE WHEN RUL >= EUL THEN 0 ELSE RUL END,0) RUL,
-IOU_AC_Territory + ElecTargetSector + ElecEndUseShape + ClimateZone ACElecKey,
-IOU_AC_Territory + GasSector + GasSavingsProfile ACGasKey,
+PA + ElecTargetSector + ElecEndUseShape + ClimateZone ACElecKey,
+PA + GasSector + GasSavingsProfile ACGasKey,
 ISNULL(UnitMeasureGrossCost_ER,0) MeasIncrCost,
 ISNULL(MeasInflation,0) MeasInflation,UnitGasInfraBens,UnitRefrigCosts,
 UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,
@@ -580,7 +592,7 @@ BEGIN
 
 SET @InputMeasurevwSql = @InputMeasurevwSql +
 'UNION SELECT 
-JobID,CET_ID,IOU_AC_Territory,PrgID,ProgramName,MeasureName,MeasureID,'''' MeasImpactType,TS,EU,/*EUAL,*/CZ,GS,GP,
+JobID,CET_ID,PA,PrgID,ProgramName,MeasureName,MeasureID,'''' MeasImpactType,TS,EU,/*EUAL,*/CZ,GS,GP,
 /*GPAL,*/ElecRateSchedule,GasRateSchedule,' + @AVCVersion + ' AVCVersion,
 CombType,Qtr,Qm,Qy,Qty,kW1,kWh1,Thm1,kW2,kWh2,Thm2,/*kW1_AL,kWh1_AL,Thm1_AL,
 kW2_AL,kWh2_AL,Thm2_AL,*/

@@ -13,7 +13,9 @@ Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
                  :  Rights Reserved.
 Change History   :  2016-06-30  Wayne Hauck added comment header
                  :  2024-04-23  Robert Hansen renamed the "PA" field to
-                 :  "IOU_AC_Territory"
+                 :              "IOU_AC_Territory"
+                 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+                 :              "PA"
 ################################################################################
 */
 
@@ -44,7 +46,7 @@ BEGIN
 
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
 	    ,c.[CET_ID]
-      ,c.[IOU_AC_Territory]
+      ,c.[PA]
       ,c.[PrgID]
 	  ,Coalesce(Case When k.ProgramName = '' Then Null else k.ProgramName end ,p.[Program Name],'') ProgramName
       ,k.[MeasureName]
@@ -216,7 +218,7 @@ PRINT 'SELECTING FROM CEDARS'
 
 SELECT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
 	   ,c.[CET_ID]
-      ,c.[IOU_AC_Territory]
+      ,c.[PA]
       ,c.[PrgID]
 	  ,p.[Program Name] ProgramName
       ,k.[MeasDescription] [MeasureName]

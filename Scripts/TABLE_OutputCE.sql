@@ -25,6 +25,8 @@
                   :    			   + WaterEnergyCostGross
 				  :  2024-04-23  Robert Hansen renamed the "PA" field to
 				  :	 			 "IOU_AC_Territory"
+				  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+				  :              "PA"
 ################################################################################
 */
 SET ANSI_NULLS ON
@@ -40,7 +42,7 @@ GO
 CREATE TABLE dbo.OutputCE(
 	ID INT IDENTITY(1,1) NOT NULL,
 	JobID INT NULL,
-	IOU_AC_Territory NVARCHAR(8) NULL,
+	PA NVARCHAR(8) NULL,
 	PrgID NVARCHAR(255) NULL,
 	CET_ID NVARCHAR(255) NULL,
 	ElecBen FLOAT NULL,
@@ -88,7 +90,7 @@ GO
 CREATE NONCLUSTERED INDEX IX_JobID ON dbo.OutputCE(JobID) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_IOU_AC_Territory ON dbo.OutputCE(IOU_AC_Territory) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX IX_PA ON dbo.OutputCE(PA) ON [PRIMARY]
 GO
 
 CREATE NONCLUSTERED INDEX IX_PrgID ON dbo.OutputCE(PrgID) ON [PRIMARY]

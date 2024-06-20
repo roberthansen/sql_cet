@@ -51,6 +51,7 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
 					+ UnitkWhTotalWater2ndBaseline aka UESkWh_TotalWater_ER, kWhTotalWater2
 				: 2024-04-23  Robert Hansen renamed the "PA" field to
 				  "IOU_AC_Territory"
+				: 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 
@@ -69,7 +70,7 @@ CREATE TABLE [dbo].[SavedInput](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[JobID] [int] NOT NULL,
 	[CET_ID] [nvarchar](255) NOT NULL,
-	[IOU_AC_Territory] [nvarchar](24) NULL,
+	[PA] [nvarchar](24) NULL,
 	[PrgID] [nvarchar](255) NULL,
 	[ProgramName] [nvarchar](255) NULL,
 	[MeasureName] [nvarchar](255) NULL,
@@ -160,7 +161,7 @@ GO
 CREATE NONCLUSTERED INDEX IX_JobID ON dbo.SavedInput(JobID) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_IOU_AC_Territory ON dbo.SavedInput(IOU_AC_Territory) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX IX_PA ON dbo.SavedInput(PA) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
 GO
 
 CREATE NONCLUSTERED INDEX IX_PrgID ON dbo.SavedInput(PrgID) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]

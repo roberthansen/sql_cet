@@ -15,6 +15,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
 Change History   :  2016-12-30  Wayne Hauck added validation for EUL > years in avoided cost table
 				 :  2024-04-23  Robert Hansen renamed the "PA" field to
 				 :              "IOU_AC_Territory"
+				 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+				 :				"PA"
 ################################################################################
 */
 USE [CET_2018_new_release]
@@ -43,11 +45,11 @@ DELETE FROM InputValidation WHERE JobID=@JobID
 --************** Start Validate Input  ***************
 
 
---************** Validate Null IOU_AC_Territory Input  ***************
+--************** Validate Null PA Input  ***************
 insert into InputValidation 
-select @JobID AS JobID, 'InputMeasure' AS [Table], 'Error' AS ErrorType, CET_ID, 'Null IOU_AC_Territory' as MessageType, '' as Detail 
+select @JobID AS JobID, 'InputMeasure' AS [Table], 'Error' AS ErrorType, CET_ID, 'Null PA' as MessageType, '' as Detail 
 from  [dbo].[InputMeasurevw] 
-m where IOU_AC_Territory is null  
+m where PA is null  
 --************************************************************
 
 
@@ -91,7 +93,7 @@ m where CET_ID is null
 insert into InputValidation 
 select @JobID AS JobID, 'InputMeasure' AS [Table], 'Warning Low' AS ErrorType, CET_ID AS ID, 'Null or zero UnitMeasureGrossCost with Rebates & Incentives and Elec Savings' as MessageType , 'UnitMeasureGrossCost=' + CASE WHEN e.UnitMeasureGrossCost is null THEN 'Null' ELSE Convert(varchar,IsNull(e.UnitMeasureGrossCost,0)) END as Detail
 from  [dbo].[InputMeasurevw]  e
-where ((IsNull(e.kWh1,0) > 0 AND IOU_AC_Territory <> 'SCG') OR IsNull(e.Thm1,0) > 0) and IsNull(e.UnitMeasureGrossCost,0) = 0 and (IsNUll(e.[IncentiveToOthers],0)+IsNUll(e.[EndUserRebate],0)+IsNUll(e.[DILaborCost],0)+IsNUll(e.[DIMaterialCost],0)) >0
+where ((IsNull(e.kWh1,0) > 0 AND PA <> 'SCG') OR IsNull(e.Thm1,0) > 0) and IsNull(e.UnitMeasureGrossCost,0) = 0 and (IsNUll(e.[IncentiveToOthers],0)+IsNUll(e.[EndUserRebate],0)+IsNUll(e.[DILaborCost],0)+IsNUll(e.[DIMaterialCost],0)) >0
 --************************************************************
 
 
@@ -112,12 +114,12 @@ from  [dbo].[InputMeasurevw]
 --insert into InputValidation 
 --select @JobID AS JobID, 'Measure' AS [Table],'Warning High' AS ErrorType, CET_ID, 'No Match with Electric Avoided Cost table' AS MessageType, 'TS='+e.TS +',EU='+ e.EU + ',CZ='+e.CZ AS Detail 
 --from InputMeasurevw e 
---where e.kWh1 <> 0 AND IOU_AC_Territory <> 'SCG' AND IOU_AC_Territory <> 'SDGE' --SDGE E3 has complex rule for TS, ignore validating SDGE
+--where e.kWh1 <> 0 AND PA <> 'SCG' AND PA <> 'SDGE' --SDGE E3 has complex rule for TS, ignore validating SDGE
 --and e.CET_ID NOT IN
 --(
 -- select e.CET_ID
 -- from InputMeasurevw e
--- left join AvoidedCostElecvw av on e.IOU_AC_Territory = av.IOU_AC_Territory and  e.TS = av.TS and e.EU = av.EU and e.CZ = av.CZ
+-- left join AvoidedCostElecvw av on e.PA = av.PA and  e.TS = av.TS and e.EU = av.EU and e.CZ = av.CZ
 -- and av.Qac = 1
 -- where av.CET_ID is not null
 --)
@@ -126,13 +128,13 @@ from  [dbo].[InputMeasurevw]
 insert into InputValidation 
 select @JobID AS JobID, 'Measure' AS [Table],'Warning High' AS ErrorType, CET_ID, 'No Match with Electric Avoided Cost table' AS MessageType, 'TS='+e.TS +',EU='+ e.EU + ',CZ='+e.CZ AS Detail 
 from InputMeasurevw e 
-where e.kWh1 <> 0 AND IOU_AC_Territory <> 'SCG' -- ignore validating SCG (gas)
+where e.kWh1 <> 0 AND PA <> 'SCG' -- ignore validating SCG (gas)
 and e.CET_ID NOT IN
 (
  select e.CET_ID
  from InputMeasurevw e
- left join AvoidedCostComboElec av on e.IOU_AC_Territory = av.IOU_AC_Territory and  e.TS = av.TS and e.EU = av.EU and e.CZ = av.CZ
- where e.IOU_AC_Territory <> 'SCG'
+ left join AvoidedCostComboElec av on e.PA = av.PA and  e.TS = av.TS and e.EU = av.EU and e.CZ = av.CZ
+ where e.PA <> 'SCG'
  AND av.[AVCVersion] = @AVCVersion
 )
 
@@ -140,10 +142,10 @@ and e.CET_ID NOT IN
 insert into InputValidation 
 select @JobID AS JobID, 'Measure' AS [Table],'Warning High' AS ErrorType, CET_ID, 'No Match with Gas Avoided Cost table' AS MessageType, 'Gas Sector='+e.GS +',Gas Profile='+ e.GP AS Detail 
 from InputMeasurevw e 
-where e.Thm1 <> 0 AND IOU_AC_Territory <> 'SCE' 
- and e.IOU_AC_Territory + e.GS + e.GP not in
+where e.Thm1 <> 0 AND PA <> 'SCE' 
+ and e.PA + e.GS + e.GP not in
  (
-	select m.IOU_AC_Territory + m.GS + m.GP from
+	select m.PA + m.GS + m.GP from
 	AvoidedCostGasvw m
 )
 

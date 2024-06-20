@@ -26,7 +26,7 @@ GROUP BY [Table], ErrorType, MessageType
 UNION
 SELECT [Table], ErrorType, COUNT(*) [Count],MessageType 
 FROM InputValidation
---where IOU_AC_Territory IN ('PGE','SCE','SCG','SDGE') 
+--where PA IN ('PGE','SCE','SCG','SDGE') 
 --and ([Table]<>'ProgramCost' and [Table]<>'ProgramDefinition')
 GROUP BY [Table], ErrorType, MessageType
 ORDER BY ErrorType, MessageType

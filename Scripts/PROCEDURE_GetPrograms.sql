@@ -18,7 +18,7 @@ AS
 BEGIN
 IF @GroupByClause IS NULL OR @GroupByClause = 'Programs'
 SELECT 0 AS ID,
-      [IOU_AC_Territory]
+      [PA]
       ,[PrgID]
       ,SUM([ElecBen]) ElecBen
       ,SUM([GasBen]) GasBen
@@ -31,9 +31,9 @@ SELECT 0 AS ID,
       ,CASE WHEN SUM(ISNULL(TRCCostNoAdmin,0)) > 0 THEN (SUM(ElecBen) + SUM(GasBen))/SUM(TRCCostNoAdmin) ELSE 0 END AS TRCRatioNoAdmin
       ,CASE WHEN SUM(ISNULL(PACCostNoAdmin,0)) > 0 THEN (SUM(ElecBen) + SUM(GasBen))/SUM(PACCostNoAdmin) ELSE 0 END AS PACRatioNoAdmin
   FROM [SavedCE]
-  WHERE (@PAString IS NULL OR IOU_AC_Territory IN (SELECT val FROM dbo.SplitString(@PAString, ','))) AND PrgID LIKE '%' + @SearchString + '%' AND JobID = @JobID
-  GROUP BY IOU_AC_Territory, PrgID 
-  ORDER BY IOU_AC_Territory, PrgID
+  WHERE (@PAString IS NULL OR PA IN (SELECT val FROM dbo.SplitString(@PAString, ','))) AND PrgID LIKE '%' + @SearchString + '%' AND JobID = @JobID
+  GROUP BY PA, PrgID 
+  ORDER BY PA, PrgID
 ELSE
 SELECT JOBID, jobs.JobDescription + ' (Job ID: ' + CONVERT(NVARCHAR(50), JOBID) + ')' AS JobDescription,
       SUM([ElecBen]) ElecBen
@@ -49,7 +49,7 @@ SELECT JOBID, jobs.JobDescription + ' (Job ID: ' + CONVERT(NVARCHAR(50), JOBID) 
   FROM [SavedCE] oce
 JOIN [dbo].[CETJobs] jobs
 ON oce.jobID = jobs.ID
-WHERE (@PAString IS NULL OR IOU_AC_Territory IN (SELECT val FROM dbo.SplitString(@PAString, ','))) AND jobs.JobDescription LIKE '%' + @SearchString + '%'
+WHERE (@PAString IS NULL OR PA IN (SELECT val FROM dbo.SplitString(@PAString, ','))) AND jobs.JobDescription LIKE '%' + @SearchString + '%'
 GROUP BY JOBID, jobs.JobDescription
 
 END

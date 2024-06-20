@@ -13,6 +13,8 @@ Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
 Change History   :  2016-06-30  Wayne Hauck added comment header
 				 :  2024-04-23  Robert Hansen renamed the "PA" field to
 				 :  			"IOU_AC_Territory"
+				 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+				 :              "PA"
 ################################################################################
 */
 USE [CET_2018_new_release]
@@ -48,7 +50,7 @@ IF @SourceType NOT IN ('CEDARS','CEDARSDatabase', 'CEDARSExcel')
 BEGIN  
 
 SELECT 
-      c.[IOU_AC_Territory]
+      c.[PA]
       ,c.[PrgID]
 	  ,Coalesce(Case When k.ProgramName = '' Then Null else k.ProgramName end ,p.[Program Name],'') ProgramName
 	  ,CASE WHEN Sum(IsNull(c.TRCCost,0)) > 0 THEN (Sum(c.ElecBen) + Sum(c.GasBen))/Sum(c.TRCCost) ELSE 0 END AS TRCRatio
@@ -165,8 +167,8 @@ SELECT
   LEFT JOIN SavedCost m on c.CET_ID = m.CET_ID
   LEFT JOIN Programs p on e.PrgID = p.[PrgID]
   WHERE c.JobID = @JobID and s.JobID = @JobID and  e.JobID = @JobID and k.JobID = @JobID and m.JobID = @JobID
-  Group By c.IOU_AC_Territory, c.PrgID, k.ProgramName,p.[Program Name] 
-  Order By c.IOU_AC_Territory, c.PrgID 
+  Group By c.PA, c.PrgID, k.ProgramName,p.[Program Name] 
+  Order By c.PA, c.PrgID 
 
 END
 
@@ -174,7 +176,7 @@ IF @SourceType = 'CEDARS' OR @SourceType = 'CEDARSDatabase' OR @SourceType = 'CE
 BEGIN
 PRINT 'SELECTING FROM CEDARS'
 SELECT 
-      c.[IOU_AC_Territory]
+      c.[PA]
       ,c.[PrgID]
 	  ,p.[Program Name] ProgramName
 	  ,CASE WHEN SUM(ISNULL(c.TRCCost,0)) > 0 THEN (SUM(c.ElecBen) + SUM(c.GasBen))/SUM(c.TRCCost) ELSE 0 END AS TRCRatio
@@ -291,8 +293,8 @@ SELECT
   LEFT JOIN SavedCost m ON c.CET_ID = m.CET_ID
   LEFT JOIN Programs p ON e.PrgID = p.[PrgID]
   WHERE c.JobID = @JobID AND s.JobID = @JobID AND  e.JobID = @JobID AND m.JobID = @JobID
-  GROUP BY c.IOU_AC_Territory, c.PrgID, p.[Program Name] 
-  ORDER BY c.IOU_AC_Territory, c.PrgID 
+  GROUP BY c.PA, c.PrgID, p.[Program Name] 
+  ORDER BY c.PA, c.PrgID 
 
 
 END

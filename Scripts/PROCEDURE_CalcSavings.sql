@@ -38,6 +38,8 @@ Change History   :  2016-06-30 Wayne Hauck added comment header
                  :              Lifecycle Electric Savings calculations.
                  :  2024-04-23  Robert Hansen renamed the "PA" field to
                  :              "IOU_AC_Territory"
+                 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+                 :              "PA"
 ###############################################################################
 */
 
@@ -71,7 +73,7 @@ PRINT 'Inserting savings...'
 
 CREATE TABLE [#OutputSavings](
     JobID INT NULL,
-    IOU_AC_Territory NVARCHAR(8) NULL,
+    PA NVARCHAR(8) NULL,
     PrgID NVARCHAR(255) NULL,
     CET_ID NVARCHAR(255) NOT NULL,
     AnnualGrosskWh FLOAT NULL,
@@ -110,7 +112,7 @@ BEGIN
     -- Insert into OutputSavings
     INSERT INTO #OutputSavings (
         JobID,
-        IOU_AC_Territory,
+        PA,
         PrgID,
         CET_ID,
         AnnualGrosskWh,
@@ -143,7 +145,7 @@ BEGIN
         FirstYearNetThm
     )
     SELECT @JobID
-        ,e.IOU_AC_Territory
+        ,e.PA
         ,e.PrgID
         ,e.CET_ID
 
@@ -471,10 +473,10 @@ BEGIN
         END * Qty * (NTGRThm+@MEBens) * IRThm * RRThm * Thm2
     ) AS FirstYearNetThm
     FROM InputMeasurevw e
-    GROUP BY e.IOU_AC_Territory
+    GROUP BY e.PA
         ,e.PrgID
         ,e.CET_ID
-    ORDER BY e.IOU_AC_Territory
+    ORDER BY e.PA
         ,e.PrgID
         ,e.CET_ID
 END
@@ -558,7 +560,7 @@ DELETE FROM SavedSavings WHERE JobID = @JobID
 INSERT INTO OutputSavings
 SELECT
     JobID
-    ,IOU_AC_Territory
+    ,PA
     ,PrgID
     ,CET_ID
     ,AnnualGrosskWh

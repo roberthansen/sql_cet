@@ -24,7 +24,7 @@ PRINT 'Source Type = ' + @SourceType
 CREATE TABLE [dbo].[#tmp](
 	[Row] [bigint] NULL,
 	[CEInputID] [nvarchar](255) NOT NULL,
-	[IOU_AC_Territory] [nvarchar](255) NULL,
+	[PA] [nvarchar](255) NULL,
 	[PrgID] [nvarchar](255) NULL,
 	[ClaimYearQuarter] [nvarchar](6) NULL,
 	[MeasDescription] [nvarchar](255) NULL,
@@ -96,7 +96,7 @@ BEGIN
 INSERT INTO #tmp
 SELECT ROW_NUMBER() OVER (ORDER BY ID ASC) AS Row
       ,CET_ID [CEInputID]
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,Qtr [ClaimYearQuarter]
       ,Measurename [MeasDescription]
@@ -170,7 +170,7 @@ PRINT 'SELECTING FROM CEDARS'
 INSERT INTO #tmp
 SELECT ROW_NUMBER() OVER (ORDER BY ID ASC) AS Row
       ,[CEInputID]
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,[ClaimYearQuarter]
       ,[MeasDescription]
@@ -240,7 +240,7 @@ END
 SELECT 
 	   [Row]
       ,[CEInputID]
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,[ClaimYearQuarter]
       ,[MeasDescription]

@@ -31,6 +31,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :              emissions calculations
                  :  2024-04-23  Robert Hansen renamed the "PA" field to
                  :              "IOU_AC_Territory"
+                 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+                 :              "PA"
 ################################################################################
 */
 
@@ -299,7 +301,7 @@ INSERT INTO @QuarterlyElecEmissions
             SELECT
                 CET_ID
                 ,JobID
-                ,IOU_AC_Territory
+                ,PA
                 ,TS
                 ,EU
                 --,EUAL
@@ -324,11 +326,11 @@ INSERT INTO @QuarterlyElecEmissions
         LEFT JOIN
             Settingsvw AS s
             ON
-                im.IOU_AC_Territory = s.IOU_AC_Territory
+                im.PA = s.PA
         --- Join all Emissions table quarters within each measure's EUL:
         LEFT JOIN (
                 SELECT
-                    IOU_AC_Territory
+                    PA
                     ,TS
                     ,EU
                     ,CZ
@@ -343,8 +345,8 @@ INSERT INTO @QuarterlyElecEmissions
             ON
                 s.Version = em1.Version
             AND
-                im.IOU_AC_Territory + im.TS + im.EU + RTRIM(im.CZ) =
-                em1.IOU_AC_Territory +
+                im.PA + im.TS + im.EU + RTRIM(im.CZ) =
+                em1.PA +
                 CASE
                     WHEN em1.EU LIKE 'Non_res:DEER%'
                     THEN 'Non_res'
@@ -375,7 +377,7 @@ INSERT INTO @QuarterlyElecEmissions
         --LEFT JOIN (
         --        --- Second join to emissions table on end use profile for additional load:
         --        SELECT
-        --            IOU_AC_Territory
+        --            PA
         --            ,TS
         --            ,EU
         --            ,CZ
@@ -390,8 +392,8 @@ INSERT INTO @QuarterlyElecEmissions
         --    ON
         --        s.Version = em2.Version
         --    AND
-        --        im.IOU_AC_Territory + im.TS + im.EUAL + RTRIM(im.CZ) =
-        --        em2.IOU_AC_Territory +
+        --        im.PA + im.TS + im.EUAL + RTRIM(im.CZ) =
+        --        em2.PA +
         --        CASE
         --            WHEN em2.EU LIKE 'Non_res:DEER%'
         --            THEN 'Non_res'
@@ -427,7 +429,7 @@ INSERT INTO @QuarterlyElecEmissions
 INSERT INTO OutputEmissions
     SELECT
         @JobID AS JobID,
-        im.IOU_AC_Territory AS IOU_AC_Territory,
+        im.PA AS PA,
         im.PrgID AS PrgID,
         im.CET_ID AS CET_ID,
         FirstYearElecEmissions.NetElecCO2 AS NetElecCO2,
@@ -670,7 +672,7 @@ INSERT INTO OutputEmissions
     LEFT JOIN
         Settingsvw AS s
     ON
-        im.IOU_AC_Territory = s.IOU_AC_Territory
+        im.PA = s.PA
     LEFT JOIN
         E3CombustionTypevw AS eg
     ON
@@ -708,7 +710,7 @@ INSERT INTO OutputEmissions
     ON
         im.CET_ID = LifecycleElecEmissions.CET_ID
     ORDER BY
-        im.IOU_AC_Territory
+        im.PA
         ,im.PrgID
         ,im.CET_ID
 GO

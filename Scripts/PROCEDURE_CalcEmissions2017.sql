@@ -10,7 +10,9 @@ Called by        :  n/a
 Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
 Change History   :  2016-06-30  Wayne Hauck added comment header
 				 :  2024-04-23  Robert Hansen renamed the "PA" field to
-				 :  "IOU_AC_Territory"
+				 :              "IOU_AC_Territory"
+				 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+				 :              "PA"
 
 #################################################################################################
 */
@@ -54,7 +56,7 @@ PRINT 'Inserting electrical and gas emissions...'
 
 CREATE TABLE [#OutputEmissions](
 	[JobID] [int] NULL,
-	[IOU_AC_Territory] [nvarchar](8) NULL,
+	[PA] [nvarchar](8) NULL,
 	[PrgID] [nvarchar](255) NULL,
 	[CET_ID] [nvarchar](255) NOT NULL,
 	[NetElecCO2] [float] NULL,
@@ -82,7 +84,7 @@ CREATE TABLE [#OutputEmissions](
 
 --***********  Insert Emissions into temp table for em.CZ <> 'NA' AND em.TS <> '0'  ***************
 SELECT DISTINCT  s.[Version]
-		,em.IOU_AC_Territory
+		,em.PA
 		, e.CET_ID
 		, e.PrgID
 		, e.TS
@@ -93,8 +95,8 @@ SELECT DISTINCT  s.[Version]
 		, IsNull(em.PM10,0) AS PM10
 INTO #tmp1
 FROM dbo.E3Settings s
-LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[IOU_AC_Territory] = em.[IOU_AC_Territory] 
-LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.IOU_AC_Territory + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.IOU_AC_Territory + e.TS + e.EU + RTrim(e.CZ)
+LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[PA] = em.[PA] 
+LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.PA + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.PA + e.TS + e.EU + RTrim(e.CZ)
 WHERE CET_ID Is Not Null
 AND em.CZ <> 'NA' AND em.TS <> '0'
 
@@ -103,7 +105,7 @@ BEGIN
 	-- Insert into CE Emissions
 	INSERT INTO dbo.#OutputEmissions (
 	JobID,
-	IOU_AC_Territory,
+	PA,
 	PrgID,
 	CET_ID,
 	NetElecCO2,
@@ -129,7 +131,7 @@ BEGIN
 		)
 		SELECT
 		@JobID
-		,e.IOU_AC_Territory
+		,e.PA
 		,e.PrgID
 		,e.CET_ID
 		,Sum(IsNull(CASE WHEN IsNull(rul,0) > 0 THEN
@@ -233,24 +235,24 @@ BEGIN
 			CASE WHEN e.eul > 0 THEN CASE WHEN e.eul < 1 THEN e.eul ELSE 1 END * e.Qty * em.PM10 * eul * IRkWh * RRkWh * e.kwh1 ELSE 0 END
 		END,0)) as GrossPM10Lifecycle
 	FROM InputMeasurevw e
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	LEFT JOIN #tmp1 em ON e.CET_ID = em.CET_ID
 	LEFT JOIN E3CombustionTypevw eg ON e.CET_ID = eg.CET_ID
 	WHERE e.CET_ID is not null
-	GROUP BY e.IOU_AC_Territory
+	GROUP BY e.PA
 		,e.PrgID
 		,e.CET_ID
-	ORDER BY e.IOU_AC_Territory
+	ORDER BY e.PA
 		,e.PrgID
 		,e.CET_ID
 
 END
 
---***********  Insert Emissions into temp table for em.CZ = 'NA' and em.TS <> '0' and ((e.IOU_AC_Territory = 'SDGE' AND e.CZ <> 'System') OR e.IOU_AC_Territory <> 'SDGE')   ***************
+--***********  Insert Emissions into temp table for em.CZ = 'NA' and em.TS <> '0' and ((e.PA = 'SDGE' AND e.CZ <> 'System') OR e.PA <> 'SDGE')   ***************
 DROP Table #tmp1
 
 SELECT DISTINCT s.Version
-		,em.IOU_AC_Territory
+		,em.PA
 		, e.CET_ID
 		, e.PrgID
 		, e.TS
@@ -261,16 +263,16 @@ SELECT DISTINCT s.Version
 		, IsNull(em.PM10,0) AS PM10
 INTO #tmp2
 FROM    dbo.Settingsvw AS s 
-LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[IOU_AC_Territory] = em.[IOU_AC_Territory] 
-LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.IOU_AC_Territory + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.IOU_AC_Territory + e.TS + e.EU + RTrim(e.CZ)
+LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[PA] = em.[PA] 
+LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.PA + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.PA + e.TS + e.EU + RTrim(e.CZ)
 WHERE CET_ID Is Not Null
-AND em.CZ = 'NA' and em.TS <> '0' and ((e.IOU_AC_Territory = 'SDGE' AND e.CZ <> 'System') OR e.IOU_AC_Territory <> 'SDGE')
+AND em.CZ = 'NA' and em.TS <> '0' and ((e.PA = 'SDGE' AND e.CZ <> 'System') OR e.PA <> 'SDGE')
 
 BEGIN
 	-- Insert into CE Emissions
 	INSERT INTO dbo.#OutputEmissions (
 	JobID,
-	IOU_AC_Territory,
+	PA,
 	PrgID,
 	CET_ID,
 	NetElecCO2,
@@ -296,7 +298,7 @@ BEGIN
 		)
 		SELECT
 		@JobID
-		,e.IOU_AC_Territory
+		,e.PA
 		,e.PrgID
 		,e.CET_ID
 		,Sum(IsNull(CASE WHEN IsNull(rul,0) > 0 THEN
@@ -368,14 +370,14 @@ BEGIN
 			CASE WHEN e.eul > 0 THEN CASE WHEN e.eul < 1 THEN e.eul ELSE 1 END * e.Qty * em.PM10 * eul * IRkWh * RRkWh * e.kwh1 ELSE 0 END
 		END,0)) as GrossPM10Lifecycle
 	FROM InputMeasurevw e
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	LEFT JOIN #tmp2 em ON e.CET_ID = em.CET_ID
 	LEFT JOIN E3CombustionTypevw eg ON e.CET_ID = eg.CET_ID
 	WHERE e.CET_ID is not null 
-	GROUP BY e.IOU_AC_Territory
+	GROUP BY e.PA
 		,e.PrgID
 		,e.CET_ID
-	ORDER BY e.IOU_AC_Territory
+	ORDER BY e.PA
 		,e.PrgID
 		,e.CET_ID
 
@@ -385,7 +387,7 @@ END
 DROP Table #tmp2
 
 SELECT DISTINCT s.Version
-		,em.IOU_AC_Territory
+		,em.PA
 		, e.CET_ID
 		, e.PrgID
 		, e.TS
@@ -396,8 +398,8 @@ SELECT DISTINCT s.Version
 		, IsNull(em.PM10,0) AS PM10
 INTO #tmp3
 FROM    dbo.E3Settings AS s 
-LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[IOU_AC_Territory] = em.[IOU_AC_Territory] 
-LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.IOU_AC_Territory + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.IOU_AC_Territory + e.TS + e.EU + RTrim(e.CZ)
+LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[PA] = em.[PA] 
+LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.PA + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.PA + e.TS + e.EU + RTrim(e.CZ)
 WHERE CET_ID Is Not Null
 AND em.CZ <> 'NA' AND em.TS = '0'
 
@@ -405,7 +407,7 @@ BEGIN
 	-- Insert into CE Emissions
 	INSERT INTO dbo.#OutputEmissions (
 	JobID,
-	IOU_AC_Territory,
+	PA,
 	PrgID,
 	CET_ID,
 	NetElecCO2,
@@ -431,7 +433,7 @@ BEGIN
 		)
 		SELECT
 		@JobID
-		,e.IOU_AC_Territory
+		,e.PA
 		,e.PrgID
 		,e.CET_ID
 		,Sum(IsNull(CASE WHEN IsNull(rul,0) > 0 THEN
@@ -503,14 +505,14 @@ BEGIN
 			CASE WHEN e.eul > 0 THEN CASE WHEN e.eul < 1 THEN e.eul ELSE 1 END * e.Qty * em.PM10 * eul * IRkWh * RRkWh * e.kwh1 ELSE 0 END
 		END,0)) as GrossPM10Lifecycle
 	FROM InputMeasurevw e
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	LEFT JOIN #tmp3 em ON e.CET_ID = em.CET_ID
 	LEFT JOIN E3CombustionTypevw eg ON e.CET_ID = eg.CET_ID
 	WHERE e.CET_ID is not null
-	GROUP BY e.IOU_AC_Territory
+	GROUP BY e.PA
 		,e.PrgID
 		,e.CET_ID
-	ORDER BY e.IOU_AC_Territory
+	ORDER BY e.PA
 		,e.PrgID
 		,e.CET_ID
 
@@ -521,7 +523,7 @@ END
 DROP Table #tmp3
 
 SELECT DISTINCT s.Version
-		,em.IOU_AC_Territory
+		,em.PA
 		, e.CET_ID
 		, e.PrgID
 		, e.TS
@@ -532,8 +534,8 @@ SELECT DISTINCT s.Version
 		, IsNull(em.PM10,0) AS PM10
 INTO #tmp4
 FROM    dbo.E3Settings AS s 
-LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[IOU_AC_Territory] = em.[IOU_AC_Territory] 
-LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.IOU_AC_Territory + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.IOU_AC_Territory + e.TS + e.EU + RTrim(e.CZ)
+LEFT JOIN  E3EmissionsSource2017Tvw em  ON s.[PA] = em.[PA] 
+LEFT JOIN dbo.InputMeasurevw AS e ON em.Qtr = e.Qtr and  em.PA + CASE WHEN em.EU like 'Non_res:DEER%' THEN 'Non_res' ELSE  CASE WHEN em.EU like 'res:DEER%' THEN 'Res' ELSE  em.TS END END + CASE WHEN em.EU like 'Non_res:DEER%' THEN Replace(em.EU,'Non_Res:','') ELSE  CASE WHEN em.EU like 'res:DEER%' THEN Replace(em.EU,'res:','') ELSE  em.EU END END + em.CZ = e.PA + e.TS + e.EU + RTrim(e.CZ)
 WHERE CET_ID Is Not Null
 AND em.CZ = 'NA' AND em.TS = '0'
 
@@ -543,7 +545,7 @@ BEGIN
 	-- Insert into CE Emissions
 	INSERT INTO dbo.#OutputEmissions (
 	JobID,
-	IOU_AC_Territory,
+	PA,
 	PrgID,
 	CET_ID,
 	NetElecCO2,
@@ -569,7 +571,7 @@ BEGIN
 		)
 		SELECT
 		@JobID
-		,e.IOU_AC_Territory
+		,e.PA
 		,e.PrgID
 		,e.CET_ID
 		,SUM(ISNULL(CASE WHEN ISNULL(rul,0) > 0 THEN
@@ -641,14 +643,14 @@ BEGIN
 			CASE WHEN e.eul > 0 THEN CASE WHEN e.eul < 1 THEN e.eul ELSE 1 END * e.Qty * em.PM10 * eul * IRkWh * RRkWh * e.kwh1 ELSE 0 END
 		END,0)) AS GrossPM10Lifecycle
 	FROM InputMeasurevw e
-	LEFT JOIN Settingsvw s ON e.IOU_AC_Territory = s.IOU_AC_Territory
+	LEFT JOIN Settingsvw s ON e.PA = s.PA
 	LEFT JOIN #tmp4 em ON e.CET_ID = em.CET_ID
 	LEFT JOIN E3CombustionTypevw eg ON e.CET_ID = eg.CET_ID
 	WHERE e.CET_ID IS NOT NULL
-	GROUP BY e.IOU_AC_Territory
+	GROUP BY e.PA
 		,e.PrgID
 		,e.CET_ID
-	ORDER BY e.IOU_AC_Territory
+	ORDER BY e.PA
 		,e.PrgID
 		,e.CET_ID
 
@@ -658,7 +660,7 @@ END
 INSERT INTO OutputEmissions
 SELECT 
       [JobID]
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,[CET_ID]
       ,SUM([NetElecCO2]) [NetElecCO2]
@@ -683,10 +685,10 @@ SELECT
 	  ,SUM([GrossPM10Lifecycle]) [GrossPM10Lifecycle]
   FROM [#OutputEmissions]
 	GROUP BY JobID
-		, IOU_AC_Territory
+		, PA
 		, PrgID
 		, CET_ID
-	ORDER BY IOU_AC_Territory
+	ORDER BY PA
 		, PrgID
 		, CET_ID
 

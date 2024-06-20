@@ -24,6 +24,8 @@ Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy, I
 Change History   :  2016-06-30  Wayne Hauck added comment header
                  :  2024-04-23  Robert Hansen renamed "PA" field to
 				 :  			"IOU_AC_Territory"
+                 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
+				 :				"PA"
 ################################################################################
 
 
@@ -116,7 +118,7 @@ IF @Qtrs > 0
 			
 		AS 
 				
-		SELECT [IOU_AC_Territory]
+		SELECT [PA]
 			  ,[Version]
 			  ,[TS]
 			  ,[EU]
@@ -130,7 +132,7 @@ IF @Qtrs > 0
 		  FROM [dbo].[' + @AvoidedCostElecTable + ']
 		  WHERE Qac > ' + Convert(nvarchar,@Qtrs-1) + '
 		UNION
-		SELECT [IOU_AC_Territory]
+		SELECT [PA]
 			  ,[Version]
 			  ,[TS]
 			  ,[EU]
@@ -161,7 +163,7 @@ IF @Qtrs > 0
 
 	    SELECT
 		   [ID]
-		  ,[IOU_AC_Territory]
+		  ,[PA]
 		  ,[Version]
 		  ,[FirstYear]
 		  ,[GS]
@@ -178,7 +180,7 @@ IF @Qtrs > 0
 	UNION
 	    SELECT
 		   [ID]
-		  ,[IOU_AC_Territory]
+		  ,[PA]
 		  ,[Version]
 		  ,[FirstYear]
 		  ,[GS]
@@ -208,7 +210,7 @@ ELSE
 '
 ALTER VIEW [dbo].[E3EmissionsSourcevw] AS 
 
-SELECT co.[IOU_AC_Territory]
+SELECT co.[PA]
       ,co.[Version]
       ,co.[TS]
       ,co.[EU]
@@ -223,7 +225,7 @@ SELECT co.[IOU_AC_Territory]
 	  ,em.NOx
 	  ,em.PM10
   FROM [dbo].' + @AvoidedCostElecTable + ' co
-  LEFT JOIN [dbo].E3Emissions em on co.IOU_AC_Territory = em.IOU_AC_Territory  and co.[Version] = em.[Version] and co.TS = em.TS and co.EU = em.EU and co.CZ = em.CZ
+  LEFT JOIN [dbo].E3Emissions em on co.PA = em.PA  and co.[Version] = em.[Version] and co.TS = em.TS and co.EU = em.EU and co.CZ = em.CZ
   AND co.Version = ''' + @AVCVersion + ''''
 
 	END

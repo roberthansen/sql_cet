@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SaveCost]    Script Date: 12/16/2019 2:04:45 PM ******/
+/****** Object:  StoredProcedure [dbo].[SaveCost]    Script Date: 2019-12-16 2:04:45 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -13,14 +13,16 @@ GO
 
 --#################################################################################################
 -- Name             :  SaveCost
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This stored procedure saves cost results by JobID into the SavedCost table.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright �      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header
+-- Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
+-- Change History   :  2016-06-30  Wayne Hauck added comment header
+--                  :  2024-04-23  Robert Hansen renamed "PA" to "IOU_AC_Territory"
+--                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
 --                     
 --#################################################################################################
 
@@ -53,7 +55,7 @@ ELSE
 SET @SQL2 = 
 'INSERT INTO ' + @CETDataDbName + 'SavedCost 
 SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
-      ,[IOU_AC_Territory]
+      ,[PA]
       ,[PrgID]
       ,[CET_ID]
       ,[IncentiveToOthers]

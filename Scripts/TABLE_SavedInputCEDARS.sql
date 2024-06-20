@@ -50,6 +50,7 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 :    + UnitkWhTotalWater2ndBaseline aka UESkWh_TotalWater_ER, kWhTotalWater2
                 :  2024-04-23  Robert Hansen renamed the "PA" field to
                 :  "IOU_AC_Territory"
+                :  2024-06-23  Robert Hansen reverted "IOU_AC_Territory" to "PA"
 */
 
 SET ANSI_NULLS ON
@@ -67,7 +68,7 @@ CREATE TABLE dbo.SavedInputCEDARS(
     ID INT IDENTITY(1,1) NOT NULL,
     JobID INT NOT NULL,
     CEInputID NVARCHAR(255) NOT NULL,
-    IOU_AC_Territory NVARCHAR(50) NULL,
+    PA NVARCHAR(50) NULL,
     PrgID NVARCHAR(255) NULL,
     ClaimYearQuarter NVARCHAR(6) NULL,
     MeasDescription NVARCHAR(255) NULL,
@@ -160,7 +161,7 @@ GO
 CREATE NONCLUSTERED INDEX IX_JobID ON dbo.SavedInputCEDARS(JobID) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_IOU_AC_Territory ON dbo.SavedInputCEDARS(IOU_AC_Territory) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX IX_PA ON dbo.SavedInputCEDARS(PA) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]
 GO
 
 CREATE NONCLUSTERED INDEX IX_PrgID ON dbo.SavedInputCEDARS(PrgID) WITH (STATISTICS_NORECOMPUTE=ON) ON [PRIMARY]

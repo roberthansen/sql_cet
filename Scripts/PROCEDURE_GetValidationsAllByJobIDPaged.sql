@@ -21,7 +21,7 @@ FROM
 (
 SELECT DISTINCT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
 	  ,c.JobID
-      ,c.[IOU_AC_Territory]
+      ,c.[PA]
       ,c.[PrgID]
       ,c.[CET_ID]
       ,k.TS [ElecTargetSector]
@@ -39,7 +39,7 @@ SELECT DISTINCT ROW_NUMBER() OVER (ORDER BY c.ID ASC) AS Row
   WHERE  v.JobID = @JobID
   ) tmp
 WHERE JobID = @JobID AND (Row >= @StartRow AND Row <= @StartRow + @NumRows)
-GROUP BY Row, JobID, IOU_AC_Territory, PrgID, CET_ID,[ElecTargetSector],[ElecEndUseShape],[ClimateZone],[GasSector],[GasSavingsProfile],[ClaimYearQuarter],[MessageType],[Message]
+GROUP BY Row, JobID, PA, PrgID, CET_ID,[ElecTargetSector],[ElecEndUseShape],[ClimateZone],[GasSector],[GasSavingsProfile],[ClaimYearQuarter],[MessageType],[Message]
 
  
 END

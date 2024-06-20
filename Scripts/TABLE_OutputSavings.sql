@@ -22,13 +22,14 @@ Change History  :  2016-06-30  Original version (reconstructed from
                 :              renamed "Direct" savings fields to "Site".
                 :  2024-04-23  Robert Hansen renamed the "PA" field to
                 :              "IOU_AC_Territory"
+                :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
 ################################################################################
 */
 CREATE TABLE [dbo].[OutputSavings]
 (
     ID INT NOT NULL IDENTITY(1, 1),
     JobID INT NULL,
-    IOU_AC_Territory NVARCHAR (8) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    PA NVARCHAR (8) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     PrgID NVARCHAR (255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     CET_ID NVARCHAR (255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
     AnnualGrosskWh FLOAT NULL,

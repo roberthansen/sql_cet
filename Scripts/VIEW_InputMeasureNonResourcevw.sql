@@ -38,6 +38,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :                  UESkWh_TotalWater_ER, kWhTotalWater2
 				 :  2024-04-23  Robert Hansen renamed "PA" field to
 				 :       		"IOU_AC_Territory"
+				 :  2024-06-23  Robert Hansen reverted "IOU_AC_Territory" to
+				 :				"PA"
 ################################################################################
 */
 
@@ -49,7 +51,7 @@ CREATE VIEW [dbo].[InputMeasureNonResourcevw]
 AS
 	SELECT JobID 
 		,m.PrgID CET_ID
-	    ,m.IOU_AC_Territory
+	    ,m.PA
 		,m.PrgID 
 		,''ProgramName
 		,'' MeasureName
@@ -135,6 +137,6 @@ AS
 		,'' DataField
 	  FROM MappingProgramvw AS m 
 	  WHERE m.PrgID NOT IN (SELECT PrgID FROM dbo.MappingMeasurevw)
-	  GROUP BY m.JobID, m.IOU_AC_Territory, m.PrgID
+	  GROUP BY m.JobID, m.PA, m.PrgID
 
 GO

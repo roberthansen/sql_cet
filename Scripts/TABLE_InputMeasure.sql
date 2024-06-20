@@ -50,6 +50,8 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 :   + UnitkWhTotalWater2ndBaseline aka UESkWh_TotalWater_ER, kWhTotalWater2
                 : 2024-04-23  Robert Hansen renamed "PA" field to
                 : "IOU_AC_Territory"
+                : 2024-04-23  Robert Hansen reverted "IOU_AC_Territory" to
+                : "PA"
 */
 SET ANSI_NULLS ON
 GO
@@ -65,7 +67,7 @@ CREATE TABLE "dbo"."InputMeasure"
 (
     JobID int NOT NULL,
     CET_ID nvarchar(255) NOT NULL,
-    IOU_AC_Territory nvarchar(24),
+    PA nvarchar(24),
     PrgID nvarchar(100),
     ProgramName nvarchar(255),
     MeasureName nvarchar(255),
@@ -150,7 +152,7 @@ CREATE TABLE "dbo"."InputMeasure"
     DataField nvarchar(255)
 )
 GO
-CREATE INDEX IOU_AC_Territory_IDX ON dbo.InputMeasure(IOU_AC_Territory)
+CREATE INDEX PA_IDX ON dbo.InputMeasure(PA)
 GO
 CREATE INDEX IDX_PrgID ON dbo.InputMeasure(PrgID)
 GO

@@ -14,7 +14,7 @@ AS
 BEGIN
 
 SELECT 
-       [IOU_AC_Territory]
+       [PA]
       ,[PrgID]
       ,[ProgramName]
       ,[Year] [ClaimYearQuarter]

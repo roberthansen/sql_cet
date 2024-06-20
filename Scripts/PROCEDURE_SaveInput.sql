@@ -8,7 +8,7 @@ Purpose          :  This stored procedure saves inputs by JobID into the
                  :  SavedInputs table.
 Usage            :  n/a
 Called by        :  n/a
-Copyright �      :  Developed by Pinnacle Consulting Group (aka Intech Energy,
+Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy,
                  :  Inc.) for California Public Utilities Commission (CPUC),
                  :  All Rights Reserved
 Change History   :  2016-06-30  Wayne Hauck added comment header
@@ -33,6 +33,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :  output table
                  :  2024-04-23  Robert Hansen renamed the "PA" field to
                  :  "IOU_AC_Territory"
+                 :  2024-04-23  Robert Hansen reverted "IOU_AC_Territory" to
+                 :  "PA"
 ################################################################################
 */
 
@@ -86,7 +88,7 @@ SET @SQL2 =
 (
 JobID
 ,CET_ID
-,IOU_AC_Territory
+,PA
 ,PrgID
 ,ProgramName
 ,MeasureName
@@ -166,7 +168,7 @@ JobID
 )
 SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
 ,CET_ID
-,IOU_AC_Territory
+,PA
 ,PrgID
 ,ProgramName
 ,MeasureName
