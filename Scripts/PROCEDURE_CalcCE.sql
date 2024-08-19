@@ -154,6 +154,9 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :                + Renamed the "PA" field to "IOU_AC_Territory"
                 :  2024-06-20  Robert Hansen reverted the "IOU_AC_Territory" to
                 :              "PA"
+                :  2024-08-19  Robert Hansen replaced gas infrastructure and
+                :              refrigerant benefits and costs with OtherBen and
+                :              OtherCost in Total System Benefit calculations
 ################################################################################
 */
 
@@ -1013,29 +1016,23 @@ AS
             ElecBen +
             GasBen +
             WaterEnergyBen +
-            Qty * (NTGRkWh + @MEBens) * (
-                ISNULL(UnitGasInfraBens,0) +
-                ISNULL(UnitRefrigBens,0)
-            )
+            OtherBen
         ) - (
             ElecSupplyCost +
             GasSupplyCost +
             WaterEnergyCost +
-            Qty * (NTGRkWh + @MECost) * ISNULL(UnitRefrigCosts,0)
+            OtherCost
         ) AS TotalSystemBenefit
         ,(
             ElecBenGross +
             GasBenGross +
             WaterEnergyBenGross +
-            Qty * (
-                ISNULL(UnitGasInfraBens,0) +
-                ISNULL(UnitRefrigBens,0)
-            )
+            OtherBenGross
         ) - (
             ElecSupplyCostGross +
             GasSupplyCostGross +
             WaterEnergyCostGross +
-            Qty * ISNULL(UnitRefrigCosts,0)
+            OtherCostGross
         ) AS TotalSystemBenefitGross
         ,(
             CASE
