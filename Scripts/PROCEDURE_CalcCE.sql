@@ -157,6 +157,7 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :  2024-08-19  Robert Hansen replaced gas infrastructure and
                 :              refrigerant benefits and costs with OtherBen and
                 :              OtherCost in Total System Benefit calculations
+                :  2024-08-20  J Scheuerell fixed errors in script
 ################################################################################
 */
 
@@ -269,7 +270,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ,SUM(
             CASE
                 WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
-                    OR (e.kWh1 * ace_1.Gen + e.kWh * ISNULL(ace_2.Gen,0)>0)
+                    OR (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)>0)
                 THEN
                     ISNULL(
                         e.Qty *
@@ -466,7 +467,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ,SUM(
             CASE
                 WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
-                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas)<0)
+                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)<0)
                 THEN
                     ISNULL(
                         -e.Qty *
@@ -536,7 +537,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ,SUM(
             CASE
                 WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
-                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)<0
+                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0))<0
                 THEN
                     ISNULL(
                         -e.Qty *
@@ -578,14 +579,14 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             (e.NTGRkWh + @MECost) *
             (
                 ISNULL( e.UnitRefrigCosts, 0 ) +
-                ISNULL( e.MiscCosts, 0 )
+                ISNULL( e.UnitMiscCosts, 0 )
             )
         ) AS OtherCost
         ,SUM(
             e.Qty *
             (
                 ISNULL( e.UnitRefrigCosts, 0 ) +
-                ISNULL( e.MiscCosts, 0 )
+                ISNULL( e.UnitMiscCosts, 0 )
             )
         ) AS OtherCostGross
     FROM InputMeasurevw AS e
