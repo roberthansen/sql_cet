@@ -114,8 +114,6 @@ Change History : 2016-06-30  Wayne Hauck added comment header
                : 2017-07-01  Modified to settings based on avoided cost version by Wayne Hauck with encryption
                : 2024-04-23  Robert Hansen renamed the "PA" to "IOU_AC_Territory"
                : 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
-               : 2025-02-11  Robert Hansen added discount rates for the Societal
-               :             Cost Test
 ################################################################################
 */
 SELECT
@@ -125,10 +123,6 @@ SELECT
 ,DiscountRateAnnual + 1 AS Raf
 ,DiscountRateQtr AS Rq
 ,DiscountRateQtr + 1 AS Rqf
-,SocietalCostDiscountRateAnnual AS Ra_SC
-,SocietalCostDiscountRateAnnual + 1 AS Raf_SC
-,SocietalCostDiscountRateQtr AS Rq_SC
-,SocietalCostDiscountRateQtr + 1 AS Rqf_SC
 ,BaseYear
 ,CO2Gas
 ,NOxGas

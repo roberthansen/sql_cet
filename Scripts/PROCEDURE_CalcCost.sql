@@ -18,6 +18,8 @@ Change History   :  2016-12-30  Wayne Hauck added measure inflation
 				 :  			"IOU_AC_Territory"
 				 :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
 				 :              "PA"
+				 :  2025-02-11  Robert Hansen added fields for the Societal
+				 :              Cost Test
 ################################################################################
 */
 
@@ -56,61 +58,73 @@ CREATE TABLE [#OutputCost](
 	[PA] [nvarchar](8) NULL,
 	[PrgID] [nvarchar](255) NULL,
 	[CET_ID] [nvarchar](255) NOT NULL,
-	IncentiveToOthers [float] NULL,
-	DILaborCost [float] NULL,
-	DIMaterialCost [float] NULL,
-	EndUserRebate [float] NULL,
-	RebatesandIncents [float] NULL,
-	GrossMeasureCost [float] NULL,
-	ExcessIncentives [float] NULL,
-	MarkEffectPlusExcessInc [float] NULL,
-	GrossParticipantCost [float] NULL,
-	GrossParticipantCostAdjusted [float] NULL,
-	NetParticipantCost [float] NULL,
-	NetParticipantCostAdjusted [float] NULL,
-	RebatesandIncentsPV [float] NULL,
-	GrossMeasCostPV [float] NULL,
-	ExcessIncentivesPV [float] NULL,
-	MarkEffectPlusExcessIncPV [float] NULL,
-	GrossParticipantCostPV [float] NULL,
-	GrossParticipantCostAdjustedPV [float] NULL,
-	NetParticipantCostPV [float] NULL,
-	NetParticipantCostAdjustedPV [float] NULL,
-	WtdAdminCostsOverheadAndGA [float] NULL, 
-	WtdAdminCostsOther [float] NULL, 
-	WtdMarketingOutreach [float] NULL, 
-	WtdDIActivity [float] NULL, 
-	WtdDIInstallation [float] NULL, 
-	WtdDIHardwareAndMaterials [float] NULL,
-	WtdDIRebateAndInspection [float] NULL, 
-	WtdEMV [float] NULL, 
-	WtdUserInputIncentive [float] NULL, 
-	WtdCostsRecoveredFromOtherSources [float] NULL, 
-	ProgramCosts [float] NULL, 
-	TotalExpenditures [float] NULL, 
-	DiscountedSavingsGrosskWh [float] NULL,
-	DiscountedSavingsNetkWh [float] NULL,
-	DiscountedSavingsGrossThm [float] NULL,
-	DiscountedSavingsNetThm [float] NULL,
-	TRCLifecycleNetBen [float] NULL,
-	PACLifecycleNetBen [float] NULL,
-	LevBenElec [float] NULL,
-	LevBenGas [float] NULL,
-	LevTRCCost [float] NULL,
-	LevTRCCostNoAdmin [float] NULL,
-	LevPACCost [float] NULL,
-	LevPACCostNoAdmin [float] NULL,
-	LevRIMCost [float] NULL,
-	LevNetBenTRCElec [float] NULL,
-	LevNetBenTRCElecNoAdmin [float] NULL,
-	LevNetBenPACElec [float] NULL,
-	LevNetBenPACElecNoAdmin [float] NULL,
-	LevNetBenTRCGas [float] NULL,
-	LevNetBenTRCGasNoAdmin [float] NULL,
-	LevNetBenPACGas [float] NULL,
-	LevNetBenPACGasNoAdmin [float] NULL,
-	LevNetBenRIMElec [float] NULL,
-	LevNetBenRIMGas [float] NULL
+	[IncentiveToOthers] [float] NULL,
+	[DILaborCost] [float] NULL,
+	[DIMaterialCost] [float] NULL,
+	[EndUserRebate] [float] NULL,
+	[RebatesandIncents] [float] NULL,
+	[GrossMeasureCost] [float] NULL,
+	[ExcessIncentives] [float] NULL,
+	[MarkEffectPlusExcessInc] [float] NULL,
+	[GrossParticipantCost] [float] NULL,
+	[GrossParticipantCostAdjusted] [float] NULL,
+	[NetParticipantCost] [float] NULL,
+	[NetParticipantCostAdjusted] [float] NULL,
+	[RebatesandIncentsPV] [float] NULL,
+	[GrossMeasCostPV] [float] NULL,
+	[ExcessIncentivesPV] [float] NULL,
+	[MarkEffectPlusExcessIncPV] [float] NULL,
+	[GrossParticipantCostPV] [float] NULL,
+	[GrossParticipantCostAdjustedPV] [float] NULL,
+	[NetParticipantCostPV] [float] NULL,
+	[NetParticipantCostAdjustedPV] [float] NULL,
+	[WtdAdminCostsOverheadAndGA] [float] NULL, 
+	[WtdAdminCostsOther] [float] NULL, 
+	[WtdMarketingOutreach] [float] NULL, 
+	[WtdDIActivity] [float] NULL, 
+	[WtdDIInstallation] [float] NULL, 
+	[WtdDIHardwareAndMaterials] [float] NULL,
+	[WtdDIRebateAndInspection] [float] NULL, 
+	[WtdEMV] [float] NULL, 
+	[WtdUserInputIncentive] [float] NULL, 
+	[WtdCostsRecoveredFromOtherSources] [float] NULL, 
+	[ProgramCosts] [float] NULL, 
+	[TotalExpenditures] [float] NULL, 
+	[DiscountedSavingsGrosskWh] [float] NULL,
+	[DiscountedSavingsNetkWh] [float] NULL,
+	[DiscountedSavingsGrossThm] [float] NULL,
+	[DiscountedSavingsNetThm] [float] NULL,
+	[SCBLifecycleNetBen] [float] NULL,
+	[SCHLifecycleNetBen] [float] NULL,
+	[TRCLifecycleNetBen] [float] NULL,
+	[PACLifecycleNetBen] [float] NULL,
+	[LevBenElec_SB] [float] NULL,
+	[LevBenElec_SH] [float] NULL,
+	[LevBenElec] [float] NULL,
+	[LevBenGas] [float] NULL,
+	[LevSCBCost] [float] NULL,
+	[LevSCBCostNoAdmin] [float] NULL,
+	[LevSCHCost] [float] NULL,
+	[LevSCHCostNoAdmin] [float] NULL,
+	[LevTRCCost] [float] NULL,
+	[LevTRCCostNoAdmin] [float] NULL,
+	[LevPACCost] [float] NULL,
+	[LevPACCostNoAdmin] [float] NULL,
+	[LevRIMCost] [float] NULL,
+	[LevNetBenSCBElec] [float] NULL,
+	[LevNetBenSCBElecNoAdmin] [float] NULL,
+	[LevNetBenSCHElec] [float] NULL,
+	[LevNetBenSCHElecNoAdmin] [float] NULL,
+	[LevNetBenTRCElec] [float] NULL,
+	[LevNetBenTRCElecNoAdmin] [float] NULL,
+	[LevNetBenPACElec] [float] NULL,
+	[LevNetBenPACElecNoAdmin] [float] NULL,
+	[LevNetBenTRCGas] [float] NULL,
+	[LevNetBenTRCGasNoAdmin] [float] NULL,
+	[LevNetBenPACGas] [float] NULL,
+	[LevNetBenPACGasNoAdmin] [float] NULL,
+	[LevNetBenRIMElec] [float] NULL,
+	[LevNetBenRIMGas] [float] NULL
 ) ON [PRIMARY]
 
 
@@ -401,15 +415,27 @@ AS
 )
 , LevelizedCost (
 	CET_ID
+	  ,SCBLifecycleNetBen
+	  ,SCHLifecycleNetBen
 	  ,TRCLifecycleNetBen
 	  ,PACLifecycleNetBen
+	  ,LevBenElec_SB
+	  ,LevBenElec_SH
 	  ,LevBenElec
 	  ,LevBenGas
+	  ,LevSCBCost
+	  ,LevSCBCostNoAdmin
+	  ,LevSCHCost
+	  ,LevSCHCostNoAdmin
 	  ,LevTRCCost
 	  ,LevTRCCostNoAdmin
 	  ,LevPACCost
 	  ,LevPACCostNoAdmin
 	  ,LevRIMCost
+	  ,LevNetBenSCBElec
+	  ,LevNetBenSCBElecNoAdmin
+	  ,LevNetBenSCHElec
+	  ,LevNetBenSCHElecNoAdmin
 	  ,LevNetBenTRCElec
 	  ,LevNetBenTRCElecNoAdmin
 	  ,LevNetBenPACElec
@@ -424,15 +450,27 @@ AS
 AS
 (
 	SELECT e.CET_ID
+	  ,IsNull((ce.ElecBen_SB + ce.GasBen),0) - IsNull(ce.SCBCost,0)  SCBLifecycleNetBen
+	  ,IsNull((ce.ElecBen_SH + ce.GasBen),0) - IsNull(ce.SCHCost,0)  SCHLifecycleNetBen
 	  ,IsNull((ce.ElecBen + ce.GasBen),0) - IsNull(ce.TRCCost,0)  TRCLifecycleNetBen
 	  ,IsNull((ce.ElecBen + ce.GasBen),0) - IsNull(ce.PACCost,0)  PACLifecycleNetBen
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN IsNull(ce.ElecBen,0)/ds.DiscountedSavingsNetkWh ELSE 0 END LevBenElec
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN IsNull(ce.ElecBen_SB,0)/ds.DiscountedSavingsNetkWh ELSE 0 END LevBenElec_SB
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN IsNull(ce.ElecBen_SH,0)/ds.DiscountedSavingsNetkWh ELSE 0 END LevBenElec_SH
 	  ,CASE WHEN ds.DiscountedSavingsNetThm <> 0 THEN IsNull(ce.GasBen,0)/ds.DiscountedSavingsNetThm ELSE 0 END LevBenGas
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.SCBCost,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END LevSCBCost
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.SCBCostNoAdmin,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END  LevSCBCostNoAdmin
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.SCHCost,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END LevSCHCost
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.SCHCostNoAdmin,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END  LevSCHCostNoAdmin
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.TRCCost,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END LevTRCCost
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.TRCCostNoAdmin,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END  LevTRCCostNoAdmin
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.PACCost,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END  LevPACCost
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.PACCostNoAdmin,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END  LevPACCostNoAdmin
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.RIMCost,0) * ce.WeightedElecAlloc)/ds.DiscountedSavingsNetkWh ELSE 0 END  LevRIMCost
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.ElecBen_SB,0) - (IsNull(ce.SCBCost,0) * ce.WeightedElecAlloc))/ds.DiscountedSavingsNetkWh ELSE 0 END  LevNetBenSCBElec
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.ElecBen_SB,0) - (IsNull(ce.SCBCostNoAdmin,0) * ce.WeightedElecAlloc))/ds.DiscountedSavingsNetkWh ELSE 0 END  LevNetBenSCBElecNoAdmin
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.ElecBen_SH,0) - (IsNull(ce.SCHCost,0) * ce.WeightedElecAlloc))/ds.DiscountedSavingsNetkWh ELSE 0 END  LevNetBenSCHElec
+	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.ElecBen_SH,0) - (IsNull(ce.SCHCostNoAdmin,0) * ce.WeightedElecAlloc))/ds.DiscountedSavingsNetkWh ELSE 0 END  LevNetBenSCHElecNoAdmin
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.ElecBen,0) - (IsNull(ce.TRCCost,0) * ce.WeightedElecAlloc))/ds.DiscountedSavingsNetkWh ELSE 0 END  LevNetBenTRCElec
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.ElecBen,0) - (IsNull(ce.TRCCostNoAdmin,0) * ce.WeightedElecAlloc))/ds.DiscountedSavingsNetkWh ELSE 0 END  LevNetBenTRCElecNoAdmin
 	  ,CASE WHEN ds.DiscountedSavingsNetkWh <> 0 THEN (IsNull(ce.ElecBen,0) - (IsNull(ce.PACCost,0) * ce.WeightedElecAlloc))/ds.DiscountedSavingsNetkWh ELSE 0 END  LevNetBenPACElec
@@ -509,15 +547,27 @@ AS
       ,IsNull(ds.[DiscountedSavingsNetThm],0) [DiscountedSavingsNetThm]
 
 		-- **************** LEVELIZED COST  ********************
+		,lv.SCBLifecycleNetBen 
+		,lv.SCHLifecycleNetBen 
 		,lv.TRCLifecycleNetBen 
 	    ,lv.PACLifecycleNetBen
 	    ,lv.LevBenElec
+	    ,lv.LevBenElec_SB
+	    ,lv.LevBenElec_SH
 	    ,lv.LevBenGas
+	    ,lv.LevSCBCost
+	    ,lv.LevSCBCostNoAdmin
+	    ,lv.LevSCHCost
+	    ,lv.LevSCHCostNoAdmin
 	    ,lv.LevTRCCost
 	    ,lv.LevTRCCostNoAdmin
 	    ,lv.LevPACCost
 	    ,lv.LevPACCostNoAdmin
 	    ,lv.LevRIMCost
+	    ,lv.LevNetBenSCBElec
+	    ,lv.LevNetBenSCBElecNoAdmin
+	    ,lv.LevNetBenSCHElec
+	    ,lv.LevNetBenSCHElecNoAdmin
 	    ,lv.LevNetBenTRCElec
 	    ,lv.LevNetBenTRCElecNoAdmin
 	    ,lv.LevNetBenPACElec
@@ -542,7 +592,11 @@ AS
 		,e.PrgID
 		,e.CET_ID
 		,ce.ElecBen
+		,ce.ElecBen_SB
+		,ce.ElecBen_SH
 		,ce.GasBen
+		,ce.SCBCost
+		,ce.SCHCost
 		,ce.TRCCost
 		,ce.PACCost
 		,ce.WeightedBenefits
@@ -555,55 +609,67 @@ AS
 		,pc.NetParticipantCostAdjustedPV
 		,ri.RebatesAndIncents
 		,ps.SumCostsNPV
-      ,ri.[IncentiveToOthers]
-      ,ri.DILaborCost
-      ,ri.DIMaterialCost
-      ,ri.[EndUserRebate]
-      ,ri.[GrossMeasCost]
-	  ,ri.[RebatesandIncentsPV]
-      ,pc.[ExcessIncentives]
-	  ,pc.MarkEffectPlusExcessInc
-	  ,pc.GrossParticipantCost
-	  ,pc.GrossParticipantCostAdjusted
-	  ,pc.NetParticipantCost
-	  ,pc.NetParticipantCostAdjusted
-      ,ri.[GrossMeasCostPV]
-      ,pc.[ExcessIncentivesPV]
-	  ,pc.MarkEffectPlusExcessIncPV
-	  ,pc.GrossParticipantCostPV
-	  ,pc.GrossParticipantCostAdjustedPV
-	  ,pc.NetParticipantCostPV
-	  ,pc.NetParticipantCostAdjustedPV	  
-      ,pd.[AdminCostsOverheadAndGA]
-      ,pd.AdminCostsOther
-      ,pd.MarketingOutreach
-      ,pd.DIActivity
-      ,pd.DIInstallation
-      ,pd.DIHardwareAndMaterials
-      ,pd.DIRebateAndInspection
-      ,pd.EMV
-      ,pd.UserInputIncentive
-      ,pd.CostsRecoveredFromOtherSources
-	  ,pd.SumProgramCosts
-	  ,lv.TRCLifecycleNetBen
-	  ,lv.PACLifecycleNetBen
-	  ,lv.LevBenElec
-	  ,lv.LevBenGas
-	  ,lv.LevTRCCost
-	  ,lv.LevTRCCostNoAdmin
-	  ,lv.LevPACCost
-	  ,lv.LevPACCostNoAdmin
-	  ,lv.LevRIMCost
-	  ,lv.LevNetBenTRCElec
-	  ,lv.LevNetBenTRCElecNoAdmin
-	  ,lv.LevNetBenPACElec
-	  ,lv.LevNetBenPACElecNoAdmin
-	  ,lv.LevNetBenTRCGas
-	  ,lv.LevNetBenTRCGasNoAdmin
-	  ,lv.LevNetBenPACGas
-	  ,lv.LevNetBenPACGasNoAdmin	  
-	  ,lv.LevNetBenRIMElec
-	  ,lv.LevNetBenRIMGas
+		,ri.[IncentiveToOthers]
+		,ri.DILaborCost
+		,ri.DIMaterialCost
+		,ri.[EndUserRebate]
+		,ri.[GrossMeasCost]
+		,ri.[RebatesandIncentsPV]
+		,pc.[ExcessIncentives]
+		,pc.MarkEffectPlusExcessInc
+		,pc.GrossParticipantCost
+		,pc.GrossParticipantCostAdjusted
+		,pc.NetParticipantCost
+		,pc.NetParticipantCostAdjusted
+		,ri.[GrossMeasCostPV]
+		,pc.[ExcessIncentivesPV]
+		,pc.MarkEffectPlusExcessIncPV
+		,pc.GrossParticipantCostPV
+		,pc.GrossParticipantCostAdjustedPV
+		,pc.NetParticipantCostPV
+		,pc.NetParticipantCostAdjustedPV	  
+		,pd.[AdminCostsOverheadAndGA]
+		,pd.AdminCostsOther
+		,pd.MarketingOutreach
+		,pd.DIActivity
+		,pd.DIInstallation
+		,pd.DIHardwareAndMaterials
+		,pd.DIRebateAndInspection
+		,pd.EMV
+		,pd.UserInputIncentive
+		,pd.CostsRecoveredFromOtherSources
+		,pd.SumProgramCosts
+		,lv.SCBLifecycleNetBen
+		,lv.SCHLifecycleNetBen
+		,lv.TRCLifecycleNetBen
+		,lv.PACLifecycleNetBen
+		,lv.LevBenElec
+		,lv.LevBenElec_SB
+		,lv.LevBenElec_SH
+		,lv.LevBenGas
+		,lv.LevSCBCost
+		,lv.LevSCBCostNoAdmin
+		,lv.LevSCHCost
+		,lv.LevSCHCostNoAdmin
+		,lv.LevTRCCost
+		,lv.LevTRCCostNoAdmin
+		,lv.LevPACCost
+		,lv.LevPACCostNoAdmin
+		,lv.LevRIMCost
+		,lv.LevNetBenSCBElec
+		,lv.LevNetBenSCBElecNoAdmin
+		,lv.LevNetBenSCHElec
+		,lv.LevNetBenSCHElecNoAdmin
+		,lv.LevNetBenTRCElec
+		,lv.LevNetBenTRCElecNoAdmin
+		,lv.LevNetBenPACElec
+		,lv.LevNetBenPACElecNoAdmin
+		,lv.LevNetBenTRCGas
+		,lv.LevNetBenTRCGasNoAdmin
+		,lv.LevNetBenPACGas
+		,lv.LevNetBenPACGasNoAdmin	  
+		,lv.LevNetBenRIMElec
+		,lv.LevNetBenRIMGas
 	  ORDER BY e.PA
 	  ,e.PrgID
  	  ,e.CET_ID
@@ -658,15 +724,27 @@ SELECT
       ,[DiscountedSavingsNetkWh]
       ,[DiscountedSavingsGrossThm]
       ,[DiscountedSavingsNetThm]
+	  ,ISNULL(SCBLifecycleNetBen,0)
+	  ,ISNULL(SCHLifecycleNetBen,0)
 	  ,ISNULL(TRCLifecycleNetBen,0)
 	  ,ISNULL(PACLifecycleNetBen,0)
 	  ,ISNULL(LevBenElec,0)
+	  ,ISNULL(LevBenElec_SB,0)
+	  ,ISNULL(LevBenElec_SH,0)
 	  ,ISNULL(LevBenGas,0)
+	  ,ISNULL(LevSCBCost,0)
+	  ,ISNULL(LevSCBCostNoAdmin,0)
+	  ,ISNULL(LevSCHCost,0)
+	  ,ISNULL(LevSCHCostNoAdmin,0)
 	  ,ISNULL(LevTRCCost,0)
 	  ,ISNULL(LevTRCCostNoAdmin,0)
 	  ,ISNULL(LevPACCost,0)
 	  ,ISNULL(LevPACCostNoAdmin,0)
 	  ,ISNULL(LevRIMCost,0)
+	  ,ISNULL(LevNetBenSCBElec,0)
+	  ,ISNULL(LevNetBenSCBElecNoAdmin,0)
+	  ,ISNULL(LevNetBenSCHElec,0)
+	  ,ISNULL(LevNetBenSCHElecNoAdmin,0)
 	  ,ISNULL(LevNetBenTRCElec,0)
 	  ,ISNULL(LevNetBenTRCElecNoAdmin,0)
 	  ,ISNULL(LevNetBenPACElec,0)

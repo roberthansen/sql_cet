@@ -905,12 +905,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,ISNULL( Gen / POWER( Rqf, Qac ), 0 ) AS Gen
                 /*,ISNULL( Gen_AL / POWER( Rqf, Qac ), 0 ) AS Gen_AL*/
-                ,ISNULL( Gen_SB / POWER( Rqf_SC, Qac), 0 ) AS Gen_SB
-                ,ISNULL( Gen_SH / POWER( Rqf_SC, Qac), 0 ) AS Gen_SH
+                ,ISNULL( Gen_SB / POWER( Rqf, Qac), 0 ) AS Gen_SB
+                ,ISNULL( Gen_SH / POWER( Rqf, Qac), 0 ) AS Gen_SH
                 ,ISNULL( TD / POWER( Rqf, Qac ), 0 ) AS TD
                 /*,ISNULL( TD_AL / POWER( Rqf, Qac ), 0 ) AS TD_AL*/
-                ,ISNULL( TD_SB / POWER( Rqf_SC, Qac), 0 ) AS TD_SB
-                ,ISNULL( TD_SH / POWER( Rqf_SC, Qac), 0 ) AS TD_SH
+                ,ISNULL( TD_SB / POWER( Rqf, Qac), 0 ) AS TD_SB
+                ,ISNULL( TD_SH / POWER( Rqf, Qac), 0 ) AS TD_SH
                 ,ISNULL( DS1, 0 ) AS DS
                 /*,ISNULL( DS1_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -921,12 +921,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,( eulq1 - FLOOR( eulq1 ) ) * (Gen / POWER( Rqf, Qac ) ) AS Gen
                 /*,( eulq1 - FLOOR( eulq1 ) ) * (Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
-                ,( eulq1 - FLOOR( eulq1 ) ) * (Gen_SB / POWER( Rqf_SC, Qac ) ) AS Gen_SB
-                ,( eulq1 - FLOOR( eulq1 ) ) * (Gen_SH / POWER( Rqf_SC, Qac ) ) AS Gen_SH
+                ,( eulq1 - FLOOR( eulq1 ) ) * (Gen_SB / POWER( Rqf, Qac ) ) AS Gen_SB
+                ,( eulq1 - FLOOR( eulq1 ) ) * (Gen_SH / POWER( Rqf, Qac ) ) AS Gen_SH
                 ,( eulq1 - FLOOR( eulq1 ) ) * (TD / POWER( Rqf, Qac ) ) AS TD
                 /*,( eulq1 - FLOOR( eulq1 ) ) * (TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
-                ,( eulq1 - FLOOR( eulq1 ) ) * (TD_SB / POWER( Rqf_SC, Qac ) ) AS TD_SB
-                ,( eulq1 - FLOOR( eulq1 ) ) * (TD_SH / POWER( Rqf_SC, Qac ) ) AS TD_SH
+                ,( eulq1 - FLOOR( eulq1 ) ) * (TD_SB / POWER( Rqf, Qac ) ) AS TD_SB
+                ,( eulq1 - FLOOR( eulq1 ) ) * (TD_SH / POWER( Rqf, Qac ) ) AS TD_SH
                 ,DS1 AS DS
                 /*,DS1_AL AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -955,12 +955,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
                 /*,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
-                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_SB / POWER( Rqf_SC, Qac ) ) AS Gen_SH
-                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_SH / POWER( Rqf_SC, Qac ) ) AS Gen_SH
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_SB / POWER( Rqf, Qac ) ) AS Gen_SH
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_SH / POWER( Rqf, Qac ) ) AS Gen_SH
                 ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
                 /*,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
-                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_SB / POWER( Rqf_SC, Qac ) ) AS TD_SB
-                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_SH / POWER( Rqf_SC, Qac ) ) AS TD_SH
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_SB / POWER( Rqf, Qac ) ) AS TD_SB
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_SH / POWER( Rqf, Qac ) ) AS TD_SH
                 ,ISNULL( DS2, 0 ) AS DS
                 /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -971,12 +971,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,ISNULL( Gen / POWER( Rqf, Qac ), 0 ) AS Gen
                 /*,ISNULL( Gen_AL / POWER( Rqf, Qac ), 0 ) AS Gen_AL*/
-                ,ISNULL( Gen_SB / POWER( Rqf_SC, Qac ), 0 ) AS Gen_SB
-                ,ISNULL( Gen_SH / POWER( Rqf_SC, Qac ), 0 ) AS Gen_SH
+                ,ISNULL( Gen_SB / POWER( Rqf, Qac ), 0 ) AS Gen_SB
+                ,ISNULL( Gen_SH / POWER( Rqf, Qac ), 0 ) AS Gen_SH
                 ,ISNULL( TD / POWER( Rqf, Qac ), 0 ) AS TD
                 /*,ISNULL( TD_AL / POWER( Rqf, Qac ), 0 ) AS TD_AL*/
-                ,ISNULL( TD_SB / POWER( Rqf_SC, Qac ), 0 ) AS TD_SB
-                ,ISNULL( TD_SH / POWER( Rqf_SC, Qac ), 0 ) AS TD_SH
+                ,ISNULL( TD_SB / POWER( Rqf, Qac ), 0 ) AS TD_SB
+                ,ISNULL( TD_SH / POWER( Rqf, Qac ), 0 ) AS TD_SH
                 ,ISNULL( DS2, 0 ) AS DS
                 /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -987,11 +987,11 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
                 /*,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
-                ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_SB / POWER( Rqf_SC, Qac ) ) AS Gen_SB
-                ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_SH / POWER( Rqf_SC, Qac ) ) AS Gen_SH
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_SB / POWER( Rqf, Qac ) ) AS Gen_SB
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_SH / POWER( Rqf, Qac ) ) AS Gen_SH
                 ,( eulq2 - FLOOR( eulq2 ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
-                ,( eulq2 - FLOOR( eulq2 ) ) * ( TD_SB / POWER( Rqf_SC, Qac ) ) AS TD_SB
-                ,( eulq2 - FLOOR( eulq2 ) ) * ( TD_SH / POWER( Rqf_SC, Qac ) ) AS TD_SH
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( TD_SB / POWER( Rqf, Qac ) ) AS TD_SB
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( TD_SH / POWER( Rqf, Qac ) ) AS TD_SH
                 /*,( eulq2 - FLOOR( eulq2 ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
                 ,ISNULL( DS2, 0 ) AS DS
                 /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/

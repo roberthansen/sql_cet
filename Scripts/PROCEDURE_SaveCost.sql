@@ -23,6 +23,8 @@ GO
 -- Change History   :  2016-06-30  Wayne Hauck added comment header
 --                  :  2024-04-23  Robert Hansen renamed "PA" to "IOU_AC_Territory"
 --                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
+--                  :  2025-02-11  Robert Hansen added fields for the Societal
+--                  :              Cost Test
 --                     
 --#################################################################################################
 
@@ -65,7 +67,7 @@ SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
       ,[RebatesandIncents]
       ,[GrossMeasureCost]
       ,[ExcessIncentives]
-	  ,[MarkEffectPlusExcessInc]
+	    ,[MarkEffectPlusExcessInc]
       ,[GrossParticipantCost]
       ,[GrossParticipantCostAdjusted]
       ,[NetParticipantCost]
@@ -73,7 +75,7 @@ SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
       ,[RebatesandIncentsPV]
       ,[GrossMeasCostPV]
       ,[ExcessIncentivesPV]
-	  ,[MarkEffectPlusExcessIncPV]
+	    ,[MarkEffectPlusExcessIncPV]
       ,[GrossParticipantCostPV]
       ,[GrossParticipantCostAdjustedPV]
       ,[NetParticipantCostPV]
@@ -94,25 +96,35 @@ SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
       ,[DiscountedSavingsNetkWh]
       ,[DiscountedSavingsGrossThm]
       ,[DiscountedSavingsNetThm]
-	  ,TRCLifecycleNetBen
-	  ,PACLifecycleNetBen
-	  ,LevBenElec
-	  ,LevBenGas
-	  ,LevTRCCost
-	  ,LevTRCCostNoAdmin
-	  ,LevPACCost
-	  ,LevPACCostNoAdmin
-	  ,LevRIMCost
-	  ,LevNetBenTRCElec
-	  ,LevNetBenTRCElecNoAdmin
-	  ,LevNetBenPACElec
-	  ,LevNetBenPACElecNoAdmin
-	  ,LevNetBenTRCGas
-	  ,LevNetBenTRCGasNoAdmin
-	  ,LevNetBenPACGas
-	  ,LevNetBenPACGasNoAdmin
-	  ,LevNetBenRIMElec
-	  ,LevNetBenRIMGas
+      ,[SCBLifecycleNetBen]
+      ,[SCHLifecycleNetBen]
+      ,[TRCLifecycleNetBen]
+      ,[PACLifecycleNetBen]
+      ,[LevBenElec_SB]
+      ,[LevBenElec_SH]
+      ,[LevBenElec]
+      ,[LevBenGas]
+      ,[LevSCBCost]
+      ,[LevSCHCost]
+      ,[LevTRCCost]
+      ,[LevTRCCostNoAdmin]
+      ,[LevPACCost]
+      ,[LevPACCostNoAdmin]
+      ,[LevRIMCost]
+      ,[LevNetBenSCBElec]
+      ,[LevNetBenSCBElecNoAdmin]
+      ,[LevNetBenSCHElec]
+      ,[LevNetBenSCHElecNoAdmin]
+      ,[LevNetBenTRCElec]
+      ,[LevNetBenTRCElecNoAdmin]
+      ,[LevNetBenPACElec]
+      ,[LevNetBenPACElecNoAdmin]
+      ,[LevNetBenTRCGas]
+      ,[LevNetBenTRCGasNoAdmin]
+      ,[LevNetBenPACGas]
+      ,[LevNetBenPACGasNoAdmin]
+      ,[LevNetBenRIMElec]
+      ,[LevNetBenRIMGas]
   FROM [dbo].[OutputCost]'
 
 EXEC  sp_executesql @SQL2

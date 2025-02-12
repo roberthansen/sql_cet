@@ -22,6 +22,27 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
 				 :	"IOU_AC_Territory"
 				 :	2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
 				 :	"PA"
+				 :	2025-02-11  Robert Hansen added new fields for the Societal
+				 :  Cost Test:
+				 :    + ElecBen_SB
+				 :    + ElecBen_SH
+				 :    + ElecBenGross_SB
+				 :    + ElecBenGross_SH
+				 :    + ElecSupplyCost_SB
+				 :    + ElecSupplyCost_SH
+				 :    + ElecSupplyCostGross_SB
+				 :    + ElecSupplyCostGross_SH
+				 :    + SCBCost
+				 :    + SCHCost
+				 :    + SCBCostGross
+				 :    + SCBCostNoAdmin
+				 :    + SCHCost
+				 :    + SCHCostGross
+				 :    + SCHCostNoAdmin
+				 :    + SCBRatio
+				 :    + SCHRatio
+				 :    + SCBRatioNoAdmin
+				 :    + SCHRatioNoAdmin
 
 ################################################################################
 */
@@ -68,26 +89,44 @@ SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
 	,[PrgID]
 	,[CET_ID]
 	,[ElecBen]
+	,[ElecBen_SB]
+	,[ElecBen_SH]
 	,[GasBen]
 	,[ElecBenGross]
+	,[ElecBenGross_SB]
+	,[ElecBenGross_SH]
 	,[GasBenGross]
 	,[OtherBen]
 	,[OtherBenGross]
 	,[ElecSupplyCost]
+	,[ElecSupplyCost_SB]
+	,[ElecSupplyCost_SH]
 	,[GasSupplyCost]
 	,[ElecSupplyCostGross]
+	,[ElecSupplyCostGross_SB]
+	,[ElecSupplyCostGross_SH]
 	,[GasSupplyCostGross]
 	,[OtherCost]
 	,[OtherCostGross]
 	,[TotalSystemBenefit]
 	,[TotalSystemBenefitGross]
+	,[SCBCost]
+	,[SCHCost]
 	,[TRCCost]
 	,[PACCost]
+	,[SCBCostGross]
+	,[SCBCostNoAdmin]
+	,[SCHCostGross]
+	,[SCHCostNoAdmin]
 	,[TRCCostGross]
 	,[TRCCostNoAdmin]
 	,[PACCostNoAdmin]
+	,[SCBRatio]
+	,[SCHRatio]
 	,[TRCRatio]
 	,[PACRatio]
+	,[SCBRatioNoAdmin]
+	,[SCHRatioNoAdmin]
 	,[TRCRatioNoAdmin]
 	,[PACRatioNoAdmin]
 	,[BillReducElec]
