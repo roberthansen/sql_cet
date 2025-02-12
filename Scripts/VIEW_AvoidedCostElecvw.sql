@@ -35,6 +35,9 @@ Change History : 2016-06-30 Wayne Hauck added comment header
                : 2024-04-23  Robert Hansen renamed the "PA" field to
                : "IOU_AC_Territory"
                : 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
+               : 2025-02-11  Robert Hansen added new fields for the Societal
+               : Cost Test: Ra_SC, Rq_SC, Rqf_SC, Gen_SB, Gen_SH, TD_SB, and
+               : TD_SH
 ###############################################################################
 */
 
@@ -48,6 +51,9 @@ SELECT
     ,s.Ra
     ,s.Rq
     ,s.Rqf
+    ,s.Ra_SC
+    ,s.Rq_SC
+    ,s.Rqf_SC
     ,im.PA
     ,im.TS
     ,im.EU
@@ -56,7 +62,11 @@ SELECT
     ,ac1.Qtr
     ,ac1.Qac
     ,ac1.Gen
+    ,ac1.Gen_SB
+    ,ac1.Gen_SH
     ,ac1.TD
+    ,ac1.TD_SB
+    ,ac1.TD_SH
     --,ac2.Gen AS Gen_AL
     --,ac2.TD AS TD_AL
     ,im.CET_ID

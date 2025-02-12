@@ -157,6 +157,30 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :  2024-08-19  Robert Hansen replaced gas infrastructure and
                 :              refrigerant benefits and costs with OtherBen and
                 :              OtherCost in Total System Benefit calculations
+                :  2025-02-11  Robert Hansen implemented the Societal Cost Test:
+                :                + Loaded new fields from the Avoided Cost
+                :                  Electric table: Gen_SB, Gen_SH, TD_SB, TD_SH
+                :                + Created new calculations and outputs for
+                :                  Societal Costs and Benefits: 
+                :                    - ElecBen_SB
+                :                    - ElecBen_SH
+                :                    - ElecBenGross_SB
+                :                    - ElecBenGross_SH
+                :                    - ElecSupplyCost_SB
+                :                    - ElecSupplyCost_SH
+                :                    - ElecSupplyCostGross_SB
+                :                    - ElecSupplyCostGross_SH
+                :                    - SCBCost
+                :                    - SCHCost
+                :                    - SCBCostGross
+                :                    - SCBCostNoAdmin
+                :                    - SCHCost
+                :                    - SCHCostGross
+                :                    - SCHCostNoAdmin
+                :                    - SCBRatio
+                :                    - SCHRatio
+                :                    - SCBRatioNoAdmin
+                :                    - SCHRatioNoAdmin
 ################################################################################
 */
 
@@ -198,16 +222,24 @@ CREATE TABLE [#OutputCE](
     PrgID NVARCHAR(255) NULL,
     CET_ID NVARCHAR(255) NULL,
     ElecBen FLOAT NULL,
+    ElecBen_SB FLOAT NULL,
+    ElecBen_SH FLOAT NULL,
     GasBen FLOAT NULL,
     WaterEnergyBen FLOAT NULL,
     ElecBenGross FLOAT NULL,
+    ElecBenGross_SB FLOAT NULL,
+    ElecBenGross_SH FLOAT NULL,
     GasBenGross FLOAT NULL,
     WaterEnergyBenGross FLOAT NULL,
     OtherBen FLOAT NULL,
     OtherBenGross FLOAT NULL,
     ElecSupplyCost FLOAT NULL,
+    ElecSupplyCost_SB FLOAT NULL,
+    ElecSupplyCost_SH FLOAT NULL,
     GasSupplyCost FLOAT NULL,
     ElecSupplyCostGross FLOAT NULL,
+    ElecSupplyCostGross_SB FLOAT NULL,
+    ElecSupplyCostGross_SH FLOAT NULL,
     GasSupplyCostGross FLOAT NULL,
     /* New Water Energy Fields */
     WaterEnergyCost FLOAT NULL,
@@ -217,13 +249,23 @@ CREATE TABLE [#OutputCE](
     OtherCostGross FLOAT NULL,
     TotalSystemBenefit FLOAT NULL,
     TotalSystemBenefitGross FLOAT NULL,
+    SCBCost FLOAT NULL,
+    SCHCost FLOAT NULL,
     TRCCost FLOAT NULL,
     PACCost FLOAT NULL,
+    SCBCostGross FLOAT NULL,
+    SCBCostNoAdmin FLOAT NULL,
+    SCHCostGross FLOAT NULL,
+    SCHCostNoAdmin FLOAT NULL,
     TRCCostGross FLOAT NULL,
     TRCCostNoAdmin FLOAT NULL,
     PACCostNoAdmin FLOAT NULL,
+    SCBRatio FLOAT NULL,
+    SCHRatio FLOAT NULL,
     TRCRatio FLOAT NULL,
     PACRatio FLOAT NULL,
+    SCBRatioNoAdmin FLOAT NULL,
+    SCHRatioNoAdmin FLOAT NULL,
     TRCRatioNoAdmin FLOAT NULL,
     PACRatioNoAdmin FLOAT NULL,
     BillReducElec FLOAT NULL,
@@ -243,17 +285,25 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ,PrgID
         ,CET_ID
         ,ElecBen
+        ,ElecBen_SB
+        ,ElecBen_SH
         ,GasBen
         ,WaterEnergyBen
         ,ElecBenGross
+        ,ElecBenGross_SB
+        ,ElecBenGross_SH
         ,GasBenGross
         ,WaterEnergyBenGross
         ,OtherBen
         ,OtherBenGross
         ,ElecSupplyCost
+        ,ElecSupplyCost_SB
+        ,ElecSupplyCost_SH
         ,GasSupplyCost
         ,WaterEnergyCost
         ,ElecSupplyCostGross
+        ,ElecSupplyCostGross_SB
+        ,ElecSupplyCostGross_SH
         ,GasSupplyCostGross
         ,WaterEnergyCostGross
         ,OtherCost
@@ -296,6 +346,67 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS ElecBen
 --------------------------------------------------------------------------------
+--- ElecBen_SB (Net Lifecycle, Societal Cost Base) -----------------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.kWh1 * ace_1.Gen_SB + e.kWh * ISNULL(ace_2.Gen_SB,0)>0)
+                THEN
+                    ISNULL(
+                        e.Qty *
+                        (
+                            ( e.NTGRkWh + @MEBens ) *
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SB +
+                                e.kWh2 * ace_2.Gen_SB
+                            )
+                            +
+                            ( e.NTGRkW + @MEBens ) *
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS * ace_1.TD_SB +
+                                ISNULL( ace_2.DS, 0 ) * ISNULL( ace_2.TD_SB, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecBen_SB
+--------------------------------------------------------------------------------
+--- ElecBen_SH (Net Lifecycle, Societal Cost High) -----------------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.kWh1 * ace_1.Gen_SH + e.kWh * ISNULL(ace_2.Gen_SH,0)>0)
+                THEN
+                    ISNULL(
+                        e.Qty *
+                        (
+                            ( e.NTGRkWh + @MEBens ) *
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SH +
+                                e.kWh2 * ace_2.Gen_SH
+                            )
+                            +
+                            ( e.NTGRkW + @MEBens ) *
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS_SB * ace_1.TD_SH +
+                                ISNULL( ace_2.DS, 0 ) * ISNULL( ace_2.TD_SH, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecBen_SH
 --- GasBen (Net Lifecycle) -----------------------------------------------------
 --- NetPVBenTOT[G]: Present value of net gas benefits
         ,SUM(
@@ -369,6 +480,65 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS ElecBenGross
 --------------------------------------------------------------------------------
+--- ElecBenGross_SB (Lifecycle, Societal Cost Base) ----------------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.kWh1 * ace_1.Gen_SB + e.kWh2 * ISNULL(ace_2.Gen_SB,0)>0)
+                THEN
+                    ISNULL(
+                        e.Qty *
+                        (
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SB +
+                                e.kWh2 * ISNULL( ace_2.Gen_SB, 0 )
+                            )
+                            +
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS * ace_1.TD_SB
+                                +
+                                ISNULL( ace_2.DS, 0 ) * ISNULL( ace_2.TD_SB, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecBenGross_SB
+--------------------------------------------------------------------------------
+--- ElecBenGross_SH (Lifecycle, Societal Cost High) ----------------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType NOT LIKE '%FuelSub' AND e.MeasImpactType NOT LIKE '%NC-AE')
+                    OR (e.kWh1 * ace_1.Gen_SH + e.kWh2 * ISNULL(ace_2.Gen_SH,0)>0)
+                THEN
+                    ISNULL(
+                        e.Qty *
+                        (
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SH +
+                                e.kWh2 * ISNULL( ace_2.Gen_SH, 0 )
+                            )
+                            +
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS * ace_1.TD_SH
+                                +
+                                ISNULL( ace_2.DS, 0 ) * ISNULL( ace_2.TD_SH, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecBenGross_SH
 --- GasBenGross (Lifecycle) ----------------------------------------------------
 --- PVBen[G]: Present value gross gas benefits
         ,SUM(
@@ -430,7 +600,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ) AS OtherBenGross
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
---- ADDED THE FOLLOWING 4 FIELDS TO PROVIDE NEGATIVE BENEFITS TO TRC AND PAC ---
+--- ADDED THE FOLLOWING 8 FIELDS TO PROVIDE NEGATIVE BENEFITS TO TRC AND PAC ---
 --- ElecSupplyCost (Net Lifecycle) ---------------------------------------------
         ,SUM(
             CASE
@@ -461,6 +631,68 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 ELSE 0
             END
         ) AS ElecSupplyCost
+--------------------------------------------------------------------------------
+--- ElecSupplyCost_SB (Net Lifecycle, Societal Cost Base) ----------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.kWh1 * ace_1.Gen_SB + e.kWh2 * ISNULL(ace_2.Gen_SB,0)<0)
+                THEN
+                    ISNULL(
+                        -e.Qty *
+                        (
+                            ( e.NTGRkWh + @MEBens ) *
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SB +
+                                e.kWh2 * ISNULL( ace_2.Gen_SB, 0 )
+                            )
+                            +
+                            ( e.NTGRkw + @MEBens ) *
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS * ace_1.TD_SB +
+                                ace_2.DS * ISNULL( ace_2.TD_SB, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecSupplyCost_SB
+--------------------------------------------------------------------------------
+--- ElecSupplyCost_SH (Net Lifecycle, Societal Cost High) ----------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.kWh1 * ace_1.Gen_SH + e.kWh2 * ISNULL(ace_2.Gen_SH,0)<0)
+                THEN
+                    ISNULL(
+                        -e.Qty *
+                        (
+                            ( e.NTGRkWh + @MEBens ) *
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SH +
+                                e.kWh2 * ISNULL( ace_2.Gen_SH, 0 )
+                            )
+                            +
+                            ( e.NTGRkw + @MEBens ) *
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS * ace_1.TD_SH +
+                                ace_2.DS * ISNULL( ace_2.TD_SH, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecSupplyCost_SH
 --------------------------------------------------------------------------------
 --- GasSupplyCost (Net Lifecycle) ----------------------------------------------
         ,SUM(
@@ -532,6 +764,64 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS ElecSupplyCostGross
 --------------------------------------------------------------------------------
+--- ElecSupplyCostGross_SB (Lifecycle, Societal Cost Base) ---------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.kWh1 * ace_1.Gen_SB + e.kWh2 * ISNULL(ace_2.Gen_SB,0)<0)
+                THEN
+                    ISNULL(
+                        -e.Qty *
+                        (
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SB +
+                                e.kWh2 * ISNULL( ace_2.Gen_SB, 0 )
+                            )
+                            +
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS * ace_1.TD_SB +
+                                ace_2.DS * ISNULL( ace_2.TD_SB, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecSupplyCostGross_SB
+--------------------------------------------------------------------------------
+--- ElecSupplyCostGross_SH (Lifecycle, Societal Cost High) ---------------------
+        ,SUM(
+            CASE
+                WHEN (e.MeasImpactType LIKE '%FuelSub' OR e.MeasImpactType LIKE '%NC-AE')
+                    AND (e.kWh1 * ace_1.Gen_SH + e.kWh2 * ISNULL(ace_2.Gen_SH,0)<0)
+                THEN
+                    ISNULL(
+                        -e.Qty *
+                        (
+                            e.IRkWh *
+                            e.RRkWh *
+                            (
+                                e.kWh1 * ace_1.Gen_SH +
+                                e.kWh2 * ISNULL( ace_2.Gen_SH, 0 )
+                            )
+                            +
+                            e.IRkW *
+                            e.RRkW *
+                            (
+                                ace_1.DS * ace_1.TD_SH +
+                                ace_2.DS * ISNULL( ace_2.TD_SH, 0 )
+                            )
+                        ),
+                        0
+                    )
+                ELSE 0
+            END
+        ) AS ElecSupplyCostGross_SH
+--------------------------------------------------------------------------------
 --- GasSupplyCostGross (Lifecycle) ---------------------------------------------
         ,SUM(
             CASE
@@ -601,8 +891,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             CET_ID
             ,SUM(Gen) AS Gen
             /*,SUM(Gen_AL) AS Gen_AL*/
+            ,SUM(Gen_SB) AS Gen_SB
+            ,SUM(Gen_SH) AS Gen_SH
             ,SUM(TD) AS TD
             /*,SUM(TD_AL) AS TD_AL*/
+            ,SUM(TD_SB) AS TD_SB
+            ,SUM(TD_SH) AS TD_SH
             ,DS
             /*,DS_AL*/
         FROM (
@@ -611,8 +905,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,ISNULL( Gen / POWER( Rqf, Qac ), 0 ) AS Gen
                 /*,ISNULL( Gen_AL / POWER( Rqf, Qac ), 0 ) AS Gen_AL*/
+                ,ISNULL( Gen_SB / POWER( Rqf_SC, Qac), 0 ) AS Gen_SB
+                ,ISNULL( Gen_SH / POWER( Rqf_SC, Qac), 0 ) AS Gen_SH
                 ,ISNULL( TD / POWER( Rqf, Qac ), 0 ) AS TD
                 /*,ISNULL( TD_AL / POWER( Rqf, Qac ), 0 ) AS TD_AL*/
+                ,ISNULL( TD_SB / POWER( Rqf_SC, Qac), 0 ) AS TD_SB
+                ,ISNULL( TD_SH / POWER( Rqf_SC, Qac), 0 ) AS TD_SH
                 ,ISNULL( DS1, 0 ) AS DS
                 /*,ISNULL( DS1_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -623,8 +921,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,( eulq1 - FLOOR( eulq1 ) ) * (Gen / POWER( Rqf, Qac ) ) AS Gen
                 /*,( eulq1 - FLOOR( eulq1 ) ) * (Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
+                ,( eulq1 - FLOOR( eulq1 ) ) * (Gen_SB / POWER( Rqf_SC, Qac ) ) AS Gen_SB
+                ,( eulq1 - FLOOR( eulq1 ) ) * (Gen_SH / POWER( Rqf_SC, Qac ) ) AS Gen_SH
                 ,( eulq1 - FLOOR( eulq1 ) ) * (TD / POWER( Rqf, Qac ) ) AS TD
                 /*,( eulq1 - FLOOR( eulq1 ) ) * (TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
+                ,( eulq1 - FLOOR( eulq1 ) ) * (TD_SB / POWER( Rqf_SC, Qac ) ) AS TD_SB
+                ,( eulq1 - FLOOR( eulq1 ) ) * (TD_SH / POWER( Rqf_SC, Qac ) ) AS TD_SH
                 ,DS1 AS DS
                 /*,DS1_AL AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -639,8 +941,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             CET_ID
             ,SUM(Gen) AS Gen
             /*,SUM(Gen_AL) AS Gen_AL*/
+            ,SUM(Gen_SB) AS Gen_SB
+            ,SUM(Gen_SH) AS Gen_SH
             ,SUM(TD) AS TD
             /*,SUM(TD_AL) AS TD_AL*/
+            ,SUM(TD_SB) AS TD_SB
+            ,SUM(TD_SH) AS TD_SH
             ,DS
             /*,DS_AL*/
         FROM (
@@ -649,8 +955,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
                 /*,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_SB / POWER( Rqf_SC, Qac ) ) AS Gen_SH
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( Gen_SH / POWER( Rqf_SC, Qac ) ) AS Gen_SH
                 ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
                 /*,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_SB / POWER( Rqf_SC, Qac ) ) AS TD_SB
+                ,( 1 - ( eulq1 - FLOOR( eulq1 ) ) ) * ( TD_SH / POWER( Rqf_SC, Qac ) ) AS TD_SH
                 ,ISNULL( DS2, 0 ) AS DS
                 /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -661,8 +971,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,ISNULL( Gen / POWER( Rqf, Qac ), 0 ) AS Gen
                 /*,ISNULL( Gen_AL / POWER( Rqf, Qac ), 0 ) AS Gen_AL*/
+                ,ISNULL( Gen_SB / POWER( Rqf_SC, Qac ), 0 ) AS Gen_SB
+                ,ISNULL( Gen_SH / POWER( Rqf_SC, Qac ), 0 ) AS Gen_SH
                 ,ISNULL( TD / POWER( Rqf, Qac ), 0 ) AS TD
                 /*,ISNULL( TD_AL / POWER( Rqf, Qac ), 0 ) AS TD_AL*/
+                ,ISNULL( TD_SB / POWER( Rqf_SC, Qac ), 0 ) AS TD_SB
+                ,ISNULL( TD_SH / POWER( Rqf_SC, Qac ), 0 ) AS TD_SH
                 ,ISNULL( DS2, 0 ) AS DS
                 /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
             FROM AvoidedCostElecvw
@@ -673,7 +987,11 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 CET_ID
                 ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen / POWER( Rqf, Qac ) ) AS Gen
                 /*,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_AL / POWER( Rqf, Qac ) ) AS Gen_AL*/
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_SB / POWER( Rqf_SC, Qac ) ) AS Gen_SB
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( Gen_SH / POWER( Rqf_SC, Qac ) ) AS Gen_SH
                 ,( eulq2 - FLOOR( eulq2 ) ) * ( TD / POWER( Rqf, Qac ) ) AS TD
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( TD_SB / POWER( Rqf_SC, Qac ) ) AS TD_SB
+                ,( eulq2 - FLOOR( eulq2 ) ) * ( TD_SH / POWER( Rqf_SC, Qac ) ) AS TD_SH
                 /*,( eulq2 - FLOOR( eulq2 ) ) * ( TD_AL / POWER( Rqf, Qac ) ) AS TD_AL*/
                 ,ISNULL( DS2, 0 ) AS DS
                 /*,ISNULL( DS2_AL, 0 ) AS DS_AL*/
@@ -759,20 +1077,28 @@ BEGIN
     -- correct for null elec and gas benefits and EDFilledUnitGrMeaCost
     UPDATE #OutputCE SET
         ElecBen = ISNULL( ElecBen, 0 ),
+        ElecBen_SB = ISNULL( ElecBen_SB, 0 ),
+        ElecBen_SH = ISNULL( ElecBen_SH, 0 ),
         GasBen = ISNULL( GasBen, 0 ),
         WaterEnergyBen = ISNULL( WaterEnergyBen, 0 ),
         ElecBenGross = ISNULL( ElecBenGross, 0 ),
+        ElecBenGross_SB = ISNULL( ElecBenGross_SB, 0 ),
+        ElecBenGross_SH = ISNULL( ElecBenGross_SH, 0 ),
         GasBenGross = ISNULL( GasBenGross, 0 ),
         WaterEnergyBenGross = ISNULL( WaterEnergyBenGross, 0 ),
         ElecSupplyCost = ISNULL( ElecSupplyCost, 0 ),
+        ElecSupplyCost_SB = ISNULL( ElecSupplyCost_SB, 0 ),
+        ElecSupplyCost_SH = ISNULL( ElecSupplyCost_SH, 0 ),
         GasSupplyCost = ISNULL( GasSupplyCost, 0 ),
         WaterEnergyCost = ISNULL( WaterEnergyCost, 0 ),
         ElecSupplyCostGross = ISNULL( ElecSupplyCostGross, 0 ),
+        ElecSupplyCostGross_SB = ISNULL( ElecSupplyCostGross_SB, 0 ),
+        ElecSupplyCostGross_SH = ISNULL( ElecSupplyCostGross_SH, 0 ),
         GasSupplyCostGross = ISNULL( GasSupplyCost, 0 ),
         WaterEnergyCostGross = ISNULL( WaterEnergyCostGross, 0 )
 END
 
-PRINT 'Updating TRC and PAC costs...'
+PRINT 'Updating SC, TRC, and PAC costs...'
 PRINT 'Inserting electrical and gas benefits... Message 5'
 
 BEGIN
@@ -877,9 +1203,13 @@ ProgramCosts (
 , BenefitsSum (
     PrgID
     ,SumElecBen
+    ,SumElecBen_SB
+    ,SumElecBen_SH
     ,SumGasBen
     ,SumOtherBen
     ,SumElecBenGross
+    ,SumElecBenGross_SB
+    ,SumElecBenGross_SH
     ,SumGasBenGross
     ,SumOtherBenGross
     ,SumWaterEnergyBen
@@ -889,9 +1219,13 @@ AS (
     SELECT
         PrgID
         ,SUM( CASE WHEN ISNULL(ElecBen,0) > 0 THEN ElecBen ELSE 0 END ) AS SumElecBen
+        ,SUM( CASE WHEN ISNULL(ElecBen_SB,0) > 0 THEN ElecBen_SB ELSE 0 END ) AS SumElecBen_SB
+        ,SUM( CASE WHEN ISNULL(ElecBen_SH,0) > 0 THEN ElecBen_SH ELSE 0 END ) AS SumElecBen_SH
         ,SUM( CASE WHEN ISNULL(GasBen,0) > 0 THEN GasBen ELSE 0 END ) AS SumGasBen
         ,SUM( CASE WHEN ISNULL(OtherBen,0) > 0 THEN OtherBen ELSE 0 END ) AS SumOtherBen
         ,SUM( CASE WHEN ISNULL(ElecBenGross,0) > 0 THEN ElecBenGross ELSE 0 END ) AS SumElecBenGross
+        ,SUM( CASE WHEN ISNULL(ElecBenGross_SB,0) > 0 THEN ElecBenGross_SB ELSE 0 END ) AS SumElecBenGross_SB
+        ,SUM( CASE WHEN ISNULL(ElecBenGross_SH,0) > 0 THEN ElecBenGross_SH ELSE 0 END ) AS SumElecBenGross_SH
         ,SUM( CASE WHEN ISNULL(GasBenGross,0) > 0 THEN GasBenGross ELSE 0 END ) AS SumGasBenGross
         ,SUM( CASE WHEN ISNULL(OtherBenGross,0) > 0 THEN OtherBenGross ELSE 0 END ) AS SumOtherBenGross
         ,SUM( CASE WHEN ISNULL(WaterEnergyBen,0) > 0 THEN WaterEnergyBen ELSE 0 END ) AS SumWaterEnergyBen
@@ -902,16 +1236,22 @@ AS (
 , BenPos (
     CET_ID
     ,ElecBenPos
+    ,ElecBenPos_SB
+    ,ElecBenPos_SH
     ,GasBenPos
     ,WaterEnergyBenPos
     ,OtherBenPos
     ,SumBenPos
+    ,SumBenPos_SB
+    ,SumBenPos_SH
 )
 AS
 (
     SELECT
         CET_ID
         ,CASE WHEN ISNULL(ElecBen,0) > 0 THEN ElecBen ELSE 0 END AS ElecBenPos
+        ,CASE WHEN ISNULL(ElecBen_SB,0) > 0 THEN ElecBen_SB ELSE 0 END AS ElecBenPos_SB
+        ,CASE WHEN ISNULL(ElecBen_SB,0) > 0 THEN ElecBen_SH ELSE 0 END AS ElecBenPos_SH
         ,CASE WHEN ISNULL(GasBen,0) > 0 THEN GasBen ELSE 0 END AS GasBenPos
         ,CASE WHEN ISNULL(WaterEnergyBen,0) > 0 THEN WaterEnergyBen ELSE 0 END AS WaterEnergyBenPos
         ,CASE WHEN ISNULL(OtherBen,0) > 0 THEN OtherBen ELSE 0 END AS OtherBenPos
@@ -920,6 +1260,16 @@ AS
           CASE WHEN ISNULL(WaterEnergyBen,0) > 0 THEN WaterEnergyBen ELSE 0 END +
           CASE WHEN ISNULL(OtherBen,0) > 0 THEN OtherBen ELSE 0 END
           AS SumBenPos
+        ,CASE WHEN ISNULL(ElecBen_SB,0) > 0 THEN ElecBen_SB ELSE 0 END +
+          CASE WHEN ISNULL(GasBen,0) > 0 THEN GasBen ELSE 0 END +
+          CASE WHEN ISNULL(WaterEnergyBen,0) > 0 THEN WaterEnergyBen ELSE 0 END +
+          CASE WHEN ISNULL(OtherBen,0) > 0 THEN OtherBen ELSE 0 END
+          AS SumBenPos_SB
+        ,CASE WHEN ISNULL(ElecBen_SH,0) > 0 THEN ElecBen_SH ELSE 0 END +
+          CASE WHEN ISNULL(GasBen,0) > 0 THEN GasBen ELSE 0 END +
+          CASE WHEN ISNULL(WaterEnergyBen,0) > 0 THEN WaterEnergyBen ELSE 0 END +
+          CASE WHEN ISNULL(OtherBen,0) > 0 THEN OtherBen ELSE 0 END
+          AS SumBenPos_SH
     FROM #OutputCE ce 
 )
 , ClaimCount (
@@ -998,6 +1348,12 @@ AS
     ,TRC_Cost
     ,TRC_CostGross
     ,TRC_Cost_NoAdmin
+    ,SCB_Cost
+    ,SCB_CostGross
+    ,SCB_Cost_NoAdmin
+    ,SCH_Cost
+    ,SCH_CostGross
+    ,SCH_Cost_NoAdmin
     ,WeightedBenefits
     ,WeightedElecAlloc
     ,WeightedProgramCost
@@ -1182,21 +1538,231 @@ AS
             CE.WaterEnergyCost +
             CE.OtherCostGross
         ) AS TRC_CostGross
-,(
-    Qty *
-    (
-        IncentiveToOthers +
-        DILaborCost +
-        DIMaterialCost +
-        EndUserRebate
-    ) / POWER(s.Rqf, Qm) +
-    pc.NetParticipantCostPV +
-    -- Increased supply costs, refrigerant costs, and miscellaneous costs
-    CE.ElecSupplyCost +
-    CE.GasSupplyCost +
-    CE.WaterEnergyCost +
-    CE.OtherCost
-) AS TRC_Cost_NoAdmin
+        ,(
+            Qty *
+            (
+                IncentiveToOthers +
+                DILaborCost +
+                DIMaterialCost +
+                EndUserRebate
+            ) / POWER(s.Rqf, Qm) +
+            pc.NetParticipantCostPV +
+            -- Increased supply costs, refrigerant costs, and miscellaneous costs
+            CE.ElecSupplyCost +
+            CE.GasSupplyCost +
+            CE.WaterEnergyCost +
+            CE.OtherCost
+        ) AS TRC_Cost_NoAdmin
+        ,(
+            CASE 
+                WHEN (BensSum.SumElecBen_SB + BensSum.SumGasBen + BensSum.SumWaterEnergyBen + BensSum.SumOtherBen) <> 0
+                THEN
+                    (
+                       CASE 
+                           WHEN ISNULL(CE.ElecBen_SB,0) > 0
+                           THEN CE.ElecBen_SB
+                           ELSE 0
+                       END +
+                       CASE 
+                           WHEN ISNULL(CE.GasBen,0) > 0
+                           THEN CE.GasBen
+                           ELSE 0
+                        END +
+                       CASE 
+                           WHEN ISNULL(CE.WaterEnergyBen,0) > 0
+                           THEN CE.WaterEnergyBen
+                           ELSE 0
+                        END +
+                        CASE
+                            WHEN ISNULL(CE.OtherBen,0) > 0
+                            THEN OtherBen
+                            ELSE 0
+                        END
+                    ) / (BensSum.SumElecBen_SB + BensSum.SumGasBen + BensSum.SumWaterEnergyBen + BensSum.SumOtherBen)
+                ELSE
+                    -- If no benefits then divide program costs evenly among claims
+                    1.000 / cc.ClaimCount
+            END *
+            ISNULL(pcSum.SumCostsNPV,0) +
+            Qty *
+            (
+                IncentiveToOthers +
+                DILaborCost +
+                DIMaterialCost +
+                EndUserRebate
+            ) / POWER(s.Rqf, Qm) +
+            pc.NetParticipantCostPV +
+            -- Increased supply costs, refrigerant costs, and miscellaneous costs
+            CE.ElecSupplyCost_SB +
+            CE.GasSupplyCost +
+            CE.WaterEnergyCost +
+            CE.OtherCost
+        ) AS SCB_Cost
+        ,(
+            CASE 
+                WHEN (SumElecBenGross_SB + SumGasBenGross + SumWaterEnergyBenGross + SumOtherBenGross) <> 0
+                THEN
+                    (
+                        CASE
+                            WHEN ISNULL(ElecBenGross_SB,0) > 0
+                            THEN ElecBenGross_SB
+                            ELSE 0
+                        END +
+                        CASE
+                            WHEN ISNULL(GasBenGross,0) > 0
+                            THEN GasBenGross
+                            ELSE 0
+                        END + 
+                        CASE
+                            WHEN ISNULL(WaterEnergyBenGross,0) > 0
+                            THEN WaterEnergyBenGross
+                            ELSE 0
+                        END + 
+                        CASE
+                            WHEN ISNULL(OtherBenGross,0) > 0
+                            THEN OtherBenGross
+                            ELSE 0
+                        END
+                    ) / (SumElecBenGross_SB + SumGasBenGross + SumWaterEnergyBenGross + SumOtherBenGross)
+                ELSE
+                    -- If no benefits then divide program costs evenly among claims
+                    1.000 / cc.ClaimCount
+            END * 
+            ISNULL(pcSum.SumCostsNPV,0) +
+            Qty *
+            (
+                IncentiveToOthers +
+                DILaborCost +
+                DIMaterialCost +
+                EndUserRebate
+            ) / POWER(s.Rqf, Qm) +
+            pc.GrossParticipantCostPV +
+            -- Increased supply costs, refrigerant costs, and miscellaneous costs
+            CE.ElecSupplyCost_SB +
+            CE.GasSupplyCost +
+            CE.WaterEnergyCost +
+            CE.OtherCostGross
+        ) AS SCB_CostGross
+        ,(
+            Qty *
+            (
+                IncentiveToOthers +
+                DILaborCost +
+                DIMaterialCost +
+                EndUserRebate
+            ) / POWER(s.Rqf, Qm) +
+            pc.NetParticipantCostPV +
+            -- Increased supply costs, refrigerant costs, and miscellaneous costs
+            CE.ElecSupplyCost_SB +
+            CE.GasSupplyCost +
+            CE.WaterEnergyCost +
+            CE.OtherCost
+        ) AS SCB_Cost_NoAdmin
+        ,(
+            CASE 
+                WHEN (BensSum.SumElecBen_SH + BensSum.SumGasBen + BensSum.SumWaterEnergyBen + BensSum.SumOtherBen) <> 0
+                THEN
+                    (
+                       CASE 
+                           WHEN ISNULL(CE.ElecBen_SH,0) > 0
+                           THEN CE.ElecBen_SH
+                           ELSE 0
+                       END +
+                       CASE 
+                           WHEN ISNULL(CE.GasBen,0) > 0
+                           THEN CE.GasBen
+                           ELSE 0
+                        END +
+                       CASE 
+                           WHEN ISNULL(CE.WaterEnergyBen,0) > 0
+                           THEN CE.WaterEnergyBen
+                           ELSE 0
+                        END +
+                        CASE
+                            WHEN ISNULL(CE.OtherBen,0) > 0
+                            THEN OtherBen
+                            ELSE 0
+                        END
+                    ) / (BensSum.SumElecBen_SH + BensSum.SumGasBen + BensSum.SumWaterEnergyBen + BensSum.SumOtherBen)
+                ELSE
+                    -- If no benefits then divide program costs evenly among claims
+                    1.000 / cc.ClaimCount
+            END *
+            ISNULL(pcSum.SumCostsNPV,0) +
+            Qty *
+            (
+                IncentiveToOthers +
+                DILaborCost +
+                DIMaterialCost +
+                EndUserRebate
+            ) / POWER(s.Rqf, Qm) +
+            pc.NetParticipantCostPV +
+            -- Increased supply costs, refrigerant costs, and miscellaneous costs
+            CE.ElecSupplyCost_SH +
+            CE.GasSupplyCost +
+            CE.WaterEnergyCost +
+            CE.OtherCost
+        ) AS SCH_Cost
+        ,(
+            CASE 
+                WHEN (SumElecBenGross_SH + SumGasBenGross + SumWaterEnergyBenGross + SumOtherBenGross) <> 0
+                THEN
+                    (
+                        CASE
+                            WHEN ISNULL(ElecBenGross_SH,0) > 0
+                            THEN ElecBenGross_SH
+                            ELSE 0
+                        END +
+                        CASE
+                            WHEN ISNULL(GasBenGross,0) > 0
+                            THEN GasBenGross
+                            ELSE 0
+                        END + 
+                        CASE
+                            WHEN ISNULL(WaterEnergyBenGross,0) > 0
+                            THEN WaterEnergyBenGross
+                            ELSE 0
+                        END + 
+                        CASE
+                            WHEN ISNULL(OtherBenGross,0) > 0
+                            THEN OtherBenGross
+                            ELSE 0
+                        END
+                    ) / (SumElecBenGross_SH + SumGasBenGross + SumWaterEnergyBenGross + SumOtherBenGross)
+                ELSE
+                    -- If no benefits then divide program costs evenly among claims
+                    1.000 / cc.ClaimCount
+            END * 
+            ISNULL(pcSum.SumCostsNPV,0) +
+            Qty *
+            (
+                IncentiveToOthers +
+                DILaborCost +
+                DIMaterialCost +
+                EndUserRebate
+            ) / POWER(s.Rqf, Qm) +
+            pc.GrossParticipantCostPV +
+            -- Increased supply costs, refrigerant costs, and miscellaneous costs
+            CE.ElecSupplyCost_SH +
+            CE.GasSupplyCost +
+            CE.WaterEnergyCost +
+            CE.OtherCostGross
+        ) AS SCH_CostGross
+        ,(
+            Qty *
+            (
+                IncentiveToOthers +
+                DILaborCost +
+                DIMaterialCost +
+                EndUserRebate
+            ) / POWER(s.Rqf, Qm) +
+            pc.NetParticipantCostPV +
+            -- Increased supply costs, refrigerant costs, and miscellaneous costs
+            CE.ElecSupplyCost_SH +
+            CE.GasSupplyCost +
+            CE.WaterEnergyCost +
+            CE.OtherCost
+        ) AS SCH_Cost_NoAdmin
         ,CASE
             WHEN (SumElecBen + SumGasBen + SumWaterEnergyBen + SumOtherBen) <> 0
             THEN (
@@ -1459,12 +2025,24 @@ WITH RIMTest (
 END 
 
 
-PRINT 'Updating TRC and PAC ratios...'
+PRINT 'Updating SC, TRC, and PAC ratios...'
 
 BEGIN
-    -- Update TRC and PAC Ratios at measure level
+    -- Update SC, TRC, and PAC Ratios at measure level
 UPDATE #OutputCE
 SET
+    SCBRatio =
+        CASE
+            WHEN SCBCost <> 0
+            THEN (ElecBen_SB + GasBen + WaterEnergyBen + OtherBen) / (SCBCost)
+            ELSE 0
+        END
+    SCHRatio =
+        CASE
+            WHEN SCHCost <> 0
+            THEN (ElecBen_SH + GasBen + WaterEnergyBen + OtherBen) / (SCHCost)
+            ELSE 0
+        END
     TRCRatio =
         CASE
             WHEN TRCCost <> 0
@@ -1475,6 +2053,18 @@ SET
         CASE 
             WHEN PACCost <> 0
             THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen) / (PACCost)
+            ELSE 0
+        END
+    ,SCBRatioNoAdmin =
+        CASE 
+            WHEN SCBCostNoAdmin <> 0
+            THEN (ElecBen_SB + GasBen + WaterEnergyBen + OtherBen) / (SCBCostNoAdmin)
+            ELSE 0
+        END
+    ,SCHRatioNoAdmin =
+        CASE 
+            WHEN SCHCostNoAdmin <> 0
+            THEN (ElecBen_SH + GasBen + WaterEnergyBen + OtherBen) / (SCHCostNoAdmin)
             ELSE 0
         END
     ,TRCRatioNoAdmin =
@@ -1503,30 +2093,48 @@ SELECT
     ,PrgID
     ,CET_ID
     ,ElecBen
+    ,ElecBen_SB
+    ,ElecBen_SH
     ,GasBen
     ,WaterEnergyBen
     ,ElecBenGross
+    ,ElecBenGross_SB
+    ,ElecBenGross_SH
     ,GasBenGross
     ,WaterEnergyBenGross
     ,OtherBen
     ,OtherBenGross
     ,ElecSupplyCost
+    ,ElecSupplyCost_SB
+    ,ElecSupplyCost_SH
     ,GasSupplyCost
     ,WaterEnergyCost
     ,ElecSupplyCostGross
+    ,ElecSupplyCostGross_SB
+    ,ElecSupplyCostGross_SH
     ,GasSupplyCostGross
     ,WaterEnergyCostGross
     ,OtherCost
     ,OtherCostGross
     ,TotalSystemBenefit
     ,TotalSystemBenefitGross
+    ,SCBCost
+    ,SCHCost
     ,TRCCost
     ,PACCost
+    ,SCBCostGross
+    ,SCBCostNoAdmin
+    ,SCHCostGross
+    ,SCHCostNoAdmin
     ,TRCCostGross
     ,TRCCostNoAdmin
     ,PACCostNoAdmin
+    ,SCBRatio
+    ,SCHRatio
     ,TRCRatio
     ,PACRatio
+    ,SCBRatioNoAdmin
+    ,SCHRatioNoAdmin
     ,TRCRatioNoAdmin
     ,PACRatioNoAdmin
     ,BillReducElec

@@ -27,6 +27,27 @@
 				  :	 			 "IOU_AC_Territory"
 				  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
 				  :              "PA"
+				  :  2025-02-11  Robert Hansen added fields for the Societal
+				  :				 Cost Test:
+				  :                + ElecBen_SB
+				  :                + ElecBen_SH
+				  :                + ElecBenGross_SB
+				  :                + ElecBenGross_SH
+				  :                + ElecSupplyCost_SB
+				  :                + ElecSupplyCost_SH
+				  :                + ElecSupplyCostGross_SB
+				  :                + ElecSupplyCostGross_SH
+				  :                + SCBCost
+				  :                + SCHCost
+				  :                + SCBCostGross
+				  :                + SCBCostNoAdmin
+				  :                + SCHCost
+				  :                + SCHCostGross
+				  :                + SCHCostNoAdmin
+				  :                + SCBRatio
+				  :                + SCHRatio
+				  :                + SCBRatioNoAdmin
+				  :                + SCHRatioNoAdmin
 ################################################################################
 */
 SET ANSI_NULLS ON
@@ -46,30 +67,48 @@ CREATE TABLE dbo.OutputCE(
 	PrgID NVARCHAR(255) NULL,
 	CET_ID NVARCHAR(255) NULL,
 	ElecBen FLOAT NULL,
+	ElecBen_SB FLOAT NULL,
+	ElecBen_SH FLOAT NULL,
 	GasBen FLOAT NULL,
 	WaterEnergyBen FLOAT NULL,
 	ElecBenGross FLOAT NULL,
+	ElecBenGross_SB FLOAT NULL,
+	ElecBenGross_SH FLOAT NULL,
 	GasBenGross FLOAT NULL,
 	WaterEnergyBenGross FLOAT NULL,
 	OtherBen FLOAT NULL,.
 	OtherBenGross FLOAT NULL,
 	ElecSupplyCost FLOAT NULL,
+	ElecSupplyCost_SB FLOAT NULL,
+	ElecSupplyCost_SH FLOAT NULL,
 	GasSupplyCost FLOAT NULL,
 	WaterEnergyCost FLOAT NULL,
 	ElecSupplyCostGross FLOAT NULL,
+	ElecSupplyCostGross_SB FLOAT NULL,
+	ElecSupplyCostGross_SH FLOAT NULL,
 	GasSupplyCostGross FLOAT NULL,
 	WaterEnergyCostGross FLOAT NULL,
 	OtherCost FLOAT NULL,
 	OtherCostGross FLOAT NULL,
 	TotalSystemBenefit FLOAT NULL,
 	TotalSystemBenefitGross FLOAT NULL,
+	SCBCost FLOAT NULL,
+	SCHCost FLOAT NULL,
 	TRCCost FLOAT NULL,
 	PACCost FLOAT NULL,
+	SCBCostGross FLOAT NULL,
+	SCBCostNoAdmin FLOAT NULL,
+	SCHCostGross FLOAT NULL,
+	SCHCostNoAdmin FLOAT NULL,
 	TRCCostGross FLOAT NULL,
 	TRCCostNoAdmin FLOAT NULL,
 	PACCostNoAdmin FLOAT NULL,
+	SCBRatio FLOAT NULL,
+	SCHRatio FLOAT NULL,
 	TRCRatio FLOAT NULL,
 	PACRatio FLOAT NULL,
+	SCBRatioNoAdmin FLOAT NULL,
+	SCHRatioNoAdmin FLOAT NULL,
 	TRCRatioNoAdmin FLOAT NULL,
 	PACRatioNoAdmin FLOAT NULL,
 	BillReducElec FLOAT NULL,
