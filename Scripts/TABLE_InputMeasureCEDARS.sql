@@ -52,6 +52,7 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 : "IOU_AC_Territory"
                 : 2024-04-23  Robert Hansen reverted "IOU_AC_Territory" to
                 : "PA"
+                : 2025-02-18  Robert Hansen added "FuelType" field
 */
 SET ANSI_NULLS ON
 GO
@@ -72,6 +73,7 @@ CREATE TABLE "dbo"."InputMeasureCEDARS"
     ClaimYearQuarter nvarchar(6),
     MeasDescription nvarchar(255),
     MeasImpactType nvarchar(50),
+    FuelType nvarchar(50),
     MeasCode nvarchar(255),
     MeasureID nvarchar(255),
     E3TargetSector nvarchar(255),

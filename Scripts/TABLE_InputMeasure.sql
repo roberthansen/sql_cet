@@ -1,5 +1,5 @@
 /*
-Name            : ImpactMeasure (table)
+Name            : InputMeasure (table)
 Date            : c.2016
 Author          : Wayne Huack
 Company         : Pinnacle Consulting Group (aka Intech Energy, Inc.)
@@ -52,6 +52,7 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 : "IOU_AC_Territory"
                 : 2024-04-23  Robert Hansen reverted "IOU_AC_Territory" to
                 : "PA"
+                : 2025-02-18  Robert Hansen added new "FuelID" field
 */
 SET ANSI_NULLS ON
 GO

@@ -29,6 +29,7 @@ CREATE TABLE [dbo].[#tmp](
 	[ClaimYearQuarter] [nvarchar](6) NULL,
 	[MeasDescription] [nvarchar](255) NULL,
 	[MeasImpactType] [nvarchar](255) NULL,
+	[FuelType] [nvarchar](255) NULL,
 	[MeasCode] [nvarchar](255) NULL,
 	[MeasureID] [nvarchar](255) NULL,
 	[E3TargetSector] [nvarchar](255) NULL,
@@ -101,6 +102,7 @@ SELECT ROW_NUMBER() OVER (ORDER BY ID ASC) AS Row
       ,Qtr [ClaimYearQuarter]
       ,Measurename [MeasDescription]
       ,'' [MeasImpactType]
+      ,'' [FuelType]
       ,SolutionCode [MeasCode]
       ,[MeasureID]
       ,TS [E3TargetSector]
@@ -175,6 +177,7 @@ SELECT ROW_NUMBER() OVER (ORDER BY ID ASC) AS Row
       ,[ClaimYearQuarter]
       ,[MeasDescription]
       ,[MeasImpactType]
+      ,[FuelType]
       ,[MeasCode]
       ,[MeasureID]
       ,[E3TargetSector]
@@ -245,6 +248,7 @@ SELECT
       ,[ClaimYearQuarter]
       ,[MeasDescription]
       ,[MeasImpactType]
+      ,[FuelType]
       ,[MeasCode]
       ,[MeasureID]
       ,[E3TargetSector]

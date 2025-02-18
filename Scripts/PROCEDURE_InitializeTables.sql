@@ -32,7 +32,7 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :                  UESkWh_TotalWater, kWhTotalWater1
                  :                + UnitkWhTotalWater2ndBaseline aka
                  :                  UESkWh_TotalWater_ER, kWhTotalWater2
-                 :  2023-02-07  Robert Hansen added a WaterUse field for
+                 :  2023-02-07  Robert Hansen added a "WaterUse" field for
                  :              tracking water-energy nexus measures and removed
                  :              extra water-energy fields not used in CET
                  :              calculations:
@@ -46,6 +46,7 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :              "IOU_AC_Territory"
                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
                  :              "PA"
+                 :  2025-02-18  Robert Hansen added new "FuelType" field
 ################################################################################
 */
 
@@ -138,12 +139,13 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
  : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
+ : 2025-02-18 Robert Hansen added "FuelType" field
 ################################################################################
 */
 
 SELECT
 ' + CONVERT(VARCHAR,@JobID) + 'AS JobID,CET_ID,PA,PrgID,ProgramName,MeasureName,
-MeasureID,MeasImpactType,
+MeasureID,MeasImpactType,FuelType,
 CASE WHEN ElecEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN ElecEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE ElecTargetSector END END AS ElecTargetSector,
 CASE WHEN ElecEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(ElecEndUseShape,''Non_res:'','''') ELSE CASE WHEN ElecEndUseShape LIKE ''res:DEER%'' THEN Replace(ElecEndUseShape,''res:'','''') ELSE ElecEndUseShape END END AS ElecEndUseShape,
 /*CASE WHEN ElecEndUseShapeAL LIKE ''Non_res:DEER%'' THEN Replace(ElecEndUseShapeAL,''Non_res:'','''') ELSE CASE WHEN ElecEndUseShapeAL LIKE ''res:DEER%'' THEN Replace(ElecEndUseShapeAL,''res:'','''') ELSE  ElecEndUseShapeAL END END AS ElecEndUseShapeAL,*/
@@ -219,13 +221,14 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
  : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
+ : 2025-02-18 Robert Hansen added "FuelType" field
 ################################################################################
 */
 
 SELECT
 ' + CONVERT(VARCHAR,@JobID) + ' AS JobID,
 CEInputID CET_ID,PA,PrgID,'''' AS ProgramName,MeasDescription MeasureName,
-MeasureID,MeasImpactType,
+MeasureID,MeasImpactType,FuelType,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE E3TargetSector END END AS ElecTargetSector,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''Non_res:'','''') ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''res:'','''') ELSE E3MeaElecEndUseShape END END AS ElecEndUseShape,
 /*CASE WHEN E3MeaElecAddEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(E3MeaElecAddEndUseShape,''Non_res:'','''') ELSE CASE WHEN E3MeaElecAddEndUseShape LIKE ''res:DEER%'' THEN Replace(E3MeaElecAddEndUseShape,''res:'','''') ELSE E3MeaElecAddEndUseShape END END AS ElecAddEndUseShape,*/
@@ -363,12 +366,13 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
  : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
+ : 2025-02-18 Robert Hansen added "FuelType" field
 ################################################################################
 */
 
 SELECT
 ' + CONVERT(VARCHAR,@JobID) + ' as JobID,ClaimID CET_ID,PA,
-ProgramID PrgID,ProgramName,Measurename,MeasureID,MeasImpactType,
+ProgramID PrgID,ProgramName,Measurename,MeasureID,MeasImpactType,FuelType
 CASE WHEN ElectricMeasureEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN ElectricMeasureEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE ElectricTargetSector END END AS ElecTargetSector,
 CASE WHEN ElectricMeasureEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(ElectricMeasureEndUseShape,''Non_res:'','''') ELSE CASE WHEN ElectricMeasureEndUseShape LIKE ''res:DEER%'' THEN Replace(ElectricMeasureEndUseShape,''res:'','''') ELSE ElectricMeasureEndUseShape END END AS ElecEndUseShape,
 /*CASE WHEN ElectricMeasureAddEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(ElectricMeasureAddEndUseShape,''Non_res:'','''') ELSE CASE WHEN ElectricMeasureAddEndUseShape LIKE ''res:DEER%'' THEN Replace(ElectricMeasureAddEndUseShape,''res:'','''') ELSE ElectricMeasureALEndUseShape END END AS ElecEndUseShape,*/
@@ -449,12 +453,13 @@ Change History : 2016-06-30  Wayne Hauck added comment header
  : 2022-08-30 Robert Hansen added new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
  : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
+ : 2025-02-18 Robert Hansen added "FuelType" field
 ################################################################################
 */
 
 SELECT
 ' + CONVERT(VARCHAR,@JobID) + ' AS JobID,CEInputID CET_ID,PA,PrgID,
-'''' AS ProgramName,MeasDescription Measurename,MeasureID,MeasImpactType,
+'''' AS ProgramName,MeasDescription Measurename,MeasureID,MeasImpactType,FuelType,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN ''Non_res'' ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN ''Res'' ELSE E3TargetSector END END AS ElecTargetSector,
 CASE WHEN E3MeaElecEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''Non_res:'','''') ELSE CASE WHEN E3MeaElecEndUseShape LIKE ''res:DEER%'' THEN Replace(E3MeaElecEndUseShape,''res:'','''') ELSE E3MeaElecEndUseShape END END AS ElecEndUseShape,
 /*CASE WHEN E3MeaElecAddEndUseShape LIKE ''Non_res:DEER%'' THEN Replace(E3MeaElecAddEndUseShape,''Non_res:'','''') ELSE CASE WHEN E3MeaElecAddEndUseShape LIKE ''res:DEER%'' THEN Replace(E3MeaElecAddEndUseShape,''res:'','''') ELSE E3MeaElecAddEndUseShape END END AS ElecAddEndUseShape,*/
@@ -544,12 +549,13 @@ Change History : 2016-06-30 Wayne Hauck added comment header with encryption
  : 2022-08-30 Robert Hansen new fields for water energy calculations
  : 2024-04-23 Robert Hansen renamed "PA" field to "IOU_AC_Territory"
  : 2024-06-20 Robert Hansen reverted "IOU_AC_Territory" to "PA"
+ : 2025-02-18 Robert Hansen added "FuelType" field
 ################################################################################
 */
 
 SELECT
 ' + CONVERT(VARCHAR,@JobID) + ' AS JobID,
-CET_ID,PA,PrgID,ProgramName,MeasureName,MeasureID,MeasImpactType,ISNULL(ElecTargetSector,'''') TS,
+CET_ID,PA,PrgID,ProgramName,MeasureName,MeasureID,MeasImpactType,FuelType,ISNULL(ElecTargetSector,'''') TS,
 ISNULL(ElecEndUseShape,'''') EU,/*ISNULL(ElecAddEndUseShape,'''') EUAL,*/
 ISNULL(ClimateZone,'''') CZ,ISNULL(GasSector,'''') GS,ISNULL(GasSavingsProfile,'''') GP,
 /*ISNULL(GasAdditionalLoadProfile,'''') GPAL,*/ISNULL(ElecRateSchedule,'''') ElecRateSchedule,
@@ -592,7 +598,7 @@ BEGIN
 
 SET @InputMeasurevwSql = @InputMeasurevwSql +
 'UNION SELECT 
-JobID,CET_ID,PA,PrgID,ProgramName,MeasureName,MeasureID,'''' MeasImpactType,TS,EU,/*EUAL,*/CZ,GS,GP,
+JobID,CET_ID,PA,PrgID,ProgramName,MeasureName,MeasureID,'''' MeasImpactType,FuelType,TS,EU,/*EUAL,*/CZ,GS,GP,
 /*GPAL,*/ElecRateSchedule,GasRateSchedule,' + @AVCVersion + ' AVCVersion,
 CombType,Qtr,Qm,Qy,Qty,kW1,kWh1,Thm1,kW2,kWh2,Thm2,/*kW1_AL,kWh1_AL,Thm1_AL,
 kW2_AL,kWh2_AL,Thm2_AL,*/

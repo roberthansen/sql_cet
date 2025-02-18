@@ -38,6 +38,8 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :  "IOU_AC_Territory"
                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
                  :  "PA"
+                 :  2025-02-18 Robert Hansen added "FuelType" field
+
 ################################################################################
 */
 
@@ -91,6 +93,7 @@ JobID
 ,ClaimYearQuarter
 ,MeasDescription
 ,MeasImpactType
+,FuelType
 ,MeasCode
 ,MeasureID
 ,E3TargetSector
@@ -177,6 +180,7 @@ SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
 ,ClaimYearQuarter
 ,MeasDescription
 ,MeasImpactType
+,FuelType
 ,MeasCode
 ,MeasureID
 ,E3TargetSector
