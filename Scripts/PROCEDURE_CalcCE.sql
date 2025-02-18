@@ -157,6 +157,7 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :  2024-08-19  Robert Hansen replaced gas infrastructure and
                 :              refrigerant benefits and costs with OtherBen and
                 :              OtherCost in Total System Benefit calculations
+                :  2024-08-20  J Scheuerell fixed errors in script
                 :  2025-02-11  Robert Hansen implemented the Societal Cost Test:
                 :                + Loaded new fields from the Avoided Cost
                 :                  Electric table: Gen_SB, Gen_SH, TD_SB, TD_SH
