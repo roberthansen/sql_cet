@@ -700,7 +700,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ,SUM(
             CASE
                 WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
-                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas)<0)
+                    AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)<0)
                 THEN
                     ISNULL(
                         -e.Qty *
@@ -870,14 +870,14 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             (e.NTGRkWh + @MECost) *
             (
                 ISNULL( e.UnitRefrigCosts, 0 ) +
-                ISNULL( e.MiscCosts, 0 )
+                ISNULL( e.UnitMiscCosts, 0 )
             )
         ) AS OtherCost
         ,SUM(
             e.Qty *
             (
                 ISNULL( e.UnitRefrigCosts, 0 ) +
-                ISNULL( e.MiscCosts, 0 )
+                ISNULL( e.UnitMiscCosts, 0 )
             )
         ) AS OtherCostGross
     FROM InputMeasurevw AS e
