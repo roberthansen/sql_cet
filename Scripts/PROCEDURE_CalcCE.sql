@@ -2119,6 +2119,8 @@ SELECT
     ,WaterEnergyBenGross
     ,OtherBen
     ,OtherBenGross
+    ,TaxCredits
+    ,TaxCreditsGross
     ,ElecSupplyCost
     ,ElecSupplyCost_SB
     ,ElecSupplyCost_SH

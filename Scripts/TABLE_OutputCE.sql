@@ -48,6 +48,9 @@
 				  :                + SCHRatio
 				  :                + SCBRatioNoAdmin
 				  :                + SCHRatioNoAdmin
+				  :  2025-04-10  Robert Hansen added tax credits fields to output:
+				  :                + TaxCredits
+				  :                + TaxCreditsGross
 ################################################################################
 */
 SET ANSI_NULLS ON
@@ -75,6 +78,8 @@ CREATE TABLE dbo.OutputCE(
 	ElecBenGross_SB FLOAT NULL,
 	ElecBenGross_SH FLOAT NULL,
 	GasBenGross FLOAT NULL,
+	TaxCredits FLOAT NULL,
+	TaxCreditsGross FLOAT NULL,
 	WaterEnergyBenGross FLOAT NULL,
 	OtherBen FLOAT NULL,.
 	OtherBenGross FLOAT NULL,
