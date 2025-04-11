@@ -184,6 +184,8 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :                    - SCHRatioNoAdmin
                 :  2025-02-18  Robert Hansen added "FuelType" field and updated
                 :              logic for fuel substitution accordingly
+                :  2025-04-11  Robert Hansen added new UnitTaxCredits field and
+                :              included tax credits in TRC_Cost, TRC_GrossCost
 ################################################################################
 */
 
@@ -601,6 +603,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 ISNULL( UnitMiscBens, 0)
             )
         ) AS OtherBenGross
+        ,SUM(
+            e.Qty * (0.90) * ISNULL( e.UnitTaxCredits, 0 )
+        ) AS TaxCredits
+        ,SUM(
+            e.Qty * ISNULL( e.UnitTaxCredits, 0 )
+        ) AS TaxCreditsGross
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --- ADDED THE FOLLOWING 8 FIELDS TO PROVIDE NEGATIVE BENEFITS TO TRC AND PAC ---
@@ -1210,6 +1218,8 @@ ProgramCosts (
     ,SumElecBen_SH
     ,SumGasBen
     ,SumOtherBen
+    ,SumTaxCredits
+    ,SumTaxCreditsGross
     ,SumElecBenGross
     ,SumElecBenGross_SB
     ,SumElecBenGross_SH
@@ -1227,6 +1237,8 @@ AS (
         ,SUM( CASE WHEN ISNULL(GasBen,0) > 0 THEN GasBen ELSE 0 END ) AS SumGasBen
         ,SUM( CASE WHEN ISNULL(OtherBen,0) > 0 THEN OtherBen ELSE 0 END ) AS SumOtherBen
         ,SUM( CASE WHEN ISNULL(ElecBenGross,0) > 0 THEN ElecBenGross ELSE 0 END ) AS SumElecBenGross
+        ,SUM( CASE WHEN ISNULL(TaxCredits,0) > 0 THEN TaxCredits ELSE 0 END ) AS SumTaxCredits,
+        ,SUM( CASE WHEN ISNULL(TaxCreditsGross,0) > 0 THEN TaxCreditsGross ELSE 0 END ) AS SumTaxCreditsGross,
         ,SUM( CASE WHEN ISNULL(ElecBenGross_SB,0) > 0 THEN ElecBenGross_SB ELSE 0 END ) AS SumElecBenGross_SB
         ,SUM( CASE WHEN ISNULL(ElecBenGross_SH,0) > 0 THEN ElecBenGross_SH ELSE 0 END ) AS SumElecBenGross_SH
         ,SUM( CASE WHEN ISNULL(GasBenGross,0) > 0 THEN GasBenGross ELSE 0 END ) AS SumGasBenGross
@@ -2049,7 +2061,7 @@ SET
     TRCRatio =
         CASE
             WHEN TRCCost <> 0
-            THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen) / (TRCCost)
+            THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen + TaxCredits) / (TRCCost)
             ELSE 0
         END
     ,PACRatio =
@@ -2073,7 +2085,7 @@ SET
     ,TRCRatioNoAdmin =
         CASE 
             WHEN TRCCostNoAdmin <> 0
-            THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen) / (TRCCostNoAdmin)
+            THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen + TaxCredits) / (TRCCostNoAdmin)
             ELSE 0
         END
     ,PACRatioNoAdmin =

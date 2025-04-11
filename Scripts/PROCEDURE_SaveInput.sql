@@ -35,6 +35,7 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :  "IOU_AC_Territory"
                  :  2024-04-23  Robert Hansen reverted "IOU_AC_Territory" to
                  :  "PA"
+                 :  2025-04-11  Robert Hansen added new UnitTaxCredits field
 ################################################################################
 */
 
@@ -152,6 +153,7 @@ JobID
 ,MiscCostsDesc
 ,UnitMiscBens
 ,MiscBensDesc
+,UnitTaxCredits
 ,Sector
 ,EndUse
 ,BuildingType
@@ -232,6 +234,7 @@ SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
 ,MiscCostsDesc
 ,UnitMiscBens
 ,MiscBensDesc
+,UnitTaxCredits
 ,Sector
 ,EndUse
 ,BuildingType

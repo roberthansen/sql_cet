@@ -53,6 +53,7 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 : 2024-04-23  Robert Hansen reverted "IOU_AC_Territory" to
                 : "PA"
                 : 2025-02-18  Robert Hansen added "FuelType" field
+                : 2025-04-11  Robert Hansen added new UnitTaxCredits field
 */
 SET ANSI_NULLS ON
 GO
@@ -139,6 +140,7 @@ CREATE TABLE "dbo"."InputMeasureCEDARS"
     MiscCostsDesc nvarchar(255),
     UnitMiscBens float(53),
     MiscBensDesc nvarchar(255),
+    UnitTaxCredits float(53),
 /* end new costs and benefits fields */
     Sector nvarchar(50),
     UseCategory nvarchar(50),

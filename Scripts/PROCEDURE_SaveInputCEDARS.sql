@@ -39,6 +39,7 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
                  :  "PA"
                  :  2025-02-18 Robert Hansen added "FuelType" field
+                 :  2025-04-11  Robert Hansen added new UnitTaxCredits field
 
 ################################################################################
 */
@@ -154,6 +155,7 @@ JobID
 ,MiscCostsDesc
 ,UnitMiscBens
 ,MiscBensDesc
+,UnitTaxCredits
 /* end new costs and benefits fields */
 ,Sector
 ,UseCategory
@@ -241,6 +243,7 @@ SELECT ' + CONVERT(NVARCHAR,@JobID) + ' AS JobID
 ,MiscCostsDesc
 ,UnitMiscBens
 ,MiscBensDesc
+,UnitTaxCredits
 /* end new costs and benefits fields */
 ,Sector
 ,UseCategory

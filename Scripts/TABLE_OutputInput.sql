@@ -24,6 +24,7 @@ Change History  : 2023-03-16  Robert Hansen added the following new fields:
                 : 2024-04-23  Robert Hansen renamed the "PA" field to
                 :             "IOU_AC_Territory"
                 : 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
+                : 2025-04-11  Robert Hansen added new UnitTaxCredits field
 ################################################################################
 */
 
@@ -82,9 +83,10 @@ CREATE TABLE [dbo].[OutputInput]
     [UnitRefrigCosts] [float] NULL,
     [UnitRefrigBens] [float] NULL,
     [UnitMiscCosts] [float] NULL,
-    [MiscCostsDesc] [float] NULL,
+    [MiscCostsDesc] [nvarchar] (255) NULL,
     [UnitMiscBens] [float] NULL,
-    [MiscBensDesc] [float] NULL,
+    [MiscBensDesc] [nvarchar] (255) NULL,
+    [UnitTaxCredits] [float] NULL,
 /* end new costs and benefits fields */
     [EndUserRebate] [float] NOT NULL,
     [DILaborCost] [float] NOT NULL,

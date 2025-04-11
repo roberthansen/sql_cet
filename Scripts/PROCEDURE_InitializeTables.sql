@@ -47,6 +47,7 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
                  :              "PA"
                  :  2025-02-18  Robert Hansen added new "FuelType" field
+                 :  2025-04-11  Robert Hansen added new UnitTaxCredits field
 ################################################################################
 */
 
@@ -157,9 +158,9 @@ WaterUse,NTGRkW,NTGRkWh,NTGRThm,NTGRCostEUL,RUL,IRkWh IR,IRkW,IRkWh,IRThm,RRkWh,
 RRkW,RRThm,IncentiveToOthers,EndUserRebate,DILaborCost,DIMaterialCost,
 UnitMeasureGrossCost,UnitMeasureGrossCost_ER,' + @MeasInflation +
 ' AS MeasInflation,UnitGasInfraBens, UnitRefrigCosts,UnitRefrigBens,
-UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,Sector,EndUse,
-BuildingType,MeasureGroup,SolutionCode,Technology,Channel,IsCustom,Location,
-ProgramType,UnitType,Comments,DataField
+UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,UnitTaxCredits,
+Sector,EndUse,BuildingType,MeasureGroup,SolutionCode,Technology,Channel,
+IsCustom,Location,ProgramType,UnitType,Comments,DataField
 FROM [SourceMeasurevw]
 '
 
@@ -255,7 +256,7 @@ UnitMeaCost1stBaseline UnitMeasureGrossCost,
 UnitMeaCost2ndBaseline UnitMeasureGrossCost_ER,
 ' + @MeasInflation + ' AS MeasInflation,UnitGasInfraBens,UnitRefrigCosts,
 UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,
-Sector,
+UnitTaxCredits,Sector,
 '''' AS EndUse,BldgType BuildingType,'''' AS MeasureGroup,
 '''' AS SolutionCode,TechType Technology,DeliveryType Channel,
 '''' AS IsCustom,'''' AS Location,'''' AS ProgramType,NormUnit UnitType,
@@ -387,10 +388,10 @@ RRTherms RRThm,IncentiveToOthers,EndUserRebate,DirectInstallLaborCost DILaborCos
 DirectInstallMaterialCost DIMaterialCost,UnitMeasureGrossCost,
 UnitMeasureGrossCost_ER,' + @MeasInflation + ' AS MeasInflation,
 UnitGasInfraBens,UnitRefrigCosts,UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,
-UnitMiscBens,MiscBensDesc,'''' AS Sector,'''' AS EndUse,'''' AS BuildingType,
-'''' AS MeasureGroup,'''' AS SolutionCode,'''' AS Technology,'''' AS Channel,
-'''' AS IsCustom,'''' AS Location,'''' AS ProgramType,'''' AS UnitType,
-'''' AS Comments,'''' AS DataField
+UnitMiscBens,MiscBensDesc,UnitTaxCredits,'''' AS Sector,'''' AS EndUse,
+'''' AS BuildingType,'''' AS MeasureGroup,'''' AS SolutionCode,'''' AS Technology,
+'''' AS Channel,'''' AS IsCustom,'''' AS Location,'''' AS ProgramType,
+'''' AS UnitType,'''' AS Comments,'''' AS DataField
 FROM [dbo].[SourceMeasurevw]
 '
 
@@ -484,10 +485,11 @@ UnitDirectInstallMat DIMaterialCost,
 UnitMeaCost1stBaseline UnitMeasureGrossCost,
 UnitMeaCost2ndBaseline UnitMeasureGrossCost_ER,
 ISNULL(MeasInflation,0) AS MeasInflation,UnitGasInfraBens,UnitRefrigCosts,
-UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,Sector,
-'''' AS EndUse,'''' AS BuildingType,'''' AS MeasureGroup,'''' AS SolutionCode,
-'''' AS Technology,'''' AS Channel,'''' AS IsCustom,'''' AS Location,
-'''' AS ProgramType,'''' AS UnitType,'''' AS Comments,'''' AS DataField
+UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,
+UnitTaxCredits,Sector,'''' AS EndUse,'''' AS BuildingType,'''' AS MeasureGroup,
+'''' AS SolutionCode,'''' AS Technology,'''' AS Channel,'''' AS IsCustom,
+'''' AS Location,'''' AS ProgramType,'''' AS UnitType,'''' AS Comments,
+'''' AS DataField
 FROM [dbo].[SourceMeasurevw]
 '
 
@@ -588,8 +590,8 @@ PA + GasSector + GasSavingsProfile ACGasKey,
 ISNULL(UnitMeasureGrossCost_ER,0) MeasIncrCost,
 ISNULL(MeasInflation,0) MeasInflation,UnitGasInfraBens,UnitRefrigCosts,
 UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,
-Sector,EndUse,BuildingType,MeasureGroup,SolutionCode,Technology,Channel,IsCustom,
-Location,ProgramType,UnitType,Comments,DataField
+UnitTaxCredits,Sector,EndUse,BuildingType,MeasureGroup,SolutionCode,Technology,
+Channel,IsCustom,Location,ProgramType,UnitType,Comments,DataField
 FROM MappingMeasurevw
 '
 
@@ -606,10 +608,11 @@ kWhWater1,kWhWater2,WaterUse,
 NTGRkW,NTGRkWh,NTGRThm,NTGRCost,IR,IRkW,IRkWh,IRThm,
 RR,RRkWh,RRkW,RRThm,IncentiveToOthers,EndUserRebate,DILaborCost,DIMaterialCost,
 UnitMeasureGrossCost,UnitMeasureGrossCost_ER,eulq,eulq1,eulq2,eul1,eul2,rulq,
-EUL,RUL,ACElecKey,ACGasKey,MeasIncrCost,0 MeasInflation,UnitGasInfraBens,UnitRefrigCosts,
-UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,UnitMiscBens,MiscBensDesc,
-Sector,EndUse,BuildingType,MeasureGroup,SolutionCode,Technology,Channel,IsCustom,Location,
-ProgramType,UnitType,Comments,DataField
+EUL,RUL,ACElecKey,ACGasKey,MeasIncrCost,0 MeasInflation,UnitGasInfraBens,
+UnitRefrigCosts,UnitRefrigBens,UnitMiscCosts,MiscCostsDesc,UnitMiscBens,
+MiscBensDesc,UnitTaxCredits,Sector,EndUse,BuildingType,MeasureGroup,
+SolutionCode,Technology,Channel,IsCustom,Location,ProgramType,UnitType,Comments,
+DataField
 FROM [InputMeasureNonResourcevw] 
 '
  

@@ -52,6 +52,7 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 :  "IOU_AC_Territory"
                 :  2024-06-23  Robert Hansen reverted "IOU_AC_Territory" to "PA"
                 :  2025-02-18  Robert Hansen added "FuelType" field
+                :  2025-03-16  Robert Hansen added "UnitTaxCredits" field
 */
 
 SET ANSI_NULLS ON
@@ -131,6 +132,7 @@ CREATE TABLE dbo.SavedInputCEDARS(
     MiscCostsDesc NVARCHAR(255),
     UnitMiscBens FLOAT,
     MiscBensDesc NVARCHAR(255),
+    UnitTaxCredits FLOAT,
     Sector NVARCHAR(50) NULL,
     UseCategory NVARCHAR(50) NULL,
     UseSubCategory NVARCHAR(50) NULL,

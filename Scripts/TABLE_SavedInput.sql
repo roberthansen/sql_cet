@@ -52,6 +52,7 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
 				: 2024-04-23  Robert Hansen renamed the "PA" field to
 				  "IOU_AC_Territory"
 				: 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
+				: 2025-04-11  Robert Hansen added new UnitTaxCredits field
 ################################################################################
 */
 
@@ -131,6 +132,7 @@ CREATE TABLE [dbo].[SavedInput](
 	[MiscCostsDesc] [nvarchar](255),
 	[UnitMiscBens] [float],
 	[MiscBensDesc] [nvarchar](255),
+	[UnitTaxCredits] [float],
 /* new water-energy nexus fields: */
   [UnitkWhIOUWater1stBaseline] [float] NULL,
   [UnitkWhIOUWater2ndBaseline] [float] NULL,
