@@ -52,7 +52,6 @@ Change History  : 2021-04-18  Robert Hansen added columns for additional load
                 : "IOU_AC_Territory"
                 : 2024-04-23  Robert Hansen reverted "IOU_AC_Territory" to
                 : "PA"
-                : 2025-02-18  Robert Hansen added new "FuelID" field
                 : 2025-04-11  Robert Hansen added new UnitTaxCredits field
 */
 SET ANSI_NULLS ON

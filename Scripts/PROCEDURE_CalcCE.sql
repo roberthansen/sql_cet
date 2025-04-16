@@ -186,6 +186,10 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 :              logic for fuel substitution accordingly
                 :  2025-04-11  Robert Hansen added new UnitTaxCredits field and
                 :              included tax credits in TRC_Cost, TRC_GrossCost
+                ;  2025-04-15  Robert Hansen moved FuelType values to temporary
+                ;              table variable named
+                ;              #FuelTypesForFuelSubstitution and updated logic
+                ;              to use the temporary table variable
 ################################################################################
 */
 
@@ -221,6 +225,9 @@ IF @MECost Is Null
     END 
 
 PRINT 'Inserting electrical and gas benefits... Message 2'
+CREATE TABLE [#FuelTypesForFuelSubstitution](
+    FuelType NVARCHAR(50) NULL
+)
 CREATE TABLE [#OutputCE](
     JobID INT NULL,
     PA NVARCHAR(24) NULL,
@@ -282,6 +289,10 @@ CREATE TABLE [#OutputCE](
 ) ON [PRIMARY]
 
 BEGIN
+    INSERT INTO #FuelTypesForFuelSubstitution VALUES
+        ('AllElec-New'),
+        ('FuelSub-ToElec'),
+        ('FuelSub-ToGas-Ex')
 PRINT 'Inserting electrical and gas benefits... Message 3'
     -- Insert into CE with correction for Null gas and elec
     INSERT INTO #OutputCE (
@@ -323,7 +334,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- PVBenNet[E]: Present value net electricity benefits
         ,SUM(
             CASE
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)>0)
                 THEN
                     ISNULL(
@@ -354,7 +365,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecBen_SB (Net Lifecycle, Societal Cost Base) -----------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.kWh1 * ace_1.Gen_SB + e.kWh2 * ISNULL(ace_2.Gen_SB,0)>0)
                 THEN
                     ISNULL(
@@ -385,7 +396,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecBen_SH (Net Lifecycle, Societal Cost High) -----------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.kWh1 * ace_1.Gen_SH + e.kWh2 * ISNULL(ace_2.Gen_SH,0)>0)
                 THEN
                     ISNULL(
@@ -416,7 +427,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- NetPVBenTOT[G]: Present value of net gas benefits
         ,SUM(
             CASE 
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)>0)
                 THEN
                     ISNULL(
@@ -458,7 +469,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- PVBen[E]: Present value gross electricity benefits
         ,SUM(
             CASE
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)>0)
                 THEN
                     ISNULL(
@@ -488,7 +499,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecBenGross_SB (Lifecycle, Societal Cost Base) ----------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.kWh1 * ace_1.Gen_SB + e.kWh2 * ISNULL(ace_2.Gen_SB,0)>0)
                 THEN
                     ISNULL(
@@ -518,7 +529,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecBenGross_SH (Lifecycle, Societal Cost High) ----------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.kWh1 * ace_1.Gen_SH + e.kWh2 * ISNULL(ace_2.Gen_SH,0)>0)
                 THEN
                     ISNULL(
@@ -548,7 +559,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- PVBen[G]: Present value gross gas benefits
         ,SUM(
             CASE
-                WHEN (e.FuelType<>'Exempt-AllElec-New' AND e.FuelType<>'Exempt-FuelSub-ToElec-Ex' AND e.FuelType<>'NonExempt-FuelSub-ToGas-Ex')
+                WHEN ISNULL(ft.FuelType)
                     OR (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)>0)
                 THEN
                     ISNULL(
@@ -615,7 +626,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCost (Net Lifecycle) ---------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)<0)
                 THEN
                     ISNULL(
@@ -646,7 +657,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCost_SB (Net Lifecycle, Societal Cost Base) ----------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.kWh1 * ace_1.Gen_SB + e.kWh2 * ISNULL(ace_2.Gen_SB,0)<0)
                 THEN
                     ISNULL(
@@ -677,7 +688,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCost_SH (Net Lifecycle, Societal Cost High) ----------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.kWh1 * ace_1.Gen_SH + e.kWh2 * ISNULL(ace_2.Gen_SH,0)<0)
                 THEN
                     ISNULL(
@@ -708,7 +719,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- GasSupplyCost (Net Lifecycle) ----------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)<0)
                 THEN
                     ISNULL(
@@ -749,7 +760,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCostGross (Lifecycle) --------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.kWh1 * ace_1.Gen + e.kWh2 * ISNULL(ace_2.Gen,0)<0)
                 THEN
                     ISNULL(
@@ -778,7 +789,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCostGross_SB (Lifecycle, Societal Cost Base) ---------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.kWh1 * ace_1.Gen_SB + e.kWh2 * ISNULL(ace_2.Gen_SB,0)<0)
                 THEN
                     ISNULL(
@@ -807,7 +818,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- ElecSupplyCostGross_SH (Lifecycle, Societal Cost High) ---------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.kWh1 * ace_1.Gen_SH + e.kWh2 * ISNULL(ace_2.Gen_SH,0)<0)
                 THEN
                     ISNULL(
@@ -836,7 +847,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
 --- GasSupplyCostGross (Lifecycle) ---------------------------------------------
         ,SUM(
             CASE
-                WHEN (e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex')
+                WHEN NOT ISNULL(ft.FuelType)
                     AND (e.Thm1 * acg_1.Gas + e.Thm2 * ISNULL(acg_2.Gas,0)<0
                 THEN
                     ISNULL(
@@ -890,6 +901,8 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             )
         ) AS OtherCostGross
     FROM InputMeasurevw AS e
+    LEFT JOIN #FuelTypesForFuelSubstitution AS ft
+    ON e.FuelType = ft.FuelType
     LEFT JOIN Settingsvw AS s
     ON e.PA = s.PA AND s.[Version] = @AVCVersion
 
@@ -1181,7 +1194,7 @@ ProgramCosts (
             (
                 Qty *
                 CASE
-                    WHEN e.FuelType=='Exempt-AllElec-New' OR e.FuelType=='Exempt-FuelSub-ToElec-Ex' OR e.FuelType=='NonExempt-FuelSub-ToGas-Ex' OR e.Channel = 'C&S' OR (e.IncentiveToOthers + e.DILaborCost + e.DIMaterialCost - e.UnitMeasureGrossCost > 0)
+                    WHEN NOT ISNULL(ft.FuelType) OR e.Channel = 'C&S' OR (e.IncentiveToOthers + e.DILaborCost + e.DIMaterialCost - e.UnitMeasureGrossCost > 0)
                     THEN e.IncentiveToOthers + e.DILaborCost + e.DIMaterialCost - e.UnitMeasureGrossCost 
                     ELSE 0
                 END
@@ -2164,6 +2177,7 @@ FROM [#OutputCE]
 ORDER BY JobID, CET_ID ASC
 
 DROP TABLE [#OutputCE]
+DROP TABLE [#FuelTypes]
 
 --PRINT 'Done!'
 
