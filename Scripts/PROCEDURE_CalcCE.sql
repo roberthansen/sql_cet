@@ -190,6 +190,21 @@ Change History  :  2016-06-30  Wayne Hauck added comment header
                 ;              table variable named
                 ;              #FuelTypesForFuelSubstitution and updated logic
                 ;              to use the temporary table variable
+                ;  2025-04-29  Robert Hansen performed the following
+                ;              corrections:
+                ;                + Added SCB and SCH costs to Update
+                ;                  #OutputCE with values from Calculations
+                ;                  temporary table, allowing values to propagate
+                ;                  to OutputCE table properly
+                ;                + Applied NTGRkWh and MEBens to TaxCredits
+                ;              Also implemented the following changes:
+                ;                + Included TaxCredits and TaxCreditsGross in
+                ;                  OutputCE table
+                ;                + Calculated RIMCostNoAdmin, RIMRatio, and
+                ;                  RIMRatioNoAdmin and included values in
+                ;                  OutputCE
+                ;                + Reordered fields and calculations for
+                ;                  consistency
 ################################################################################
 */
 
@@ -237,34 +252,37 @@ CREATE TABLE [#OutputCE](
     ElecBen_SB FLOAT NULL,
     ElecBen_SH FLOAT NULL,
     GasBen FLOAT NULL,
+    TaxCredits FLOAT NULL,
     WaterEnergyBen FLOAT NULL,
+    OtherBen FLOAT NULL,
     ElecBenGross FLOAT NULL,
     ElecBenGross_SB FLOAT NULL,
     ElecBenGross_SH FLOAT NULL,
     GasBenGross FLOAT NULL,
+    TaxCreditsGross FLOAT NULL,
     WaterEnergyBenGross FLOAT NULL,
-    OtherBen FLOAT NULL,
     OtherBenGross FLOAT NULL,
     ElecSupplyCost FLOAT NULL,
     ElecSupplyCost_SB FLOAT NULL,
     ElecSupplyCost_SH FLOAT NULL,
     GasSupplyCost FLOAT NULL,
+    WaterEnergyCost FLOAT NULL,
+    OtherCost FLOAT NULL,
     ElecSupplyCostGross FLOAT NULL,
     ElecSupplyCostGross_SB FLOAT NULL,
     ElecSupplyCostGross_SH FLOAT NULL,
     GasSupplyCostGross FLOAT NULL,
-    /* New Water Energy Fields */
-    WaterEnergyCost FLOAT NULL,
     WaterEnergyCostGross FLOAT NULL,
-    /* End New Water Energy Fields */
-    OtherCost FLOAT NULL,
     OtherCostGross FLOAT NULL,
+    BillReducElec FLOAT NULL,
+    BillReducGas FLOAT NULL,
     TotalSystemBenefit FLOAT NULL,
     TotalSystemBenefitGross FLOAT NULL,
     SCBCost FLOAT NULL,
     SCHCost FLOAT NULL,
     TRCCost FLOAT NULL,
     PACCost FLOAT NULL,
+    RIMCost FLOAT NULL,
     SCBCostGross FLOAT NULL,
     SCBCostNoAdmin FLOAT NULL,
     SCHCostGross FLOAT NULL,
@@ -272,17 +290,17 @@ CREATE TABLE [#OutputCE](
     TRCCostGross FLOAT NULL,
     TRCCostNoAdmin FLOAT NULL,
     PACCostNoAdmin FLOAT NULL,
+    RIMCostNoAdmin FLOAT NULL,
     SCBRatio FLOAT NULL,
     SCHRatio FLOAT NULL,
     TRCRatio FLOAT NULL,
     PACRatio FLOAT NULL,
+    RIMRatio FLOAT NULL,
     SCBRatioNoAdmin FLOAT NULL,
     SCHRatioNoAdmin FLOAT NULL,
     TRCRatioNoAdmin FLOAT NULL,
     PACRatioNoAdmin FLOAT NULL,
-    BillReducElec FLOAT NULL,
-    BillReducGas FLOAT NULL,
-    RIMCost FLOAT NULL,
+    RIMRatioNoAdmin FLOAT NULL,
     WeightedBenefits FLOAT NULL,
     WeightedElecAlloc FLOAT NULL,
     WeightedProgramCost FLOAT NULL
@@ -304,25 +322,27 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
         ,ElecBen_SB
         ,ElecBen_SH
         ,GasBen
+        ,TaxCredits
         ,WaterEnergyBen
+        ,OtherBen
         ,ElecBenGross
         ,ElecBenGross_SB
         ,ElecBenGross_SH
         ,GasBenGross
+        ,TaxCreditsGross
         ,WaterEnergyBenGross
-        ,OtherBen
         ,OtherBenGross
         ,ElecSupplyCost
         ,ElecSupplyCost_SB
         ,ElecSupplyCost_SH
         ,GasSupplyCost
         ,WaterEnergyCost
+        ,OtherCost
         ,ElecSupplyCostGross
         ,ElecSupplyCostGross_SB
         ,ElecSupplyCostGross_SH
         ,GasSupplyCostGross
         ,WaterEnergyCostGross
-        ,OtherCost
         ,OtherCostGross
     )
     SELECT
@@ -445,7 +465,12 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS GasBen
 --------------------------------------------------------------------------------
---- WaterEnergyBen -------------------------------------------------------------
+--- TaxCredits (Net) -----------------------------------------------------------
+        ,SUM(
+            e.Qty * (NTGRkWh + @MEBens) * ISNULL( e.UnitTaxCredits, 0 )
+        ) AS TaxCredits
+--------------------------------------------------------------------------------
+--- WaterEnergyBen (Net) -------------------------------------------------------
         ,SUM(
             CASE
                 WHEN e.kWhWater1>0
@@ -464,6 +489,17 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 ELSE 0
             END
         ) AS WaterEnergyBen
+--------------------------------------------------------------------------------
+--- OtherBen (Net) -------------------------------------------------------------
+        ,SUM(
+            e.Qty *
+            (NTGRkWh + @MEBens) *
+            (
+                ISNULL( UnitGasInfraBens, 0 ) +
+                ISNULL( UnitRefrigBens, 0 ) +
+                ISNULL( UnitMiscBens, 0)
+            )
+        ) AS OtherBen
 --------------------------------------------------------------------------------
 --- ElecBenGross (Lifecycle) ---------------------------------------------------
 --- PVBen[E]: Present value gross electricity benefits
@@ -555,6 +591,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 ELSE 0
             END
         ) AS ElecBenGross_SH
+--------------------------------------------------------------------------------
 --- GasBenGross (Lifecycle) ----------------------------------------------------
 --- PVBen[G]: Present value gross gas benefits
         ,SUM(
@@ -576,6 +613,11 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS GasBenGross
 --------------------------------------------------------------------------------
+--- Tax CreditsGross -----------------------------------------------------------
+        ,SUM(
+            e.Qty * ISNULL( e.UnitTaxCredits, 0 )
+        ) AS TaxCreditsGross
+--------------------------------------------------------------------------------
 --- WaterEnergyBenGross --------------------------------------------------------
         ,SUM(
             CASE
@@ -595,17 +637,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS WaterEnergyBenGross
 --------------------------------------------------------------------------------
---- OtherBen -------------------------------------------------------------------
---- Naive benefits based on user-input present values:
-        ,SUM(
-            e.Qty *
-            (NTGRkWh + @MEBens) *
-            (
-                ISNULL( UnitGasInfraBens, 0 ) +
-                ISNULL( UnitRefrigBens, 0 ) +
-                ISNULL( UnitMiscBens, 0)
-            )
-        ) AS OtherBen
+--- OtherBenGross -------------------------------------------------------------------
         ,SUM(
             e.Qty *
             (
@@ -614,12 +646,6 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 ISNULL( UnitMiscBens, 0)
             )
         ) AS OtherBenGross
-        ,SUM(
-            e.Qty * (0.90) * ISNULL( e.UnitTaxCredits, 0 )
-        ) AS TaxCredits
-        ,SUM(
-            e.Qty * ISNULL( e.UnitTaxCredits, 0 )
-        ) AS TaxCreditsGross
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --- ADDED THE FOLLOWING 8 FIELDS TO PROVIDE NEGATIVE BENEFITS TO TRC AND PAC ---
@@ -757,6 +783,16 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS WaterEnergyCost
 --------------------------------------------------------------------------------
+--- OtherCost (Net) ------------------------------------------------------------
+        ,SUM(
+            e.Qty *
+            (e.NTGRkWh + @MECost) *
+            (
+                ISNULL( e.UnitRefrigCosts, 0 ) +
+                ISNULL( e.UnitMiscCosts, 0 )
+            )
+        ) AS OtherCost
+--------------------------------------------------------------------------------
 --- ElecSupplyCostGross (Lifecycle) --------------------------------------------
         ,SUM(
             CASE
@@ -883,16 +919,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
             END
         ) AS WaterEnergyCostGross
 --------------------------------------------------------------------------------
---- OtherCost ------------------------------------------------------------------
---- Naive costs based on user-input present values:
-        ,SUM(
-            e.Qty *
-            (e.NTGRkWh + @MECost) *
-            (
-                ISNULL( e.UnitRefrigCosts, 0 ) +
-                ISNULL( e.UnitMiscCosts, 0 )
-            )
-        ) AS OtherCost
+--- OtherCostGross -------------------------------------------------------------
         ,SUM(
             e.Qty *
             (
@@ -900,6 +927,7 @@ PRINT 'Inserting electrical and gas benefits... Message 3'
                 ISNULL( e.UnitMiscCosts, 0 )
             )
         ) AS OtherCostGross
+--------------------------------------------------------------------------------
     FROM InputMeasurevw AS e
     LEFT JOIN #FuelTypesForFuelSubstitution AS ft
     ON e.FuelType = ft.FuelType
@@ -1104,22 +1132,28 @@ BEGIN
         ElecBen_SB = ISNULL( ElecBen_SB, 0 ),
         ElecBen_SH = ISNULL( ElecBen_SH, 0 ),
         GasBen = ISNULL( GasBen, 0 ),
+        TaxCredits = ISNULL( TaxCredits, 0 ),
         WaterEnergyBen = ISNULL( WaterEnergyBen, 0 ),
+        OtherBen = ISNULL( OtherBen, 0 ),
         ElecBenGross = ISNULL( ElecBenGross, 0 ),
         ElecBenGross_SB = ISNULL( ElecBenGross_SB, 0 ),
         ElecBenGross_SH = ISNULL( ElecBenGross_SH, 0 ),
         GasBenGross = ISNULL( GasBenGross, 0 ),
+        TaxCreditsGross = ISNULL( TaxCreditsGross, 0 ),
         WaterEnergyBenGross = ISNULL( WaterEnergyBenGross, 0 ),
+        OtherBenGross = ISNULL( OtherBenGross, 0 ),
         ElecSupplyCost = ISNULL( ElecSupplyCost, 0 ),
         ElecSupplyCost_SB = ISNULL( ElecSupplyCost_SB, 0 ),
         ElecSupplyCost_SH = ISNULL( ElecSupplyCost_SH, 0 ),
         GasSupplyCost = ISNULL( GasSupplyCost, 0 ),
         WaterEnergyCost = ISNULL( WaterEnergyCost, 0 ),
+        OtherCost = ISNULL( OtherCost, 0 ),
         ElecSupplyCostGross = ISNULL( ElecSupplyCostGross, 0 ),
         ElecSupplyCostGross_SB = ISNULL( ElecSupplyCostGross_SB, 0 ),
         ElecSupplyCostGross_SH = ISNULL( ElecSupplyCostGross_SH, 0 ),
         GasSupplyCostGross = ISNULL( GasSupplyCost, 0 ),
-        WaterEnergyCostGross = ISNULL( WaterEnergyCostGross, 0 )
+        WaterEnergyCostGross = ISNULL( WaterEnergyCostGross, 0 ),
+        OtherCostGross = ISNULL( OtherCostGross, 0 )
 END
 
 PRINT 'Updating SC, TRC, and PAC costs...'
@@ -1824,7 +1858,7 @@ AS
                 THEN ElecBenPos / SumBenPos
                 ELSE 0
             END
-        ) AS WeightedElectricAlloc
+        ) AS WeightedElecAlloc
         ,(
             CASE 
                 WHEN SumElecBen + SumGasBen + SumWaterEnergyBen + SumOtherBen <> 0
@@ -1871,13 +1905,19 @@ AS
     LEFT JOIN Settingsvw s ON e.PA = s.PA
     WHERE s.[Version] = @AVCVersion
 )
-    UPDATE #OutputCE 
-    SET 
+    UPDATE #OutputCE
+    SET
         TotalSystemBenefit = c.TotalSystemBenefit
         , TotalSystemBenefitGross = c.TotalSystemBenefitGross
+        , SCBCost = c.SCB_Cost
+        , SCHCost = c.SCH_Cost
         , TRCCost = c.TRC_Cost
-        , TRCCostGross = c.TRC_CostGross
         , PACCost = c.PAC_Cost
+        , SCBCostGross = c.SCB_CostGross
+        , SCBCostNoAdmin = c.SCB_Cost_NoAdmin
+        , SCHCostGross = c.SCH_CostGross
+        , SCHCostNoAdmin = c.SCH_Cost_NoAdmin
+        , TRCCostGross = c.TRC_CostGross
         , TRCCostNoAdmin = c.TRC_Cost_NoAdmin
         , PACCostNoAdmin = c.PAC_Cost_NoAdmin
         , WeightedBenefits = c.WeightedBenefits
@@ -2046,17 +2086,21 @@ WITH RIMTest (
     GROUP BY e.PA, e.PrgID, e.CET_ID, e.EUL1, re.RateE1, rg.RateG1, Qy
 )
     UPDATE #OutputCE
-    SET BillReducElec=t.RimCostElec, BillReducGas=t.RimCostGas, RimCost = t.RimCostElec + t.RimCostGas + ce.PacCost
+    SET
+        BillReducElec=t.RimCostElec,
+        BillReducGas=t.RimCostGas,
+        RIMCost = t.RimCostElec + t.RimCostGas + ce.PacCost,
+        RIMCostNoAdmin = t.RimCostElec + t.RimCostGas + ce.PacCostNoAdmin
     FROM #OutputCE ce
     LEFT JOIN RIMTest t ON CE.CET_ID = t.CET_ID
 
 END 
 
 
-PRINT 'Updating SC, TRC, and PAC ratios...'
+PRINT 'Updating SC, TRC, PAC, and RIM ratios...'
 
 BEGIN
-    -- Update SC, TRC, and PAC Ratios at measure level
+    -- Update SC, TRC, PAC, RIM ratios at measure level
 UPDATE #OutputCE
 SET
     SCBRatio =
@@ -2065,13 +2109,13 @@ SET
             THEN (ElecBen_SB + GasBen + WaterEnergyBen + OtherBen) / (SCBCost)
             ELSE 0
         END
-    SCHRatio =
+    ,SCHRatio =
         CASE
             WHEN SCHCost <> 0
             THEN (ElecBen_SH + GasBen + WaterEnergyBen + OtherBen) / (SCHCost)
             ELSE 0
         END
-    TRCRatio =
+    ,TRCRatio =
         CASE
             WHEN TRCCost <> 0
             THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen + TaxCredits) / (TRCCost)
@@ -2081,6 +2125,12 @@ SET
         CASE 
             WHEN PACCost <> 0
             THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen) / (PACCost)
+            ELSE 0
+        END
+    ,RIMRatio =
+        CASE
+            WHEN RIMCost <> 0
+            THEN (BillReducElec + BillReducGas) / (RIMCost)
             ELSE 0
         END
     ,SCBRatioNoAdmin =
@@ -2107,7 +2157,12 @@ SET
             THEN (ElecBen + GasBen + WaterEnergyBen + OtherBen) / (PACCostNoAdmin)
             ELSE 0
         END
-END
+    ,RIMRatioNoAdmin =
+        CASE
+            WHEN RIMCostNoAdmin <> 0
+            THEN (BillReducElec + BillReducGas) / (RIMCostNoAdmin)
+            ELSE 0
+        END
 
 --Clear OutputCE
 DELETE FROM OutputCE WHERE JobID = @JobID
@@ -2124,34 +2179,37 @@ SELECT
     ,ElecBen_SB
     ,ElecBen_SH
     ,GasBen
+    ,TaxCredits
     ,WaterEnergyBen
+    ,OtherBen
     ,ElecBenGross
     ,ElecBenGross_SB
     ,ElecBenGross_SH
     ,GasBenGross
-    ,WaterEnergyBenGross
-    ,OtherBen
-    ,OtherBenGross
-    ,TaxCredits
     ,TaxCreditsGross
+    ,WaterEnergyBenGross
+    ,OtherBenGross
     ,ElecSupplyCost
     ,ElecSupplyCost_SB
     ,ElecSupplyCost_SH
     ,GasSupplyCost
     ,WaterEnergyCost
+    ,OtherCost
     ,ElecSupplyCostGross
     ,ElecSupplyCostGross_SB
     ,ElecSupplyCostGross_SH
     ,GasSupplyCostGross
     ,WaterEnergyCostGross
-    ,OtherCost
     ,OtherCostGross
+    ,BillReducElec
+    ,BillReducGas
     ,TotalSystemBenefit
     ,TotalSystemBenefitGross
     ,SCBCost
     ,SCHCost
     ,TRCCost
     ,PACCost
+    ,RIMCost
     ,SCBCostGross
     ,SCBCostNoAdmin
     ,SCHCostGross
@@ -2159,17 +2217,17 @@ SELECT
     ,TRCCostGross
     ,TRCCostNoAdmin
     ,PACCostNoAdmin
+    ,RIMCostNoAdmin
     ,SCBRatio
     ,SCHRatio
     ,TRCRatio
     ,PACRatio
+    ,RIMRatio
     ,SCBRatioNoAdmin
     ,SCHRatioNoAdmin
     ,TRCRatioNoAdmin
     ,PACRatioNoAdmin
-    ,BillReducElec
-    ,BillReducGas
-    ,RIMCost
+    ,RIMRatioNoAdmin
     ,WeightedBenefits
     ,WeightedElecAlloc
     ,WeightedProgramCost
