@@ -26,8 +26,11 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
 				 :  			"IOU_AC_Territory"
                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
 				 :				"PA"
+				 :  2025-05-21  Robert Hansen added fields for the Societal Cost
+				 :              Test: Gen_SB, Gen_SH, TD_SB, TD_SH, Cost_SB, and
+				 :				Cost_SH
 ################################################################################
-
+*/
 
 CREATE PROCEDURE [dbo].[InitializeTablesAvoidedCosts]
 @JobID INT=-1,

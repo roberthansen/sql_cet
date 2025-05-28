@@ -30,6 +30,9 @@ Change History   :  2016-06-30  Wayne Hauck added comment header
                  :              "IOU_AC_Territory"
                  :  2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to
                  :              "PA"
+                 :  2025-05-21  Robert Hansen added fields to Settingsvw for the
+                 :              Societal Cost Test: Ra_SCT, Raf_SCT, Rq_SCT, and
+                 :              Rqf_SCT
 ################################################################################
 */
 
@@ -114,6 +117,8 @@ Change History : 2016-06-30  Wayne Hauck added comment header
                : 2017-07-01  Modified to settings based on avoided cost version by Wayne Hauck with encryption
                : 2024-04-23  Robert Hansen renamed the "PA" to "IOU_AC_Territory"
                : 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
+               : 2025-05-21  Robert Hansen added fields for the Societal Cost
+               :             Test: Ra_SCT, Raf_SCT, Rq_SCT, Rqf_SCT
 ################################################################################
 */
 SELECT
@@ -123,6 +128,10 @@ SELECT
 ,DiscountRateAnnual + 1 AS Raf
 ,DiscountRateQtr AS Rq
 ,DiscountRateQtr + 1 AS Rqf
+,SocietalDiscountRateAnnual AS Ra_SCT
+,SocietalDiscountRateAnnual + 1 AS Raf_SCT
+,SocietalDiscountRateQtr AS Rq_SCT
+,SocietalDiscountRateQtr + 1 AS Rqf_SCT
 ,BaseYear
 ,CO2Gas
 ,NOxGas

@@ -36,7 +36,8 @@ Change History : 2016-06-30 Wayne Hauck added comment header
                : "IOU_AC_Territory"
                : 2024-06-20  Robert Hansen reverted "IOU_AC_Territory" to "PA"
                : 2025-02-11  Robert Hansen added new fields for the Societal
-               : Cost Test: Gen_SB, Gen_SH, TD_SB, and TD_SH
+               :             Cost Test: Ra_SCT, Rq_SCT, Raf_SCT, Rqf_SCT,
+               :             Gen_SB, Gen_SH, TD_SB, and TD_SH
 ###############################################################################
 */
 
@@ -50,6 +51,9 @@ SELECT
     ,s.Ra
     ,s.Rq
     ,s.Rqf
+    ,s.Ra_SCT
+    ,s.Rq_SCT
+    ,s.Rqf_SCT
     ,im.PA
     ,im.TS
     ,im.EU

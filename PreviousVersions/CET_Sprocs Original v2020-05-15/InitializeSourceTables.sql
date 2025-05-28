@@ -1,7 +1,7 @@
 USE [CET_2018_new_release]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InitializeSourceTables]    Script Date: 12/16/2019 1:56:00 PM ******/
+/****** Object:  StoredProcedure [dbo].[InitializeSourceTables]    Script Date: 2019-12-16 1:56:00 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -10,21 +10,28 @@ GO
 
 
 
-
---#################################################################################################
--- Name             :  InitializeSourceTables
--- Date             :  06/30/2016
--- Author           :  Wayne Hauck
--- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
--- Purpose          :  This stored procedure initializes tables which prepares views for running cost effectiveness.
--- Usage            :  n/a
--- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka InTech Energy, Inc.) for California Public Utilities Commission (CPUC). All Rights Reserved.
--- Change History   :  06/30/2016  Wayne Hauck added comment header
--- Change History   :  09/01/2016  Wayne Hauck modified to allow source database to be passed and processed correctly 
--- Change History   :  07/01/2017  Wayne Hauck modified to pass  avoided cost version to when Settingsvw view is created 
---                     
---#################################################################################################
+/*
+################################################################################
+Name             :  InitializeSourceTables
+Date             :  2016-06-30
+Author           :  Wayne Hauck
+Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
+Purpose          :  This stored procedure initializes tables which prepares
+				 :  views for running cost effectiveness.
+Usage            :  n/a
+Called by        :  n/a
+Copyright        :  Developed by Pinnacle Consulting Group (aka InTech Energy,
+				 :	Inc.) for California Public Utilities Commission (CPUC).
+				 :  All Rights Reserved.
+Change History   :  2016-06-30  Wayne Hauck added comment header
+                 :  2016-09-01  Wayne Hauck modified to allow source database to
+				 :              be passed and processed correctly 
+                 :  2017-07-01  Wayne Hauck modified to pass  avoided cost
+				 :              version to when Settingsvw view is created 
+                 :  2025-05-21  Robert Hansen incorporated new societal discount
+				 :              rates into Settingsvw definition
+################################################################################
+*/
 
 
 
@@ -57,14 +64,14 @@ SET @SourceMeasurevwSql = 'ALTER VIEW [dbo].[SourceMeasurevw] AS
 
 --#################################################################################################
 -- Name             :  SourceMeasurevw
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This view is a pointer to the source measure table and is code generated in the InitializeTables sproc. It does not care about fieldnames or formats. Only the location of the source table.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header
+-- Copyright ï¿½      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
+-- Change History   :  2016-06-30  Wayne Hauck added comment header
 --                     
 --#################################################################################################
 
@@ -74,14 +81,14 @@ SET @SourceProgramvwSql = 'ALTER VIEW [dbo].[SourceProgramvw] AS
 
 --#################################################################################################
 -- Name             :  SourceProgramvw
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This view is a pointer to the source program table and is code generated in the InitializeTables sproc. It does not care about fieldnames or formats. Only the location of the source table.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header
+-- Copyright ï¿½      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
+-- Change History   :  2016-06-30  Wayne Hauck added comment header
 --                     
 --#################################################################################################
 
@@ -93,14 +100,15 @@ SET @SettingsvwSql = 'ALTER VIEW [dbo].[Settingsvw]
 /*--#################################################################################################
 -- Name             :  Settingsvw
 -- Purpose          :  This view is E3Settings table.
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header
--- Change History   :  07/01/2017  Modified to settings based on avoided cost version by Wayne Hauck*/ with encryption
+-- Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
+-- Change History   :  2016-06-30  Wayne Hauck added comment header
+--                  :  2017-07-01  Modified to settings based on avoided cost version by Wayne Hauck*/ with encryption
+--                  :  2025-05-21  Robert Hansen incorporated new societal discount rate fields
 ----######################################################################################################################
 
 		AS
@@ -111,6 +119,10 @@ SET @SettingsvwSql = 'ALTER VIEW [dbo].[Settingsvw]
 		, DiscountRateAnnual+1 AS Raf
 		, DiscountRateQtr AS Rq
 		, DiscountRateQtr+1 AS Rqf
+		, SocietalDiscountRateAnnual AS Ra_SCT
+		, SocietalDiscountRateAnnual+1 AS Raf_SCT
+		, SocietalDiscountRateQtr AS Rq_SCT
+		, SocietalDiscountRateQtr+1 AS Rqf_SCT
 		, BaseYear
 		, CO2Gas
 		, NOxGas
@@ -122,14 +134,14 @@ SET @SettingsvwSql = 'ALTER VIEW [dbo].[Settingsvw]
 	SET @InputMeasurevwSql = 'ALTER VIEW [dbo].[InputMeasurevw]
 /*--#################################################################################################
 -- Name             :  InputMeasurevw
--- Date             :  06/30/2016
+-- Date             :  2016-06-30
 -- Author           :  Wayne Hauck
 -- Company          :  Pinnacle Consulting Group (aka Intech Energy, Inc.)
 -- Purpose          :  This view 1) sets the core variables for cost effectiveness calculations, 2) handles nulls, 3) calculates quarters based on first year of implementation, and 4) calculates calculated fields.
 -- Usage            :  n/a
 -- Called by        :  n/a
--- Copyright ©      :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
--- Change History   :  06/30/2016  Wayne Hauck added comment header*/
+-- Copyright        :  Developed by Pinnacle Consulting Group (aka Intech Energy, Inc.) for California Public Utilities Commission (CPUC), All Rights Reserved
+-- Change History   :  2016-06-30  Wayne Hauck added comment header*/
 -- #################################################################################################
 
 		AS
